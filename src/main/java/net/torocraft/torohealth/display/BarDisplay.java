@@ -26,23 +26,22 @@ public class BarDisplay {
   }
 
   public void draw(MatrixStack matrix, LivingEntity entity) {
-    int xOffset = 0;
+    int xOffset = 46;
 
     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     RenderSystem.setShader(GameRenderer::getPositionTexShader);
     RenderSystem.setShaderTexture(0, ICON_TEXTURES);
     RenderSystem.enableBlend();
 
-    HealthBarRenderer.render(matrix, entity, 63, 14, 130, false);
+    HealthBarRenderer.render(matrix, entity, 109, 14, 130, false);
     String name = getEntityName(entity);
     int healthMax = MathHelper.ceil(entity.getMaxHealth());
     int healthCur = Math.min(MathHelper.ceil(entity.getHealth()), healthMax);
     String healthText = healthCur + "/" + healthMax;
     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+    DrawableHelper.drawStringWithShadow(matrix, mc.textRenderer, name, xOffset, (int) 2, 0xFFFFFF);
 
-    DrawableHelper.drawStringWithShadow(matrix, mc.textRenderer, name, xOffset, (int) 2, 16777215);
-
-    mc.textRenderer.drawWithShadow(matrix, name, xOffset, 2, 16777215);
+    mc.textRenderer.drawWithShadow(matrix, name, xOffset, 2, 0xFFFFFF);
     xOffset += mc.textRenderer.getWidth(name) + 5;
 
     renderHeartIcon(matrix, xOffset, (int) 1);

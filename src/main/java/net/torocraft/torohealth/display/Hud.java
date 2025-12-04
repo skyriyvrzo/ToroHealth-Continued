@@ -13,7 +13,7 @@ import net.torocraft.torohealth.config.Config.AnchorPoint;
 
 public class Hud extends Screen {
   private static final Identifier BACKGROUND_TEXTURE =
-      new Identifier(ToroHealth.MODID + ":textures/gui/default_skin_basic.png");
+      new Identifier(ToroHealth.MODID + ":textures/gui/frame.png");
   private EntityDisplay entityDisplay = new EntityDisplay();
   private LivingEntity entity;
   private BarDisplay barDisplay;
@@ -108,16 +108,14 @@ public class Hud extends Screen {
     }
 
     matrix.push();
+    matrix.translate(x, y, 0);
     matrix.scale(scale, scale, scale);
-    matrix.translate(x - 10, y - 10, 0);
     if (config.hud.showSkin) {
       this.drawSkin(matrix);
     }
-    matrix.translate(10, 10, 0);
     if (config.hud.showEntity) {
       entityDisplay.draw(matrix, scale);
     }
-    matrix.translate(44, 0, 0);
     if (config.hud.showBar) {
       barDisplay.draw(matrix, entity);
     }
@@ -127,7 +125,7 @@ public class Hud extends Screen {
   private void drawSkin(MatrixStack matrix) {
     RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-    int w = 160, h = 60;
-    drawTexture(matrix, 0, 0, 0.0f, 0.0f, w, h, w, h);
+    int w = 144, h = 42;
+    this.drawTexture(matrix, 0, 0, 0, 42, w, h);
   }
 }

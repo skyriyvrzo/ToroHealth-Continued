@@ -28,11 +28,6 @@ public class BarDisplay {
   public void draw(MatrixStack matrix, LivingEntity entity) {
     int xOffset = 46;
 
-    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-    RenderSystem.setShader(GameRenderer::getPositionTexShader);
-    RenderSystem.setShaderTexture(0, ICON_TEXTURES);
-    RenderSystem.enableBlend();
-
     HealthBarRenderer.render(matrix, entity, 109, 14, 130, false);
     String name = getEntityName(entity);
     int healthMax = MathHelper.ceil(entity.getMaxHealth());

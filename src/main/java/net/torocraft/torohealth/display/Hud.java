@@ -116,8 +116,7 @@ public class Hud extends Screen {
       this.drawSkin(matrix);
     }
     if (config.hudOptions.showEntity) {
-
-      entityDisplay.draw(matrix, scale);
+      entityDisplay.draw(matrix);
     }
     if (config.hudOptions.showBar) {
       barDisplay.draw(matrix, entity);

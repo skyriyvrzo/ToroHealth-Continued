@@ -8,7 +8,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.*;
 import net.minecraft.util.Identifier;
 import net.torocraft.torohealth.ToroHealth;
-import net.torocraft.torohealth.ModConfig;
 import net.torocraft.torohealth.ModConfig.AnchorPoint;
 
 public class Hud extends Screen {
@@ -17,7 +16,6 @@ public class Hud extends Screen {
   private EntityDisplay entityDisplay = new EntityDisplay();
   private LivingEntity entity;
   private BarDisplay barDisplay;
-  private ModConfig config;
   private int age;
 
   public Hud() {
@@ -26,23 +24,18 @@ public class Hud extends Screen {
     barDisplay = new BarDisplay(MinecraftClient.getInstance(), this);
   }
 
-  public void draw(MatrixStack matrix, float tickDelta, ModConfig config) {
+  public void draw(MatrixStack matrix, float tickDelta) {
     if (this.client.options.debugEnabled) {
       return;
     }
-    this.config = config;
-    if (this.config == null) {
-        ModConfig.init();
-        this.config = ModConfig.INSTANCE;
-    }
     float x = determineX();
     float y = determineY();
-    draw(matrix, x, y, config.hudOptions.hudScale, tickDelta);
+    draw(matrix, x, y, ToroHealth.CONFIG.hudOptions.hudScale, tickDelta);
   }
 
   private float determineX() {
-    float x = config.hudOptions.hudXPosition;
-    AnchorPoint anchor = config.hudOptions.anchorPoint;
+    float x = ToroHealth.CONFIG.hudOptions.hudXPosition;
+    AnchorPoint anchor = ToroHealth.CONFIG.hudOptions.anchorPoint;
     float wScreen = client.getWindow().getScaledWidth();
 
     switch (anchor) {
@@ -58,8 +51,8 @@ public class Hud extends Screen {
   }
 
   private float determineY() {
-    float y = config.hudOptions.hudYPosition;
-    AnchorPoint anchor = config.hudOptions.anchorPoint;
+    float y = ToroHealth.CONFIG.hudOptions.hudYPosition;
+    AnchorPoint anchor = ToroHealth.CONFIG.hudOptions.anchorPoint;
     float hScreen = client.getWindow().getScaledHeight();
 
     switch (anchor) {
@@ -82,7 +75,7 @@ public class Hud extends Screen {
       age = 0;
     }
 
-    if (entity == null && age > config.hudOptions.hudHideDelay) {
+    if (entity == null && age > ToroHealth.CONFIG.hudOptions.hudHideDelay) {
       setEntityWork(null);
     }
 
@@ -105,20 +98,20 @@ public class Hud extends Screen {
       return;
     }
     
-    if (config.hudOptions.onlyWhenHurt && entity.getHealth() >= entity.getMaxHealth()) {
+    if (ToroHealth.CONFIG.hudOptions.onlyWhenHurt && entity.getHealth() >= entity.getMaxHealth()) {
       return;
     }
 
     matrix.push();
     matrix.translate(x, y, 0);
     matrix.scale(scale, scale, scale);
-    if (config.hudOptions.showSkin) {
+    if (ToroHealth.CONFIG.hudOptions.showSkin) {
       this.drawSkin(matrix);
     }
-    if (config.hudOptions.showEntity) {
+    if (ToroHealth.CONFIG.hudOptions.showEntity) {
       entityDisplay.draw(matrix, tickDelta);
     }
-    if (config.hudOptions.showBar) {
+    if (ToroHealth.CONFIG.hudOptions.showBar) {
       barDisplay.draw(matrix, entity);
     }
     matrix.pop();

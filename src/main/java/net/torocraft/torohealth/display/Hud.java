@@ -26,7 +26,7 @@ public class Hud extends Screen {
     barDisplay = new BarDisplay(MinecraftClient.getInstance(), this);
   }
 
-  public void draw(MatrixStack matrix, ModConfig config) {
+  public void draw(MatrixStack matrix, float tickDelta, ModConfig config) {
     if (this.client.options.debugEnabled) {
       return;
     }
@@ -37,7 +37,7 @@ public class Hud extends Screen {
     }
     float x = determineX();
     float y = determineY();
-    draw(matrix, x, y, config.hudOptions.hudScale);
+    draw(matrix, x, y, config.hudOptions.hudScale, tickDelta);
   }
 
   private float determineX() {
@@ -100,7 +100,7 @@ public class Hud extends Screen {
     return entity;
   }
 
-  private void draw(MatrixStack matrix, float x, float y, float scale) {
+  private void draw(MatrixStack matrix, float x, float y, float scale, float tickDelta) {
     if (entity == null) {
       return;
     }
@@ -116,7 +116,7 @@ public class Hud extends Screen {
       this.drawSkin(matrix);
     }
     if (config.hudOptions.showEntity) {
-      entityDisplay.draw(matrix);
+      entityDisplay.draw(matrix, tickDelta);
     }
     if (config.hudOptions.showBar) {
       barDisplay.draw(matrix, entity);

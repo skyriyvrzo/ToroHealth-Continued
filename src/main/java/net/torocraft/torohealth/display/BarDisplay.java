@@ -1,7 +1,6 @@
 package net.torocraft.torohealth.display;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.render.GameRenderer;
@@ -9,11 +8,9 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import net.torocraft.torohealth.ModConfig;
 import net.torocraft.torohealth.ToroHealth;
 import net.torocraft.torohealth.bars.BarState;
 import net.torocraft.torohealth.bars.BarStates;
-import net.torocraft.torohealth.bars.HealthBarRenderer;
 import net.torocraft.torohealth.util.EntityUtil;
 
 public class BarDisplay {

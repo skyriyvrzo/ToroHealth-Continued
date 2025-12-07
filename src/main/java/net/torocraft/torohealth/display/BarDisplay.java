@@ -74,6 +74,9 @@ public class BarDisplay {
   // draw a health Bar composed of 3 layers in InGameHud.
   private void renderHealthBar(MatrixStack matrices, LivingEntity entity, int x, int y) {
       BarState state = BarStates.getState(entity);
+      if (state == null) {
+          return;
+      }
       EntityUtil.Relation relation = EntityUtil.determineRelation(entity);
 
       int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barOptions.friendColor
@@ -110,6 +113,9 @@ public class BarDisplay {
       final int Y_UPMOST = 19 + 2;
       int healthChange;
       BarState state = BarStates.getState(entity);
+      if (state == null) {
+          return;
+      }
       switch (ToroHealth.CONFIG.barOptions.healthChangeType) {
           case LAST:
               healthChange = -state.lastDmg;

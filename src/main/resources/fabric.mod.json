@@ -16,7 +16,7 @@
   "icon": "assets/torohealth/icon.png",
   "environment": "client",
   "entrypoints": {
-    "main": [
+    "client": [
       "net.torocraft.torohealth.ToroHealth"
     ],
     "modmenu": [

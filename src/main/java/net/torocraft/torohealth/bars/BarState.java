@@ -2,6 +2,7 @@ package net.torocraft.torohealth.bars;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.torocraft.torohealth.ToroHealth;
 
 public class BarState {
@@ -62,8 +63,10 @@ public class BarState {
 
     lastDmgDelay = HEALTH_INDICATOR_DELAY * 2;
     lastHealth = health;
-    if (ToroHealth.CONFIG.particle.show) {
-      BarStates.PARTICLES.add(new BarParticle(entity, lastDmg));
+    if (ToroHealth.CONFIG.particle.show && lastDmg != 0) {
+      //BarStates.PARTICLES.add(new BarParticle(entity, lastDmg));
+        Vec3d entityLocation = entity.getPos().add(0, entity.getHeight() / 2, 0);
+        entity.world.addImportantParticle(ToroHealth.HEALTH_CHANGE, true, entityLocation.x, entityLocation.y, entityLocation.z, Double.longBitsToDouble(-lastDmg & 0xFFFFFFFFL), 0, 0);
     }
   }
 

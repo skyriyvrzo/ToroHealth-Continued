@@ -88,6 +88,10 @@ public class BarState {
         lastDmgCumulative += lastDmg;
 
         lastDmgDelay = HEALTH_INDICATOR_DELAY * 2;
+	previousHealthDisplay = Math.max(lastHealth, previousHealthDisplay);
+	if (previousHealthDisplay <= lastHealth) {
+	    previousHealthDelay = HEALTH_INDICATOR_DELAY;
+	}
         lastHealth = health;
         if (ToroHealth.CONFIG.particleOptions.show && lastDmg != 0) {
             MinecraftClient client = MinecraftClient.getInstance();
@@ -98,19 +102,16 @@ public class BarState {
                 entity.world.addImportantParticle(ToroHealth.HEALTH_CHANGE, true, entityLocation.x, entityLocation.y, entityLocation.z, Double.longBitsToDouble(-lastDmg & 0xFFFFFFFFL), 0, 0);
             }
         }
+    	updateAnimationSpeed();
     }
 
-    private void updateAnimations() {
-        if (previousHealthDelay > 0) {
-            float diff = previousHealthDisplay - health;
-            if (diff > 0) {
-                animationSpeed = diff / 10f;
-            }
-        } else if (previousHealthDelay < 1 && previousHealthDisplay > health) {
-            previousHealthDisplay -= animationSpeed;
-        } else {
-            previousHealthDisplay = health;
-            previousHealthDelay = HEALTH_INDICATOR_DELAY;
-        }
-    }
+  private void updateAnimationSpeed() {
+      animationSpeed = (previousHealthDisplay - health) / 10f;
+  }
+
+  private void updateAnimations() {
+      if (previousHealthDelay <= 0) {
+          previousHealthDisplay = Math.max(previousHealthDisplay - animationSpeed, health);
+      }
+  }
 }

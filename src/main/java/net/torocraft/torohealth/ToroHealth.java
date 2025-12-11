@@ -4,10 +4,13 @@ import java.util.Random;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.ConfigHolder;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
+import net.minecraft.util.ActionResult;
 import net.torocraft.torohealth.display.Hud;
 import net.torocraft.torohealth.util.RayTrace;
 import net.torocraft.torohealth.particle.HealthChangeParticle;
@@ -29,6 +32,19 @@ public class ToroHealth implements ClientModInitializer {
   @Override
   public void onInitializeClient() {
       ModConfig.init();
+
+      ConfigHolder<ModConfig> holder =
+          AutoConfig.getConfigHolder(ModConfig.class);
+
+      holder.registerSaveListener((h, c) -> {
+          c.postLoad();
+          return ActionResult.SUCCESS;
+      });
+
+      holder.registerLoadListener((h, c) -> {
+          c.postLoad();
+          return ActionResult.SUCCESS;
+      });
       CONFIG = ModConfig.INSTANCE;
       Registry.register(
           Registry.PARTICLE_TYPE,

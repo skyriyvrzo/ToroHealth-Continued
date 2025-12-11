@@ -17,7 +17,7 @@ public class BarDisplay {
 
   private static final Identifier ICON_TEXTURES = new Identifier("textures/gui/icons.png");
   private static final Identifier TOROHEALTH_BARS_TEXTURES = new Identifier(ToroHealth.MODID + ":textures/gui/bars.png");
-    private static final int DARK_GRAY = 0x808080;
+  private static final int DARK_GRAY = 0x808080;
   private final MinecraftClient mc;
   private final DrawableHelper gui;
 
@@ -79,10 +79,8 @@ public class BarDisplay {
       }
       EntityUtil.Relation relation = EntityUtil.determineRelation(entity);
 
-      int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barOptions.friendColor
-          : ToroHealth.CONFIG.barOptions.foeColor;
-      int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barOptions.friendColorSecondary
-          : ToroHealth.CONFIG.barOptions.foeColorSecondary;
+      int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barOptions.friendColor : ToroHealth.CONFIG.barOptions.foeColor;
+      int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barOptions.friendColorSecondary : ToroHealth.CONFIG.barOptions.foeColorSecondary;
       float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
       float percent2 = Math.min(state.previousHealthDisplay, entity.getMaxHealth()) / entity.getMaxHealth();
       int width = (int)(percent * 131.0f);

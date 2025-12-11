@@ -93,6 +93,9 @@ public class ModConfig implements ConfigData {
 
         @ConfigEntry.Gui.Tooltip
         public float inWorldBarDistance = 60f;
+
+        @ConfigEntry.Gui.Excluded
+        public transient float inWorldBarDistanceSquared = 0;
     }
 
     @ConfigEntry.Gui.Tooltip
@@ -138,5 +141,6 @@ public class ModConfig implements ConfigData {
     public void validatePostLoad() {
         // Recalculate dependent field
         particleOptions.particleDistanceSquared = particleOptions.particleDistance * particleOptions.particleDistance;
+        inWorldBarOptions.inWorldBarDistanceSquared = inWorldBarOptions.inWorldBarDistance * inWorldBarOptions.inWorldBarDistance;
     }
 }

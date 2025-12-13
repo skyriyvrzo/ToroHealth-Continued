@@ -30,10 +30,10 @@ public class BarDisplay {
     return entity.getDisplayName().getString();
   }
 
-  public void draw(MatrixStack matrix, LivingEntity entity) {
+  public void draw(MatrixStack matrix, LivingEntity entity, float tickDelta) {
     int xOffset = 42 + 2;
 
-    this.renderHealthBar(matrix, entity, xOffset, 14);
+    this.renderHealthBar(matrix, entity, xOffset, 14, tickDelta);
     xOffset += 2;
     String name = getEntityName(entity);
     int healthMax = MathHelper.ceil(entity.getMaxHealth());
@@ -72,8 +72,8 @@ public class BarDisplay {
   }
 
   // draw a health Bar composed of 3 layers in InGameHud.
-  private void renderHealthBar(MatrixStack matrices, LivingEntity entity, int x, int y) {
-      BarState state = ((BarStateAccessor) entity).torohealth$getBarState();;
+  private void renderHealthBar(MatrixStack matrices, LivingEntity entity, int x, int y, float tickDelta) {
+      BarState state = ((BarStateAccessor) entity).torohealth$getBarState();
       if (state == null) {
           return;
       }
@@ -82,9 +82,9 @@ public class BarDisplay {
       int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barOptions.friendColor : ToroHealth.CONFIG.barOptions.foeColor;
       int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barOptions.friendColorSecondary : ToroHealth.CONFIG.barOptions.foeColorSecondary;
       float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
-      float percent2 = Math.min(state.previousHealthDisplay, entity.getMaxHealth()) / entity.getMaxHealth();
-      int width = (int)(percent * 131.0f);
-      int width2 = (int)(percent2 * 131.0f);
+      float percent2 = Math.min(MathHelper.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
+      int width = MathHelper.ceil(percent * 131.0f);
+      int width2 = MathHelper.ceil(percent2 * 131.0f);
       this.renderBar(matrices, x, y, DARK_GRAY, 130);
       if (width2 > 0) {
           this.renderBar(matrices, x, y, color2, width2);
@@ -110,7 +110,7 @@ public class BarDisplay {
       final int X_RIGHTMOST = 42 + 2 + 130;
       final int Y_UPMOST = 19 + 2;
       int healthChange;
-      BarState state = ((BarStateAccessor) entity).torohealth$getBarState();;
+      BarState state = ((BarStateAccessor) entity).torohealth$getBarState();
       if (state == null) {
           return;
       }

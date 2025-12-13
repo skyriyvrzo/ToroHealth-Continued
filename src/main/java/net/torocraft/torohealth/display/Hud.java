@@ -94,10 +94,13 @@ public class Hud extends Screen {
   }
 
   private void draw(MatrixStack matrix, float x, float y, float scale, float tickDelta) {
-    if (entity == null) {
-      return;
-    }
-    
+      if (entity == null) {
+          return;
+      }
+      if (entity.isRemoved()) {
+          return;
+      }
+
     if (ToroHealth.CONFIG.hudOptions.onlyWhenHurt && entity.getHealth() >= entity.getMaxHealth()) {
       return;
     }
@@ -112,7 +115,7 @@ public class Hud extends Screen {
       entityDisplay.draw(matrix, tickDelta);
     }
     if (ToroHealth.CONFIG.hudOptions.showBar) {
-      barDisplay.draw(matrix, entity);
+      barDisplay.draw(matrix, entity, tickDelta);
     }
     matrix.pop();
   }

@@ -9,11 +9,12 @@ public class BarState {
     public final Integer entityID;
 
     public float health;
-    public float previousHealthDisplay;
+    public float healthDisplay;
     public float previousHealthDelay;
     public int lastDmg;
     public int lastDmgCumulative;
     public float lastHealth;
+    public float lastHealthDisplay;
     public float lastDmgDelay;
     private float animationSpeed;
 
@@ -23,7 +24,8 @@ public class BarState {
     private BarState(Integer id, float health){
         this.entityID = id;
         this.health = health;
-        this.previousHealthDisplay = health;
+        this.healthDisplay = health;
+        this.lastHealthDisplay = health;
         this.lastDmg = 0;
         this.lastDmgCumulative = 0;
         this.lastHealth = health;
@@ -78,20 +80,21 @@ public class BarState {
         this.lastDmg = MathHelper.ceil(this.lastHealth) - MathHelper.ceil(this.health);
         this.lastDmgCumulative += this.lastDmg;
         this.lastDmgDelay = HEALTH_INDICATOR_DELAY * 2;
-        this.previousHealthDisplay = Math.max(Math.max(this.lastHealth, this.previousHealthDisplay), this.health);
-        if (this.previousHealthDisplay <= this.lastHealth) {
+        this.healthDisplay = Math.max(Math.max(this.lastHealth, this.healthDisplay), this.health);
+        if (this.healthDisplay <= this.lastHealth) {
             this.previousHealthDelay = HEALTH_INDICATOR_DELAY;
         }
     	this.updateAnimationSpeed();
     }
 
   private void updateAnimationSpeed() {
-      this.animationSpeed = (this.previousHealthDisplay - this.health) / 10f;
+      this.animationSpeed = (this.healthDisplay - this.health) / 10f;
   }
 
   private void updateAnimations() {
+      lastHealthDisplay = healthDisplay;
       if (previousHealthDelay <= 0) {
-          previousHealthDisplay = Math.max(previousHealthDisplay - animationSpeed, health);
+          healthDisplay = Math.max(healthDisplay - animationSpeed, health);
       }
   }
 

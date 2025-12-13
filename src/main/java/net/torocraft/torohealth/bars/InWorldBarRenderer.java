@@ -38,19 +38,20 @@ public class InWorldBarRenderer {
         matrices.multiply(entityRenderDispatcher.getRotation());
         matrices.scale(-0.025f, -0.025f, 0.025f);
         VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(TOROHEALTH_BARS_TEXTURES));
-        renderHealthBar(matrices, (LivingEntity)entity, -20.0F, 0.0F, light, buffer);
+        renderHealthBar(matrices, (LivingEntity)entity, -20.0F, 0.0F, light, buffer, tickDelta);
         matrices.pop();
     }
-    private static void renderHealthBar(MatrixStack matrices, LivingEntity entity, float x, float y, int light, VertexConsumer buffer) {
-        BarState state = ((BarStateAccessor) entity).torohealth$getBarState();;
+    private static void renderHealthBar(MatrixStack matrices, LivingEntity entity, float x, float y, int light, VertexConsumer buffer, float tickDelta) {
+        BarState state = ((BarStateAccessor) entity).torohealth$getBarState();
         Matrix4f matrix = matrices.peek().getPositionMatrix();
         Relation relation = EntityUtil.determineRelation(entity);
         int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barOptions.friendColor : ToroHealth.CONFIG.barOptions.foeColor;
         int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barOptions.friendColorSecondary : ToroHealth.CONFIG.barOptions.foeColorSecondary;
         float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
-        float percent2 = Math.min(state.previousHealthDisplay, entity.getMaxHealth()) / entity.getMaxHealth();
-        int width = (int)(percent * 41.0f);
-        int width2 = (int)(percent2 * 41.0f);
+        float percent2 = Math.min(MathHelper.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
+
+        int width = MathHelper.ceil(percent * 41.0f);
+        int width2 = MathHelper.ceil(percent2 * 41.0f);
         renderBar(matrix, x, y, 0.0f, DARK_GRAY, 40, light, buffer);
         if (width2 > 0) {
             renderBar(matrix, x, y, -0.1f, color2, width2, light, buffer);

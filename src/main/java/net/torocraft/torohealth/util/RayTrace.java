@@ -20,7 +20,7 @@ import net.minecraft.world.RaycastContext;
 
 public class RayTrace {
     // modified from minecraft.client.render.GameRender.updateTargetedEntity
-    public LivingEntity getEntityInCrosshair(float tickDelta, float reachDistance) {
+    public static LivingEntity getEntityInCrosshair(float tickDelta, float reachDistance) {
         MinecraftClient client = MinecraftClient.getInstance();
         Entity entity2 = client.getCameraEntity();
         if (entity2 == null) {
@@ -29,7 +29,7 @@ public class RayTrace {
         if (client.world == null) {
             return null;
         }
-        HitResult crosshairTarget = this.raycastEntity(entity2, reachDistance, tickDelta, false);
+        HitResult crosshairTarget = raycastEntity(entity2, reachDistance, tickDelta, false);
         Vec3d vec3d = entity2.getCameraPosVec(tickDelta);
         double e = reachDistance;
 
@@ -55,7 +55,7 @@ public class RayTrace {
     }
 
     // modified from net.minecraft.entity.Entity.raycast, adding ignore opaque blocks feature
-    private BlockHitResult raycastEntity(Entity entity, double maxDistance, float tickDelta, boolean includeFluids) {
+    private static BlockHitResult raycastEntity(Entity entity, double maxDistance, float tickDelta, boolean includeFluids) {
         Vec3d vec3d = entity.getCameraPosVec(tickDelta);
         Vec3d vec3d2 = entity.getRotationVec(tickDelta);
         Vec3d vec3d3 = vec3d.add(vec3d2.x * maxDistance, vec3d2.y * maxDistance, vec3d2.z * maxDistance);
@@ -64,7 +64,7 @@ public class RayTrace {
 
 
 
-    private BlockHitResult raycastBlockView(World world, RaycastContext context) {
+    private static BlockHitResult raycastBlockView(World world, RaycastContext context) {
         return BlockView.raycast(context.getStart(), context.getEnd(), context, (c, pos) -> {
             BlockState block = world.getBlockState(pos);
             if (!block.isOpaque()) {

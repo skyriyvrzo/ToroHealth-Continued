@@ -6,8 +6,11 @@
   "mixins": [],
   "client": [
     "InGameHudMixin",
-    "PlayerEntityMixin",
-    "WorldRendererMixin"
+    "WorldRendererMixin",
+    "GameRendererMixin",
+    "LivingEntityMixin",
+    "EntityMixin",
+    "accessor.LivingEntityAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

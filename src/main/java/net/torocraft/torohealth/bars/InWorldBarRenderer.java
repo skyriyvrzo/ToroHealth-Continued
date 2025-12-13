@@ -17,9 +17,10 @@ import net.torocraft.torohealth.ToroHealth;
 import net.torocraft.torohealth.ModConfig.InWorldBarVisibilityMode;
 import net.torocraft.torohealth.util.EntityUtil;
 import net.torocraft.torohealth.util.EntityUtil.Relation;
+import net.torocraft.torohealth.api.BarStateAccessor;
 
 public class InWorldBarRenderer {
-    private static final int DARK_GRAY = 8421504;
+    private static final int DARK_GRAY = 0x808080;
     private static final Identifier TOROHEALTH_BARS_TEXTURES = new Identifier("torohealth:textures/gui/bars.png");
 
     public static void render(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,  EntityRenderDispatcher entityRenderDispatcher) {
@@ -41,7 +42,7 @@ public class InWorldBarRenderer {
         matrices.pop();
     }
     private static void renderHealthBar(MatrixStack matrices, LivingEntity entity, float x, float y, int light, VertexConsumer buffer) {
-        BarState state = BarStates.getState(entity);
+        BarState state = ((BarStateAccessor) entity).torohealth$getBarState();;
         Matrix4f matrix = matrices.peek().getPositionMatrix();
         Relation relation = EntityUtil.determineRelation(entity);
         int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barOptions.friendColor : ToroHealth.CONFIG.barOptions.foeColor;

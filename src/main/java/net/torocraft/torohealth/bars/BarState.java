@@ -4,8 +4,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.math.Vec3d;
-import net.torocraft.torohealth.ToroHealth;
 
 public class BarState {
     public final Integer entityID;
@@ -54,13 +52,7 @@ public class BarState {
             health = Math.min(entity.getHealth(), entity.getMaxHealth());
             incrementTimers();
 
-            if (lastHealth < 0.1) {
-                reset();
-
-            } else if (lastHealth != health) {
-                handleHealthChange();
-
-            } else if (lastDmgDelay == 0.0F) {
+             if (this.lastDmgDelay == 0.0F) {
                 reset();
             }
 
@@ -69,7 +61,6 @@ public class BarState {
     }
 
     private void reset() {
-        lastHealth = health;
         lastDmg = 0;
         lastDmgCumulative = 0;
     }
@@ -83,35 +74,30 @@ public class BarState {
         }
     }
 
-    private void handleHealthChange() {
-        lastDmg = MathHelper.ceil(lastHealth) - MathHelper.ceil(health);
-        lastDmgCumulative += lastDmg;
-
-        lastDmgDelay = HEALTH_INDICATOR_DELAY * 2;
-	previousHealthDisplay = Math.max(lastHealth, previousHealthDisplay);
-	if (previousHealthDisplay <= lastHealth) {
-	    previousHealthDelay = HEALTH_INDICATOR_DELAY;
-	}
-        lastHealth = health;
-        if (ToroHealth.CONFIG.particleOptions.show && lastDmg != 0) {
-            MinecraftClient client = MinecraftClient.getInstance();
-            assert client.world != null;
-            LivingEntity entity = (LivingEntity) client.world.getEntityById(entityID);
-            if (entity != null) {
-                Vec3d entityLocation = entity.getPos().add(0, entity.getHeight() / 2, 0);
-                entity.world.addImportantParticle(ToroHealth.HEALTH_CHANGE, true, entityLocation.x, entityLocation.y, entityLocation.z, Double.longBitsToDouble(-lastDmg & 0xFFFFFFFFL), 0, 0);
-            }
+    public void handleHealthChange() {
+        this.lastDmg = MathHelper.ceil(this.lastHealth) - MathHelper.ceil(this.health);
+        this.lastDmgCumulative += this.lastDmg;
+        this.lastDmgDelay = HEALTH_INDICATOR_DELAY * 2;
+        this.previousHealthDisplay = Math.max(Math.max(this.lastHealth, this.previousHealthDisplay), this.health);
+        if (this.previousHealthDisplay <= this.lastHealth) {
+            this.previousHealthDelay = HEALTH_INDICATOR_DELAY;
         }
-    	updateAnimationSpeed();
+    	this.updateAnimationSpeed();
     }
 
   private void updateAnimationSpeed() {
-      animationSpeed = (previousHealthDisplay - health) / 10f;
+      this.animationSpeed = (this.previousHealthDisplay - this.health) / 10f;
   }
 
   private void updateAnimations() {
       if (previousHealthDelay <= 0) {
           previousHealthDisplay = Math.max(previousHealthDisplay - animationSpeed, health);
       }
+  }
+
+
+  public void updateHealth(float health) {
+        this.lastHealth = this.health;
+        this.health = health;
   }
 }

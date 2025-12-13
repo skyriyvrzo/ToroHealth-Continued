@@ -10,8 +10,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.torocraft.torohealth.ToroHealth;
 import net.torocraft.torohealth.bars.BarState;
-import net.torocraft.torohealth.bars.BarStates;
 import net.torocraft.torohealth.util.EntityUtil;
+import net.torocraft.torohealth.api.BarStateAccessor;
 
 public class BarDisplay {
 
@@ -73,7 +73,7 @@ public class BarDisplay {
 
   // draw a health Bar composed of 3 layers in InGameHud.
   private void renderHealthBar(MatrixStack matrices, LivingEntity entity, int x, int y) {
-      BarState state = BarStates.getState(entity);
+      BarState state = ((BarStateAccessor) entity).torohealth$getBarState();;
       if (state == null) {
           return;
       }
@@ -110,7 +110,7 @@ public class BarDisplay {
       final int X_RIGHTMOST = 42 + 2 + 130;
       final int Y_UPMOST = 19 + 2;
       int healthChange;
-      BarState state = BarStates.getState(entity);
+      BarState state = ((BarStateAccessor) entity).torohealth$getBarState();;
       if (state == null) {
           return;
       }

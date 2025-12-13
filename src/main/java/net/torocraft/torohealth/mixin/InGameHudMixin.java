@@ -15,5 +15,4 @@ public class InGameHudMixin {
   private void render(MatrixStack matrixStack, float tickDelta, CallbackInfo info) {
     ToroHealth.HUD.draw(matrixStack, tickDelta);
   }
-
 }

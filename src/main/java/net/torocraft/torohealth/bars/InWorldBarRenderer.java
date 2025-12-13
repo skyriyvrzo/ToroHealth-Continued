@@ -98,7 +98,7 @@ public class InWorldBarRenderer {
         if (ToroHealth.CONFIG.inWorldBarOptions.onlyWhenHurt && livingEntity.getHealth() >= livingEntity.getMaxHealth()) {
             return false;
         }
-        if (ToroHealth.CONFIG.inWorldBarOptions.onlyWhenLookingAt && ToroHealth.HUD.getEntity() != entity) {
+        if (ToroHealth.CONFIG.inWorldBarOptions.onlyWhenLookingAt && ToroHealth.getTargetedEntity() != entity) {
             return false;
         }
         return EntityUtil.showHealthBar(entity, MinecraftClient.getInstance());

@@ -1,11 +1,13 @@
 package net.torocraft.torohealth;
 
+import blue.endless.jankson.annotation.Nullable;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -22,6 +24,7 @@ public class ToroHealth implements ClientModInitializer {
   public static ModConfig CONFIG;
   public static Hud HUD = new Hud();
   public static boolean IS_HOLDING_WEAPON = false;
+  private static LivingEntity targetedEntity;
 
 
   public static final DefaultParticleType HEALTH_CHANGE = FabricParticleTypes.simple();
@@ -59,4 +62,13 @@ public class ToroHealth implements ClientModInitializer {
           HealthChangeParticle.HealthChangeFactory::new
       );
   }
+
+
+    public static @Nullable LivingEntity getTargetedEntity() {
+        return targetedEntity;
+    }
+
+    public static void setTargetedEntity(@Nullable LivingEntity entity) {
+        targetedEntity = entity;
+    }
 }

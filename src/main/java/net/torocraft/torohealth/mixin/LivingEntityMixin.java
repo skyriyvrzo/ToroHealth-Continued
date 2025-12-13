@@ -48,7 +48,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements BarStateA
             if (this.barState.health != this.barState.lastHealth) {
                 this.barState.handleHealthChange();
                 // create healthChangeParticle
-                if (this.barState.lastDmg != 0) {
+                if (this.barState.lastDmg != 0 && ToroHealth.CONFIG.particleOptions.show) {
                     Vec3d entityLocation = this.getPos();
                     this.world.addImportantParticle(ToroHealth.HEALTH_CHANGE, true, entityLocation.x, entityLocation.y + this.getHeight() / 2, entityLocation.z, Double.longBitsToDouble(-this.barState.lastDmg & 0xFFFFFFFFL), 0, 0);
                 }

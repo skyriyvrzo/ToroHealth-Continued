@@ -12,11 +12,11 @@ import net.minecraft.item.ThrowablePotionItem;
 import net.minecraft.item.TridentItem;
 
 import net.torocraft.torohealth.ToroHealth;
-import net.torocraft.torohealth.ModConfig.InWorldBarVisibilityMode;
+import net.torocraft.torohealth.ModConfig;
 
 public class HoldingWeaponUpdater {
   public static void update() {
-    if (InWorldBarVisibilityMode.NONE.equals(ToroHealth.CONFIG.inWorldBarOptions.inWorldBarVisibilityMode))
+    if (ModConfig.InWorldBarVisibilityMode.NONE.equals(ToroHealth.CONFIG.inWorldBarOptions.inWorldBarVisibilityMode))
       return;
     MinecraftClient minecraft = MinecraftClient.getInstance();
     PlayerEntity player = minecraft.player;

@@ -13,37 +13,38 @@ public class ModConfig implements ConfigData {
     @ConfigEntry.Gui.Excluded
     public static ModConfig INSTANCE;
 
-    public static void init()
-    {
-        AutoConfig.register(ModConfig.class, JanksonConfigSerializer::new);
-        INSTANCE = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
-        INSTANCE.postLoad();
-    }
+    @ConfigEntry.Gui.Tooltip
+    public boolean enabled = true;
 
     @ConfigEntry.Gui.CollapsibleObject
     public HudOptions hudOptions = new HudOptions();
     public static class HudOptions {
         @ConfigEntry.Gui.Tooltip
+        public boolean showHUD = true;
+
+        @ConfigEntry.Gui.Tooltip
         public boolean showEntity = true;
 
         @ConfigEntry.Gui.Tooltip
-        public boolean showBar = true;
+        @ConfigEntry.Gui.EnumHandler(option = EnumDisplayOption.BUTTON)
+        public FrameStype frameStyle = FrameStype.LIGHT;
 
         @ConfigEntry.Gui.Tooltip
-        public boolean showSkin = true;
+        @ConfigEntry.Gui.EnumHandler(option = EnumDisplayOption.BUTTON)
+        public HealthChangeType healthChangeType= HealthChangeType.LAST;
 
         @ConfigEntry.Gui.Tooltip
         public boolean onlyWhenHurt = false;
 
         @ConfigEntry.Gui.Tooltip
-        @ConfigEntry.Gui.EnumHandler(option = EnumDisplayOption.BUTTON)
-        public AnchorPoint anchorPoint = AnchorPoint.TOP_LEFT;
+        public float hudDistance = 128f;
 
         @ConfigEntry.Gui.Tooltip
         public int hudHideDelay = 20;
 
         @ConfigEntry.Gui.Tooltip
-        public float hudDistance = 60f;
+        @ConfigEntry.Gui.EnumHandler(option = EnumDisplayOption.BUTTON)
+        public AnchorPoint anchorPoint = AnchorPoint.TOP_LEFT;
 
         @ConfigEntry.Gui.Tooltip
         public int hudXPosition = 4;
@@ -52,7 +53,7 @@ public class ModConfig implements ConfigData {
         public int hudYPosition = 4;
 
         @ConfigEntry.Gui.Tooltip
-        public float hudScale = 1f;
+        public int hudScale = 1;
     }
 
 
@@ -60,10 +61,10 @@ public class ModConfig implements ConfigData {
     public ParticleOptions particleOptions = new ParticleOptions();
     public static class ParticleOptions {
         @ConfigEntry.Gui.Tooltip
-        public boolean show = true;
+        public boolean showParticle = true;
 
         @ConfigEntry.Gui.Tooltip
-        public float particleDistance = 60f;
+        public float particleDistance = 64f;
 
         @ConfigEntry.Gui.Excluded
         public transient float particleDistanceSquared = 0;
@@ -71,6 +72,7 @@ public class ModConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.ColorPicker
         public int damageColor = 0xff0000;
+
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.ColorPicker
         public int healColor = 0x00ff00;
@@ -91,19 +93,15 @@ public class ModConfig implements ConfigData {
         public boolean onlyWhenHurt = false;
 
         @ConfigEntry.Gui.Tooltip
-        public float inWorldBarDistance = 60f;
+        public float inWorldBarDistance = 64f;
 
         @ConfigEntry.Gui.Excluded
         public transient float inWorldBarDistanceSquared = 0;
     }
 
     @ConfigEntry.Gui.CollapsibleObject
-    public BarOptions barOptions = new BarOptions();
-    public static class BarOptions {
-        @ConfigEntry.Gui.Tooltip
-        @ConfigEntry.Gui.EnumHandler(option = EnumDisplayOption.BUTTON)
-        public HealthChangeType healthChangeType= HealthChangeType.LAST;
-
+    public BarColor barColor = new BarColor();
+    public static class BarColor {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.ColorPicker
         public int friendColor = 0x00ff00;
@@ -121,9 +119,20 @@ public class ModConfig implements ConfigData {
         public int foeColorSecondary = 0x800000;
     }
 
+    public static void init()
+    {
+        AutoConfig.register(ModConfig.class, JanksonConfigSerializer::new);
+        INSTANCE = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
+        INSTANCE.postLoad();
+    }
+
 
     public enum AnchorPoint {
         TOP_LEFT, TOP_CENTER, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT
+    }
+
+    public enum FrameStype {
+        LIGHT, HEAVY
     }
 
     public enum InWorldBarVisibilityMode {

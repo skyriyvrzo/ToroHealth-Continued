@@ -17,8 +17,10 @@ import net.torocraft.torohealth.util.RayTrace;
 public class GameRendererMixin {
     @Inject(method = "renderWorld", at = @At("HEAD"))
     private void updateTargetedEntity(float tickDelta, long limitTime, MatrixStack matrices, CallbackInfo info) {
-        LivingEntity entity = RayTrace.getEntityInCrosshair(tickDelta, Math.max(ToroHealth.CONFIG.hudOptions.hudDistance, ToroHealth.CONFIG.inWorldBarOptions.inWorldBarDistance));
-        ToroHealth.setTargetedEntity(entity);
-        ToroHealth.HUD.setEntity(entity);
+        if (ToroHealth.CONFIG.enabled) {
+            LivingEntity entity = RayTrace.getEntityInCrosshair(tickDelta, Math.max(ToroHealth.CONFIG.hudOptions.hudDistance, ToroHealth.CONFIG.inWorldBarOptions.inWorldBarDistance));
+            ToroHealth.setTargetedEntity(entity);
+            ToroHealth.HUD.setEntity(entity);
+        }
     }
 }

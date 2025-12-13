@@ -7,8 +7,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.*;
 import net.minecraft.util.Identifier;
+import net.torocraft.torohealth.ModConfig;
 import net.torocraft.torohealth.ToroHealth;
 import net.torocraft.torohealth.ModConfig.AnchorPoint;
+import net.torocraft.torohealth.ModConfig.FrameStype;
 
 public class Hud extends Screen {
   private static final Identifier BACKGROUND_TEXTURE =
@@ -17,6 +19,7 @@ public class Hud extends Screen {
   private LivingEntity entity;
   private BarDisplay barDisplay;
   private int age;
+  private final static int FRAME_WIDTH = 42;
 
   public Hud() {
     super(Text.literal("ToroHealth HUD"));
@@ -108,22 +111,19 @@ public class Hud extends Screen {
     matrix.push();
     matrix.translate(x, y, 0);
     matrix.scale(scale, scale, scale);
-    if (ToroHealth.CONFIG.hudOptions.showSkin) {
-      this.drawSkin(matrix);
-    }
     if (ToroHealth.CONFIG.hudOptions.showEntity) {
-      entityDisplay.draw(matrix, tickDelta);
+        this.drawSkin(matrix);
+        entityDisplay.draw(matrix, tickDelta);
+        matrix.translate(FRAME_WIDTH + 2, 0, 0);
     }
-    if (ToroHealth.CONFIG.hudOptions.showBar) {
-      barDisplay.draw(matrix, entity, tickDelta);
-    }
+    barDisplay.draw(matrix, entity, tickDelta);
     matrix.pop();
   }
 
   private void drawSkin(MatrixStack matrix) {
     RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-    int w = 144, h = 42;
-    this.drawTexture(matrix, 0, 0, 0, 42, w, h);
+    int w = 179, h = 42;
+    this.drawTexture(matrix, 0, 0, 0, (ToroHealth.CONFIG.hudOptions.frameStyle.equals(FrameStype.LIGHT) ? 42 : 0), w, h);
   }
 }

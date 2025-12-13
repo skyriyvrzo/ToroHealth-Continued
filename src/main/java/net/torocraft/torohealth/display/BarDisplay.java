@@ -31,7 +31,7 @@ public class BarDisplay {
   }
 
   public void draw(MatrixStack matrix, LivingEntity entity, float tickDelta) {
-    int xOffset = 42 + 2;
+    int xOffset = 0;
 
     this.renderHealthBar(matrix, entity, xOffset, 14, tickDelta);
     xOffset += 2;
@@ -40,21 +40,21 @@ public class BarDisplay {
     int healthCur = Math.min(MathHelper.ceil(entity.getHealth()), healthMax);
     String healthText = healthCur + "/" + healthMax;
     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-    mc.textRenderer.drawWithShadow(matrix, name, (float)xOffset, 2, 0xFFFFFF);
+    mc.textRenderer.drawWithShadow(matrix, name, (float)xOffset, 4, 0xFFFFFF);
     xOffset += mc.textRenderer.getWidth(name) + 5;
 
-    renderHeartIcon(matrix, xOffset, (int) 1);
+    renderHeartIcon(matrix, xOffset, (int) 3);
     xOffset += 10;
 
-    mc.textRenderer.drawWithShadow(matrix, healthText, xOffset, 2, 0xe0e0e0);
+    mc.textRenderer.drawWithShadow(matrix, healthText, xOffset, 4, 0xe0e0e0);
     xOffset += mc.textRenderer.getWidth(healthText) + 5;
 
     int armor = entity.getArmor();
 
     if (armor > 0) {
-      renderArmorIcon(matrix, xOffset, (int) 1);
+      renderArmorIcon(matrix, xOffset, (int) 3);
       xOffset += 10;
-      mc.textRenderer.drawWithShadow(matrix, entity.getArmor() + "", xOffset, 2, 0xe0e0e0);
+      mc.textRenderer.drawWithShadow(matrix, entity.getArmor() + "", xOffset, 4, 0xe0e0e0);
     }
 
     this.drawHealthChange(matrix, entity);
@@ -79,8 +79,8 @@ public class BarDisplay {
       }
       EntityUtil.Relation relation = EntityUtil.determineRelation(entity);
 
-      int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barOptions.friendColor : ToroHealth.CONFIG.barOptions.foeColor;
-      int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barOptions.friendColorSecondary : ToroHealth.CONFIG.barOptions.foeColorSecondary;
+      int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barColor.friendColor : ToroHealth.CONFIG.barColor.foeColor;
+      int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barColor.friendColorSecondary : ToroHealth.CONFIG.barColor.foeColorSecondary;
       float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
       float percent2 = Math.min(MathHelper.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
       int width = MathHelper.ceil(percent * 131.0f);
@@ -107,14 +107,14 @@ public class BarDisplay {
   }
 
   private void drawHealthChange(MatrixStack matrices, LivingEntity entity) {
-      final int X_RIGHTMOST = 42 + 2 + 130;
+      final int X_RIGHTMOST = 130;
       final int Y_UPMOST = 19 + 2;
       int healthChange;
       BarState state = ((BarStateAccessor) entity).torohealth$getBarState();
       if (state == null) {
           return;
       }
-      switch (ToroHealth.CONFIG.barOptions.healthChangeType) {
+      switch (ToroHealth.CONFIG.hudOptions.healthChangeType) {
           case LAST:
               healthChange = -state.lastDmg;
               break;

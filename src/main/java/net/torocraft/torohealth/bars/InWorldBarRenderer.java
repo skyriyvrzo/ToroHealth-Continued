@@ -14,7 +14,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.Identifier;
 import net.minecraft.client.MinecraftClient;
 import net.torocraft.torohealth.ToroHealth;
-import net.torocraft.torohealth.ModConfig.InWorldBarVisibilityMode;
+import net.torocraft.torohealth.ModConfig;
 import net.torocraft.torohealth.util.EntityUtil;
 import net.torocraft.torohealth.util.EntityUtil.Relation;
 import net.torocraft.torohealth.api.BarStateAccessor;
@@ -45,8 +45,8 @@ public class InWorldBarRenderer {
         BarState state = ((BarStateAccessor) entity).torohealth$getBarState();
         Matrix4f matrix = matrices.peek().getPositionMatrix();
         Relation relation = EntityUtil.determineRelation(entity);
-        int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barOptions.friendColor : ToroHealth.CONFIG.barOptions.foeColor;
-        int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barOptions.friendColorSecondary : ToroHealth.CONFIG.barOptions.foeColorSecondary;
+        int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barColor.friendColor : ToroHealth.CONFIG.barColor.foeColor;
+        int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barColor.friendColorSecondary : ToroHealth.CONFIG.barColor.foeColorSecondary;
         float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
         float percent2 = Math.min(MathHelper.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
 
@@ -83,10 +83,10 @@ public class InWorldBarRenderer {
 
 
     private static boolean shouldRender(Entity entity, EntityRenderDispatcher entityRenderDispatcher) {
-        if (ToroHealth.CONFIG.inWorldBarOptions.inWorldBarVisibilityMode.equals(InWorldBarVisibilityMode.NONE)) {
+        if (ToroHealth.CONFIG.inWorldBarOptions.inWorldBarVisibilityMode.equals(ModConfig.InWorldBarVisibilityMode.NONE)) {
             return false;
         }
-        if (ToroHealth.CONFIG.inWorldBarOptions.inWorldBarVisibilityMode.equals(InWorldBarVisibilityMode.WHEN_HOLDING_WEAPON) && !ToroHealth.IS_HOLDING_WEAPON) {
+        if (ToroHealth.CONFIG.inWorldBarOptions.inWorldBarVisibilityMode.equals(ModConfig.InWorldBarVisibilityMode.WHEN_HOLDING_WEAPON) && !ToroHealth.IS_HOLDING_WEAPON) {
             return false;
         }
         if (!(entity instanceof LivingEntity livingEntity)) {

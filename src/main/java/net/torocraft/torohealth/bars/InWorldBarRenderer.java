@@ -37,7 +37,7 @@ public class InWorldBarRenderer {
         matrices.translate(0.0, f, 0.0);
         matrices.multiply(entityRenderDispatcher.getRotation());
         matrices.scale(-0.025f, -0.025f, 0.025f);
-        VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(TOROHEALTH_BARS_TEXTURES));
+        VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayer.getText(TOROHEALTH_BARS_TEXTURES));
         renderHealthBar(matrices, (LivingEntity)entity, -20.0F, 0.0F, light, buffer, tickDelta);
         matrices.pop();
     }

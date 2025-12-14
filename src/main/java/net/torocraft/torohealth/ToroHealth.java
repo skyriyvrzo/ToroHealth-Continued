@@ -12,6 +12,7 @@ import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.ActionResult;
+import net.minecraft.client.MinecraftClient;
 import net.torocraft.torohealth.display.Hud;
 import net.torocraft.torohealth.particle.HealthChangeParticle;
 import net.torocraft.torohealth.util.HoldingWeaponUpdater;
@@ -22,7 +23,7 @@ public class ToroHealth implements ClientModInitializer {
 
 
   public static ModConfig CONFIG;
-  public static Hud HUD = new Hud();
+  public static Hud HUD;
   public static boolean IS_HOLDING_WEAPON = false;
   private static LivingEntity targetedEntity;
 
@@ -46,6 +47,9 @@ public class ToroHealth implements ClientModInitializer {
           return ActionResult.SUCCESS;
       });
       CONFIG = ModConfig.INSTANCE;
+
+      HUD = new Hud(MinecraftClient.getInstance());
+
       Registry.register(
           Registry.PARTICLE_TYPE,
           new Identifier(MODID, "health_change"),

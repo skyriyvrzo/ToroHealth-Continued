@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.bars;
+package net.torocraft.torohealth.data;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Entity;

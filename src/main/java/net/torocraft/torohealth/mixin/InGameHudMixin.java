@@ -14,7 +14,7 @@ public class InGameHudMixin {
   @Inject(method = "render", at = @At("RETURN"))
   private void render(MatrixStack matrixStack, float tickDelta, CallbackInfo info) {
       if (ToroHealth.CONFIG.enabled && ToroHealth.CONFIG.hudOptions.showHUD) {
-          ToroHealth.HUD.draw(matrixStack, tickDelta);
+          ToroHealth.toroHealthHud.draw(matrixStack, tickDelta);
       }
   }
 }

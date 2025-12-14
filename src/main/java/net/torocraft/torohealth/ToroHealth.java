@@ -13,9 +13,9 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.ActionResult;
 import net.minecraft.client.MinecraftClient;
-import net.torocraft.torohealth.display.Hud;
-import net.torocraft.torohealth.particle.HealthChangeParticle;
-import net.torocraft.torohealth.util.HoldingWeaponUpdater;
+import net.torocraft.torohealth.client.gui.ToroHealthHud;
+import net.torocraft.torohealth.client.particle.HealthChangeParticle;
+import net.torocraft.torohealth.client.util.HoldingWeaponUpdater;
 
 public class ToroHealth implements ClientModInitializer {
 
@@ -23,7 +23,7 @@ public class ToroHealth implements ClientModInitializer {
 
 
   public static ModConfig CONFIG;
-  public static Hud HUD;
+  public static ToroHealthHud toroHealthHud;
   public static boolean IS_HOLDING_WEAPON = false;
   private static LivingEntity targetedEntity;
 
@@ -48,7 +48,7 @@ public class ToroHealth implements ClientModInitializer {
       });
       CONFIG = ModConfig.INSTANCE;
 
-      HUD = new Hud(MinecraftClient.getInstance());
+      toroHealthHud = new ToroHealthHud(MinecraftClient.getInstance());
 
       Registry.register(
           Registry.PARTICLE_TYPE,
@@ -58,7 +58,7 @@ public class ToroHealth implements ClientModInitializer {
 
       ClientTickEvents.END_CLIENT_TICK.register(client -> {
           HoldingWeaponUpdater.update();
-          ToroHealth.HUD.tick();
+          ToroHealth.toroHealthHud.tick();
       });
 
       ParticleFactoryRegistry.getInstance().register(

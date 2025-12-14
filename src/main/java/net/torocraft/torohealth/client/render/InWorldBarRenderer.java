@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.bars;
+package net.torocraft.torohealth.client.render;
 
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -15,9 +15,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.client.MinecraftClient;
 import net.torocraft.torohealth.ToroHealth;
 import net.torocraft.torohealth.ModConfig;
-import net.torocraft.torohealth.util.EntityUtil;
-import net.torocraft.torohealth.util.EntityUtil.Relation;
-import net.torocraft.torohealth.api.BarStateAccessor;
+import net.torocraft.torohealth.data.BarState;
+import net.torocraft.torohealth.client.util.EntityUtil;
+import net.torocraft.torohealth.client.util.EntityUtil.Relation;
+import net.torocraft.torohealth.data.BarStateAccessor;
 
 public class InWorldBarRenderer {
     private static final int DARK_GRAY = 0x808080;
@@ -44,7 +45,7 @@ public class InWorldBarRenderer {
     private static void renderHealthBar(MatrixStack matrices, LivingEntity entity, float x, float y, int light, VertexConsumer buffer, float tickDelta) {
         BarState state = ((BarStateAccessor) entity).torohealth$getBarState();
         Matrix4f matrix = matrices.peek().getPositionMatrix();
-        Relation relation = EntityUtil.determineRelation(entity);
+        Relation relation = EntityUtil.getRelation(entity);
         int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barColor.friendColor : ToroHealth.CONFIG.barColor.foeColor;
         int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barColor.friendColorSecondary : ToroHealth.CONFIG.barColor.foeColorSecondary;
         float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();

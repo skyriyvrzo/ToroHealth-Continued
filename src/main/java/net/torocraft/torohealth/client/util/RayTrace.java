@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.util;
+package net.torocraft.torohealth.client.util;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;

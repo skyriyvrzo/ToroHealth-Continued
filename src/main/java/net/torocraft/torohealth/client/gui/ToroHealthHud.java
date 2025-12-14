@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.display;
+package net.torocraft.torohealth.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
@@ -17,11 +17,11 @@ import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 import net.torocraft.torohealth.ToroHealth;
 import net.torocraft.torohealth.ModConfig.FrameStype;
-import net.torocraft.torohealth.api.BarStateAccessor;
-import net.torocraft.torohealth.bars.BarState;
-import net.torocraft.torohealth.util.EntityUtil;
+import net.torocraft.torohealth.data.BarStateAccessor;
+import net.torocraft.torohealth.data.BarState;
+import net.torocraft.torohealth.client.util.EntityUtil;
 
-public class Hud extends DrawableHelper {
+public class ToroHealthHud extends DrawableHelper {
     private static final Identifier ICON_TEXTURES = new Identifier("textures/gui/icons.png");
     private static final Identifier TOROHEALTH_BARS_TEXTURES = new Identifier(ToroHealth.MODID + ":textures/gui/bars.png");
     private static final Identifier TOROHEALTH_FRAME_TEXTURE =
@@ -37,7 +37,7 @@ public class Hud extends DrawableHelper {
     private float entityY;
     private float entityScale;
 
-    public Hud(MinecraftClient client) {
+    public ToroHealthHud(MinecraftClient client) {
         this.client = client;
     }
 
@@ -231,7 +231,7 @@ public class Hud extends DrawableHelper {
         if (state == null) {
             return;
         }
-        EntityUtil.Relation relation = EntityUtil.determineRelation(entity);
+        EntityUtil.Relation relation = EntityUtil.getRelation(entity);
 
         int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barColor.friendColor : ToroHealth.CONFIG.barColor.foeColor;
         int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barColor.friendColorSecondary : ToroHealth.CONFIG.barColor.foeColorSecondary;

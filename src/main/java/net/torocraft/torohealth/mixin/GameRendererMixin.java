@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.torocraft.torohealth.util.RayTrace;
+import net.torocraft.torohealth.client.util.RayTrace;
 
 
 @Mixin(GameRenderer.class)
@@ -20,7 +20,7 @@ public class GameRendererMixin {
         if (ToroHealth.CONFIG.enabled) {
             LivingEntity entity = RayTrace.getEntityInCrosshair(tickDelta, Math.max(ToroHealth.CONFIG.hudOptions.hudDistance, ToroHealth.CONFIG.inWorldBarOptions.inWorldBarDistance));
             ToroHealth.setTargetedEntity(entity);
-            ToroHealth.HUD.setEntity(entity);
+            ToroHealth.toroHealthHud.setEntity(entity);
         }
     }
 }

@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.util;
+package net.torocraft.torohealth.client.util;
 
 import java.util.stream.StreamSupport;
 import net.minecraft.client.MinecraftClient;
@@ -21,7 +21,7 @@ public class EntityUtil {
     FRIEND, FOE, UNKNOWN
   }
 
-  public static Relation determineRelation(Entity entity) {
+  public static Relation getRelation(Entity entity) {
     if (entity instanceof HostileEntity) {
       return Relation.FOE;
     } else if (entity instanceof SlimeEntity) {

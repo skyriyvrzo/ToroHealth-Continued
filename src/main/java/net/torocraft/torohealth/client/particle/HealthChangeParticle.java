@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.particle;
+package net.torocraft.torohealth.client.particle;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.torocraft.torohealth.ToroHealth;
-import net.torocraft.torohealth.bars.BarState;
-import net.torocraft.torohealth.api.BarStateAccessor;
+import net.torocraft.torohealth.data.BarState;
+import net.torocraft.torohealth.data.BarStateAccessor;
 import net.torocraft.torohealth.mixin.accessor.LivingEntityAccessor;
 
 @Mixin(LivingEntity.class)

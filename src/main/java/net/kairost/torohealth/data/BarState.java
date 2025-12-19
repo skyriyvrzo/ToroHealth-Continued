@@ -6,16 +6,17 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.client.MinecraftClient;
 
 public class BarState {
-    private static final float HEALTH_INDICATOR_DELAY = 10;
+    private static final float HEALTH_DISPLAY_DELAY = 5;
+    private static final float HEALTH_CUMULATE_DELAY = 20;
 
     public final Integer entityID;
     public float health;
     public float lastHealth;
     public float healthDisplay;
     public float lastHealthDisplay;
-    public int lastHealthChange;
-    public int lastHealthChangeCumulative;
-    public float healthChangeDelay;
+    public int healthChangeLast;
+    public int healthChangeCumulate;
+    public float healthCumulateDelay;
     public float healthDisplayDelay;
     private float animationSpeed;
 
@@ -25,10 +26,10 @@ public class BarState {
         this.health = health;
         this.healthDisplay = health;
         this.lastHealthDisplay = health;
-        this.lastHealthChange = 0;
-        this.lastHealthChangeCumulative = 0;
+        this.healthChangeLast = 0;
+        this.healthChangeCumulate = 0;
         this.lastHealth = health;
-        this.healthChangeDelay = 0;
+        this.healthCumulateDelay = 0;
         this.animationSpeed = 0;
     }
 
@@ -52,7 +53,7 @@ public class BarState {
             health = Math.min(entity.getHealth(), entity.getMaxHealth());
             incrementTimers();
 
-             if (this.healthChangeDelay == 0.0F) {
+             if (this.healthCumulateDelay == 0.0F) {
                 reset();
             }
             updateAnimations();
@@ -60,13 +61,13 @@ public class BarState {
     }
 
     private void reset() {
-        lastHealthChange = 0;
-        lastHealthChangeCumulative = 0;
+        healthChangeLast = 0;
+        healthChangeCumulate = 0;
     }
 
     private void incrementTimers() {
-        if (this.healthChangeDelay > 0) {
-            this.healthChangeDelay--;
+        if (this.healthCumulateDelay > 0) {
+            this.healthCumulateDelay--;
         }
         if (this.healthDisplayDelay > 0) {
             this.healthDisplayDelay--;
@@ -74,12 +75,12 @@ public class BarState {
     }
 
     public void handleHealthChange() {
-        this.lastHealthChange = MathHelper.ceil(this.health) - MathHelper.ceil(this.lastHealth);
-        this.lastHealthChangeCumulative += this.lastHealthChange;
-        this.healthChangeDelay = HEALTH_INDICATOR_DELAY * 2;
+        this.healthChangeLast = MathHelper.ceil(this.health) - MathHelper.ceil(this.lastHealth);
+        this.healthChangeCumulate += this.healthChangeLast;
+        this.healthCumulateDelay = HEALTH_CUMULATE_DELAY;
         this.healthDisplay = Math.max(Math.max(this.lastHealth, this.healthDisplay), this.health);
         if (this.healthDisplay <= this.lastHealth) {
-            this.healthDisplayDelay = HEALTH_INDICATOR_DELAY;
+            this.healthDisplayDelay = HEALTH_DISPLAY_DELAY;
         }
     	this.updateAnimationSpeed();
     }

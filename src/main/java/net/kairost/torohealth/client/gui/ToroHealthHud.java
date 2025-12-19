@@ -193,8 +193,8 @@ public class ToroHealthHud extends DrawableHelper {
             return;
         }
         healthChange = switch (ToroHealth.getConfig().hudOptions.healthChangeType) {
-            case LAST -> -state.lastDmg;
-            case CUMULATIVE -> -state.lastDmgCumulative;
+            case LAST -> state.lastHealthChange;
+            case CUMULATIVE -> state.lastHealthChangeCumulative;
             default -> 0;
         };
         int color = healthChange > 0 ? ToroHealth.getConfig().particleOptions.healColor : ToroHealth.getConfig().particleOptions.damageColor;

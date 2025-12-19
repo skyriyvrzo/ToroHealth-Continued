@@ -13,9 +13,9 @@ public class BarState {
     public float lastHealth;
     public float healthDisplay;
     public float lastHealthDisplay;
-    public int lastDmg;
-    public int lastDmgCumulative;
-    public float dmgDelay;
+    public int lastHealthChange;
+    public int lastHealthChangeCumulative;
+    public float healthChangeDelay;
     public float healthDisplayDelay;
     private float animationSpeed;
 
@@ -25,10 +25,10 @@ public class BarState {
         this.health = health;
         this.healthDisplay = health;
         this.lastHealthDisplay = health;
-        this.lastDmg = 0;
-        this.lastDmgCumulative = 0;
+        this.lastHealthChange = 0;
+        this.lastHealthChangeCumulative = 0;
         this.lastHealth = health;
-        this.dmgDelay = 0;
+        this.healthChangeDelay = 0;
         this.animationSpeed = 0;
     }
 
@@ -52,7 +52,7 @@ public class BarState {
             health = Math.min(entity.getHealth(), entity.getMaxHealth());
             incrementTimers();
 
-             if (this.dmgDelay == 0.0F) {
+             if (this.healthChangeDelay == 0.0F) {
                 reset();
             }
             updateAnimations();
@@ -60,13 +60,13 @@ public class BarState {
     }
 
     private void reset() {
-        lastDmg = 0;
-        lastDmgCumulative = 0;
+        lastHealthChange = 0;
+        lastHealthChangeCumulative = 0;
     }
 
     private void incrementTimers() {
-        if (this.dmgDelay > 0) {
-            this.dmgDelay--;
+        if (this.healthChangeDelay > 0) {
+            this.healthChangeDelay--;
         }
         if (this.healthDisplayDelay > 0) {
             this.healthDisplayDelay--;
@@ -74,9 +74,9 @@ public class BarState {
     }
 
     public void handleHealthChange() {
-        this.lastDmg = MathHelper.ceil(this.lastHealth) - MathHelper.ceil(this.health);
-        this.lastDmgCumulative += this.lastDmg;
-        this.dmgDelay = HEALTH_INDICATOR_DELAY * 2;
+        this.lastHealthChange = MathHelper.ceil(this.health) - MathHelper.ceil(this.lastHealth);
+        this.lastHealthChangeCumulative += this.lastHealthChange;
+        this.healthChangeDelay = HEALTH_INDICATOR_DELAY * 2;
         this.healthDisplay = Math.max(Math.max(this.lastHealth, this.healthDisplay), this.health);
         if (this.healthDisplay <= this.lastHealth) {
             this.healthDisplayDelay = HEALTH_INDICATOR_DELAY;

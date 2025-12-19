@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.data;
+package net.kairost.torohealth.data;
 
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.entity.Entity;

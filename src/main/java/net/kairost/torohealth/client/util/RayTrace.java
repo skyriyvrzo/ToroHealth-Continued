@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.client.util;
+package net.kairost.torohealth.client.util;
 
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;

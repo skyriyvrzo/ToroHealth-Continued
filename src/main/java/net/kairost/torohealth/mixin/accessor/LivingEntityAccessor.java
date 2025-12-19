@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.mixin.accessor;
+package net.kairost.torohealth.mixin.accessor;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.TrackedData;

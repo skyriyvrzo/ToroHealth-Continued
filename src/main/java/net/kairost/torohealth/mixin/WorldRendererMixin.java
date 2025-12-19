@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.mixin;
+package net.kairost.torohealth.mixin;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.client.util.math.MatrixStack;
@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import net.torocraft.torohealth.ModConfig;
-import net.torocraft.torohealth.ToroHealth;
-import net.torocraft.torohealth.client.render.InWorldBarRenderer;
+import net.kairost.torohealth.ModConfig;
+import net.kairost.torohealth.ToroHealth;
+import net.kairost.torohealth.client.render.InWorldBarRenderer;
 
 @Mixin(WorldRenderer.class)
 public class WorldRendererMixin {

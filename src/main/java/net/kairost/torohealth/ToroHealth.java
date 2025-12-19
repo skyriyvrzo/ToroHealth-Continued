@@ -1,4 +1,4 @@
-package net.torocraft.torohealth;
+package net.kairost.torohealth;
 
 import blue.endless.jankson.annotation.Nullable;
 import net.minecraft.util.registry.Registry;
@@ -13,9 +13,9 @@ import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
-import net.torocraft.torohealth.client.gui.ToroHealthHud;
-import net.torocraft.torohealth.client.particle.HealthChangeParticle;
-import net.torocraft.torohealth.client.util.HoldingWeaponUpdater;
+import net.kairost.torohealth.client.gui.ToroHealthHud;
+import net.kairost.torohealth.client.particle.HealthChangeParticle;
+import net.kairost.torohealth.client.util.HoldingWeaponUpdater;
 
 public class ToroHealth implements ClientModInitializer {
     public static final String MODID = "torohealth";

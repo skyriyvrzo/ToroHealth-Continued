@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.client.util;
+package net.kairost.torohealth.client.util;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,8 +10,8 @@ import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ThrowablePotionItem;
 import net.minecraft.item.TridentItem;
-import net.torocraft.torohealth.ToroHealth;
-import net.torocraft.torohealth.ModConfig;
+import net.kairost.torohealth.ToroHealth;
+import net.kairost.torohealth.ModConfig;
 
 public class HoldingWeaponUpdater {
     public static void update() {

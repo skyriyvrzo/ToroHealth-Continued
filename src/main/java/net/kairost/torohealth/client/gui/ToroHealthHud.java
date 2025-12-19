@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.client.gui;
+package net.kairost.torohealth.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.util.Identifier;
@@ -15,11 +15,11 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
-import net.torocraft.torohealth.ToroHealth;
-import net.torocraft.torohealth.ModConfig.FrameStyle;
-import net.torocraft.torohealth.data.BarStateAccessor;
-import net.torocraft.torohealth.data.BarState;
-import net.torocraft.torohealth.client.util.EntityUtil;
+import net.kairost.torohealth.ToroHealth;
+import net.kairost.torohealth.ModConfig.FrameStyle;
+import net.kairost.torohealth.data.BarStateAccessor;
+import net.kairost.torohealth.data.BarState;
+import net.kairost.torohealth.client.util.EntityUtil;
 
 public class ToroHealthHud extends DrawableHelper {
     private static final Identifier ICON_TEXTURES = new Identifier("textures/gui/icons.png");

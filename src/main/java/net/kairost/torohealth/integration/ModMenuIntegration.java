@@ -1,11 +1,11 @@
-package net.torocraft.torohealth.integration;
+package net.kairost.torohealth.integration;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import me.shedaniel.autoconfig.AutoConfig;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import net.torocraft.torohealth.ModConfig;
+import net.kairost.torohealth.ModConfig;
 
 
 @Environment(EnvType.CLIENT)

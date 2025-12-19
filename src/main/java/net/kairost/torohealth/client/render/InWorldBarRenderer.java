@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.client.render;
+package net.kairost.torohealth.client.render;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Matrix4f;
@@ -12,12 +12,12 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.OverlayTexture;
-import net.torocraft.torohealth.ToroHealth;
-import net.torocraft.torohealth.ModConfig;
-import net.torocraft.torohealth.data.BarState;
-import net.torocraft.torohealth.client.util.EntityUtil;
-import net.torocraft.torohealth.client.util.EntityUtil.Relation;
-import net.torocraft.torohealth.data.BarStateAccessor;
+import net.kairost.torohealth.ToroHealth;
+import net.kairost.torohealth.ModConfig;
+import net.kairost.torohealth.data.BarState;
+import net.kairost.torohealth.client.util.EntityUtil;
+import net.kairost.torohealth.client.util.EntityUtil.Relation;
+import net.kairost.torohealth.data.BarStateAccessor;
 
 public class InWorldBarRenderer {
     private static final int DARK_GRAY = 0x808080;

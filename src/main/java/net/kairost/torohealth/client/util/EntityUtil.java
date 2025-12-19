@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.client.util;
+package net.kairost.torohealth.client.util;
 
 import java.util.stream.StreamSupport;
 import net.minecraft.client.MinecraftClient;

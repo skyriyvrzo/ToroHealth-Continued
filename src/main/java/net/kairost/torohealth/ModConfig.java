@@ -1,4 +1,4 @@
-package net.torocraft.torohealth;
+package net.kairost.torohealth;
 
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
@@ -13,7 +13,6 @@ public class ModConfig implements ConfigData {
     @ConfigEntry.Gui.Excluded
     public static ModConfig INSTANCE;
 
-    @ConfigEntry.Gui.Tooltip
     public boolean enabled = true;
 
     @ConfigEntry.Gui.CollapsibleObject

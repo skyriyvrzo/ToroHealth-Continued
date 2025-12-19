@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.client.particle;
+package net.kairost.torohealth.client.particle;
 
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.MathHelper;
@@ -18,7 +18,7 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.torocraft.torohealth.ToroHealth;
+import net.kairost.torohealth.ToroHealth;
 
 @Environment(value=EnvType.CLIENT)
 public class HealthChangeParticle

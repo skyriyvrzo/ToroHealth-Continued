@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.mixin;
+package net.kairost.torohealth.mixin;
 
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.entity.Entity;

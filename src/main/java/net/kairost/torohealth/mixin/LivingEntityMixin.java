@@ -1,4 +1,4 @@
-package net.torocraft.torohealth.mixin;
+package net.kairost.torohealth.mixin;
 
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.entity.LivingEntity;
@@ -9,10 +9,10 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import net.torocraft.torohealth.ToroHealth;
-import net.torocraft.torohealth.data.BarState;
-import net.torocraft.torohealth.data.BarStateAccessor;
-import net.torocraft.torohealth.mixin.accessor.LivingEntityAccessor;
+import net.kairost.torohealth.ToroHealth;
+import net.kairost.torohealth.data.BarState;
+import net.kairost.torohealth.data.BarStateAccessor;
+import net.kairost.torohealth.mixin.accessor.LivingEntityAccessor;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends EntityMixin implements BarStateAccessor{

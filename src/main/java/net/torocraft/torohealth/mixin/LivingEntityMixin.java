@@ -1,8 +1,7 @@
 package net.torocraft.torohealth.mixin;
 
-
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.TrackedData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,8 +30,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements BarStateA
         return barState;
     }
 
-
-    @Inject(method = "tick", at = @At("TAIL"))
+    @Inject(method = "tick", at = @At("RETURN"))
     private void torohealth$tick(CallbackInfo info) {
         if (this.barState != null) {
             this.barState.tick();
@@ -48,7 +46,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements BarStateA
             if (this.barState.health != this.barState.lastHealth) {
                 this.barState.handleHealthChange();
                 // create healthChangeParticle
-                if (this.barState.lastDmg != 0 && ToroHealth.CONFIG.particleOptions.showParticle && ToroHealth.CONFIG.enabled) {
+                if (this.barState.lastDmg != 0 && ToroHealth.getConfig().particleOptions.showParticle && ToroHealth.getConfig().enabled) {
                     Vec3d entityLocation = this.getPos();
                     this.world.addImportantParticle(ToroHealth.HEALTH_CHANGE, true, entityLocation.x, entityLocation.y + this.getHeight() / 2, entityLocation.z, Double.longBitsToDouble(-this.barState.lastDmg & 0xFFFFFFFFL), 0, 0);
                 }

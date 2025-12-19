@@ -1,18 +1,17 @@
 package net.torocraft.torohealth.client.render;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.OverlayTexture;
-
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.Identifier;
-import net.minecraft.client.MinecraftClient;
 import net.torocraft.torohealth.ToroHealth;
 import net.torocraft.torohealth.ModConfig;
 import net.torocraft.torohealth.data.BarState;
@@ -24,6 +23,7 @@ public class InWorldBarRenderer {
     private static final int DARK_GRAY = 0x808080;
     private static final Identifier TOROHEALTH_BARS_TEXTURES = new Identifier("torohealth:textures/gui/bars.png");
 
+    // referencing vanilla entity draw name tag function
     public static void render(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,  EntityRenderDispatcher entityRenderDispatcher) {
         if (!shouldRender(entity, entityRenderDispatcher)) {
             return;
@@ -46,8 +46,8 @@ public class InWorldBarRenderer {
         BarState state = ((BarStateAccessor) entity).torohealth$getBarState();
         Matrix4f matrix = matrices.peek().getPositionMatrix();
         Relation relation = EntityUtil.getRelation(entity);
-        int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barColor.friendColor : ToroHealth.CONFIG.barColor.foeColor;
-        int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barColor.friendColorSecondary : ToroHealth.CONFIG.barColor.foeColorSecondary;
+        int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.getConfig().barColor.friendColor : ToroHealth.getConfig().barColor.foeColor;
+        int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.getConfig().barColor.friendColorSecondary : ToroHealth.getConfig().barColor.foeColorSecondary;
         float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
         float percent2 = Math.min(MathHelper.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
 
@@ -63,11 +63,9 @@ public class InWorldBarRenderer {
     }
 
 
-    private static void renderBar(Matrix4f matrix, float x, float y, float z, int color, int width, int light, VertexConsumer buffer) {
-        float x0 = x;
-        float x1 = x+(float)width;
-        float y0 = y;
-        float y1 = 5f + y;
+    private static void renderBar(Matrix4f matrix, float x0, float y0, float z, int color, int width, int light, VertexConsumer buffer) {
+        float x1 = x0 +(float)width;
+        float y1 = 5f + y0;
         float u0 = 0f / 256f;
         float u1 = 0f + width / 256f;
         float v0 = 135f / 256f;
@@ -84,25 +82,24 @@ public class InWorldBarRenderer {
 
 
     private static boolean shouldRender(Entity entity, EntityRenderDispatcher entityRenderDispatcher) {
-        if (ToroHealth.CONFIG.inWorldBarOptions.inWorldBarVisibilityMode.equals(ModConfig.InWorldBarVisibilityMode.NONE)) {
+        if (ToroHealth.getConfig().inWorldBarOptions.inWorldBarVisibilityMode.equals(ModConfig.InWorldBarVisibilityMode.NONE)) {
             return false;
         }
-        if (ToroHealth.CONFIG.inWorldBarOptions.inWorldBarVisibilityMode.equals(ModConfig.InWorldBarVisibilityMode.WHEN_HOLDING_WEAPON) && !ToroHealth.IS_HOLDING_WEAPON) {
+        if (ToroHealth.getConfig().inWorldBarOptions.inWorldBarVisibilityMode.equals(ModConfig.InWorldBarVisibilityMode.WHEN_HOLDING_WEAPON) && !ToroHealth.isHoldingWeapon()) {
             return false;
         }
         if (!(entity instanceof LivingEntity livingEntity)) {
             return false;
         }
-        if (entityRenderDispatcher.getSquaredDistanceToCamera(entity) > ToroHealth.CONFIG.inWorldBarOptions.inWorldBarDistanceSquared) {
+        if (entityRenderDispatcher.getSquaredDistanceToCamera(entity) > ToroHealth.getConfig().inWorldBarOptions.inWorldBarDistanceSquared) {
             return false;
         }
-        if (ToroHealth.CONFIG.inWorldBarOptions.onlyWhenHurt && livingEntity.getHealth() >= livingEntity.getMaxHealth()) {
+        if (ToroHealth.getConfig().inWorldBarOptions.onlyWhenHurt && livingEntity.getHealth() >= livingEntity.getMaxHealth()) {
             return false;
         }
-        if (ToroHealth.CONFIG.inWorldBarOptions.onlyWhenLookingAt && ToroHealth.getTargetedEntity() != entity) {
+        if (ToroHealth.getConfig().inWorldBarOptions.onlyWhenLookingAt && ToroHealth.getTargetedEntity() != entity) {
             return false;
         }
         return EntityUtil.showHealthBar(entity, MinecraftClient.getInstance());
     }
-
 }

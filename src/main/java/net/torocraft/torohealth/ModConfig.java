@@ -27,7 +27,7 @@ public class ModConfig implements ConfigData {
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.Gui.EnumHandler(option = EnumDisplayOption.BUTTON)
-        public FrameStype frameStyle = FrameStype.LIGHT;
+        public FrameStyle frameStyle = FrameStyle.LIGHT;
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.Gui.EnumHandler(option = EnumDisplayOption.BUTTON)
@@ -131,7 +131,7 @@ public class ModConfig implements ConfigData {
         TOP_LEFT, TOP_CENTER, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT
     }
 
-    public enum FrameStype {
+    public enum FrameStyle {
         LIGHT, HEAVY
     }
 

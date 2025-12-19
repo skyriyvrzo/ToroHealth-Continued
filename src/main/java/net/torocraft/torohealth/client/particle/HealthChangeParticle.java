@@ -1,20 +1,24 @@
 package net.torocraft.torohealth.client.particle;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
+import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.particle.*;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleTextureSheet;
+import net.minecraft.client.particle.ParticleFactory;
+import net.minecraft.client.particle.SpriteProvider;
+import net.minecraft.client.particle.BillboardParticle;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particle.DefaultParticleType;
-import net.minecraft.util.math.*;
-import net.minecraft.util.math.random.Random;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.torocraft.torohealth.ToroHealth;
-import net.minecraft.client.util.math.MatrixStack;
-
 
 @Environment(value=EnvType.CLIENT)
 public class HealthChangeParticle
@@ -36,7 +40,6 @@ public class HealthChangeParticle
         this.value = value;
     }
 
-
     @Override
     public void tick() {
         this.prevPosX = this.x;
@@ -54,7 +57,6 @@ public class HealthChangeParticle
             this.alpha -= 0.05f;
         }
     }
-
 
     @Override
     public ParticleTextureSheet getType() {
@@ -76,7 +78,7 @@ public class HealthChangeParticle
             Random random = clientWorld.getRandom();
             // use g to encode health change
             int healthChange = (int)Double.doubleToLongBits(g);
-            int color = (healthChange > 0) ? ToroHealth.CONFIG.particleOptions.healColor : ToroHealth.CONFIG.particleOptions.damageColor;
+            int color = (healthChange > 0) ? ToroHealth.getConfig().particleOptions.healColor : ToroHealth.getConfig().particleOptions.damageColor;
             int value = Math.abs(healthChange);
             double vx = random.nextGaussian() * 0.04;
             double vy = 0.10 + (random.nextGaussian() * 0.05);
@@ -118,7 +120,6 @@ public class HealthChangeParticle
         immediate.draw();
     }
 
-
     @Override
     protected float getMinU() {
         return 0.0F;
@@ -138,5 +139,4 @@ public class HealthChangeParticle
     protected float getMaxV() {
         return 1.0F;
     }
-
 }

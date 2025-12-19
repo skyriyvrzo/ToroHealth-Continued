@@ -1,24 +1,23 @@
 package net.torocraft.torohealth.data;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.client.MinecraftClient;
 
 public class BarState {
-    public final Integer entityID;
+    private static final float HEALTH_INDICATOR_DELAY = 10;
 
+    public final Integer entityID;
     public float health;
+    public float lastHealth;
     public float healthDisplay;
-    public float previousHealthDelay;
+    public float lastHealthDisplay;
     public int lastDmg;
     public int lastDmgCumulative;
-    public float lastHealth;
-    public float lastHealthDisplay;
-    public float lastDmgDelay;
+    public float dmgDelay;
+    public float healthDisplayDelay;
     private float animationSpeed;
-
-    private static final float HEALTH_INDICATOR_DELAY = 10;
 
 
     private BarState(Integer id, float health){
@@ -29,7 +28,7 @@ public class BarState {
         this.lastDmg = 0;
         this.lastDmgCumulative = 0;
         this.lastHealth = health;
-        this.lastDmgDelay = 0;
+        this.dmgDelay = 0;
         this.animationSpeed = 0;
     }
 
@@ -44,7 +43,6 @@ public class BarState {
         return  null;
     }
 
-
     public void tick() {
         MinecraftClient client = MinecraftClient.getInstance();
         assert client.world != null;
@@ -54,10 +52,9 @@ public class BarState {
             health = Math.min(entity.getHealth(), entity.getMaxHealth());
             incrementTimers();
 
-             if (this.lastDmgDelay == 0.0F) {
+             if (this.dmgDelay == 0.0F) {
                 reset();
             }
-
             updateAnimations();
         }
     }
@@ -68,39 +65,38 @@ public class BarState {
     }
 
     private void incrementTimers() {
-        if (this.lastDmgDelay > 0) {
-            this.lastDmgDelay--;
+        if (this.dmgDelay > 0) {
+            this.dmgDelay--;
         }
-        if (this.previousHealthDelay > 0) {
-            this.previousHealthDelay--;
+        if (this.healthDisplayDelay > 0) {
+            this.healthDisplayDelay--;
         }
     }
 
     public void handleHealthChange() {
         this.lastDmg = MathHelper.ceil(this.lastHealth) - MathHelper.ceil(this.health);
         this.lastDmgCumulative += this.lastDmg;
-        this.lastDmgDelay = HEALTH_INDICATOR_DELAY * 2;
+        this.dmgDelay = HEALTH_INDICATOR_DELAY * 2;
         this.healthDisplay = Math.max(Math.max(this.lastHealth, this.healthDisplay), this.health);
         if (this.healthDisplay <= this.lastHealth) {
-            this.previousHealthDelay = HEALTH_INDICATOR_DELAY;
+            this.healthDisplayDelay = HEALTH_INDICATOR_DELAY;
         }
     	this.updateAnimationSpeed();
     }
 
-  private void updateAnimationSpeed() {
-      this.animationSpeed = (this.healthDisplay - this.health) / 10f;
-  }
+    private void updateAnimationSpeed() {
+        this.animationSpeed = (this.healthDisplay - this.health) / 10f;
+    }
 
-  private void updateAnimations() {
-      lastHealthDisplay = healthDisplay;
-      if (previousHealthDelay <= 0) {
-          healthDisplay = Math.max(healthDisplay - animationSpeed, health);
-      }
-  }
+    private void updateAnimations() {
+        lastHealthDisplay = healthDisplay;
+        if (healthDisplayDelay <= 0) {
+            healthDisplay = Math.max(healthDisplay - animationSpeed, health);
+        }
+    }
 
-
-  public void updateHealth(float health) {
+    public void updateHealth(float health) {
         this.lastHealth = this.health;
         this.health = health;
-  }
+    }
 }

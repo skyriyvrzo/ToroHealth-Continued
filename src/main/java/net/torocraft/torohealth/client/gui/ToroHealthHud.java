@@ -1,6 +1,13 @@
 package net.torocraft.torohealth.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.math.Vec3f;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.GhastEntity;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.render.DiffuseLighting;
@@ -8,15 +15,8 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.GhastEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3f;
 import net.torocraft.torohealth.ToroHealth;
-import net.torocraft.torohealth.ModConfig.FrameStype;
+import net.torocraft.torohealth.ModConfig.FrameStyle;
 import net.torocraft.torohealth.data.BarStateAccessor;
 import net.torocraft.torohealth.data.BarState;
 import net.torocraft.torohealth.client.util.EntityUtil;
@@ -24,15 +24,21 @@ import net.torocraft.torohealth.client.util.EntityUtil;
 public class ToroHealthHud extends DrawableHelper {
     private static final Identifier ICON_TEXTURES = new Identifier("textures/gui/icons.png");
     private static final Identifier TOROHEALTH_BARS_TEXTURES = new Identifier(ToroHealth.MODID + ":textures/gui/bars.png");
-    private static final Identifier TOROHEALTH_FRAME_TEXTURE =
-      new Identifier(ToroHealth.MODID + ":textures/gui/frame.png");
-    private LivingEntity entity;
-    private final MinecraftClient client;
-    private int age;
+    private static final Identifier TOROHEALTH_FRAME_TEXTURE = new Identifier(ToroHealth.MODID + ":textures/gui/frame.png");
     private static final int DARK_GRAY = 0x808080;
-    private final static int FRAME_SIZE = 42;
-    private static final float RENDER_HEIGHT = 32f;
-    private static final float RENDER_WIDTH = 24f;
+    private static final int LIGHT_GRAY = 0xe0e0e0;
+    private static final int FRAME_SIZE = 42;
+    private static final float ENTITY_RENDER_HEIGHT = 32f;
+    private static final float ENTITY_RENDER_WIDTH = 24f;
+    private static final int INFO_Y_BASE = 2;
+    private static final int INFO_X_BASE = 2;
+    private static final int INFO_SPACING = 4;
+    private static final int BAR_Y = 12;
+    private static final int BAR_SIZE = 130;
+    private static final int HEALTH_CHANGE_Y = 18;
+    private final MinecraftClient client;
+    private LivingEntity entity;
+    private int age;
     private float entityX;
     private float entityY;
     private float entityScale;
@@ -41,14 +47,14 @@ public class ToroHealthHud extends DrawableHelper {
         this.client = client;
     }
 
-    public void draw(MatrixStack matrix, float tickDelta) {
+    public void render(MatrixStack matrix, float tickDelta) {
         if (entity == null) {
             return;
         }
         if (entity.isRemoved()) {
             return;
         }
-        if (ToroHealth.CONFIG.hudOptions.onlyWhenHurt && entity.getHealth() >= entity.getMaxHealth()) {
+        if (ToroHealth.getConfig().hudOptions.onlyWhenHurt && entity.getHealth() >= entity.getMaxHealth()) {
             return;
         }
 
@@ -56,12 +62,12 @@ public class ToroHealthHud extends DrawableHelper {
         float x = determineX();
         float y = determineY();
         matrix.translate(x, y, 0);
-        int scale = ToroHealth.CONFIG.hudOptions.hudScale;
+        int scale = ToroHealth.getConfig().hudOptions.hudScale;
         matrix.scale(scale, scale, scale);
-        if (ToroHealth.CONFIG.hudOptions.showEntity) {
-            this.drawSkin(matrix);
-            this.drawEntity(matrix,  this.entityX,  this.entityY, this.entityScale, -80, -20, entity, tickDelta);
-            matrix.translate(FRAME_SIZE + 2, 0, 0);
+        if (ToroHealth.getConfig().hudOptions.showEntity) {
+            this.renderFrame(matrix);
+            drawEntity(matrix,  this.entityX,  this.entityY, this.entityScale, -80, -20, entity, tickDelta);
+            matrix.translate(FRAME_SIZE + 2, INFO_Y_BASE + (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.HEAVY)? 2 : 0), 0);
         }
 
         // draw entity info
@@ -69,31 +75,26 @@ public class ToroHealthHud extends DrawableHelper {
         matrix.pop();
     }
 
-  private float determineX() {
-    float x = ToroHealth.CONFIG.hudOptions.hudXPosition;
-    float wScreen = this.client.getWindow().getScaledWidth();
+    private float determineX() {
+        float x = ToroHealth.getConfig().hudOptions.hudXPosition;
+        float wScreen = this.client.getWindow().getScaledWidth();
 
-      return switch (ToroHealth.CONFIG.hudOptions.anchorPoint) {
-          case BOTTOM_CENTER, TOP_CENTER -> (wScreen / 2) + x;
-          case BOTTOM_RIGHT, TOP_RIGHT -> (wScreen) + x;
-          default -> x;
-      };
-  }
-
-  private float determineY() {
-    float y = ToroHealth.CONFIG.hudOptions.hudYPosition;
-    float hScreen = client.getWindow().getScaledHeight();
-
-    switch (ToroHealth.CONFIG.hudOptions.anchorPoint) {
-      case BOTTOM_CENTER:
-      case BOTTOM_LEFT:
-      case BOTTOM_RIGHT:
-        return y + hScreen;
-      default:
-        return y;
+        return switch (ToroHealth.getConfig().hudOptions.anchorPoint) {
+                case BOTTOM_CENTER, TOP_CENTER -> (wScreen / 2) + x;
+                case BOTTOM_RIGHT, TOP_RIGHT -> (wScreen) + x;
+                default -> x;
+        };
     }
-  }
 
+    private float determineY() {
+        float y = ToroHealth.getConfig().hudOptions.hudYPosition;
+        float hScreen = client.getWindow().getScaledHeight();
+
+        return switch (ToroHealth.getConfig().hudOptions.anchorPoint) {
+            case BOTTOM_CENTER, BOTTOM_LEFT, BOTTOM_RIGHT -> y + hScreen;
+            default -> y;
+        };
+    }
 
     public void tick()  {
         age++;
@@ -104,7 +105,7 @@ public class ToroHealthHud extends DrawableHelper {
             this.age = 0;
         }
 
-        if (entity == null && age > ToroHealth.CONFIG.hudOptions.hudHideDelay) {
+        if (entity == null && age > ToroHealth.getConfig().hudOptions.hudHideDelay) {
             setEntityWork(null);
         }
 
@@ -114,56 +115,41 @@ public class ToroHealthHud extends DrawableHelper {
     }
 
     private  void  setEntityWork(LivingEntity  entity)  {
-        this.entity  =  entity;
-        if  (entity  !=  null)  {
+        this.entity = entity;
+        if  (entity !=  null)  {
             this.entityX = (float) FRAME_SIZE / 2;
-            this.entityY = (float) FRAME_SIZE / 2 + RENDER_HEIGHT / 2;
+            this.entityY = (float) FRAME_SIZE / 2 + ENTITY_RENDER_HEIGHT / 2;
             if (entity instanceof GhastEntity) {
                 this.entityY -= 10;
             }
 
-            this.entityScale = Math.min(RENDER_HEIGHT / entity.getHeight(), RENDER_WIDTH / entity.getWidth());
+            this.entityScale = Math.min(ENTITY_RENDER_HEIGHT / entity.getHeight(), ENTITY_RENDER_WIDTH / entity.getWidth());
             if (entity instanceof MobEntity mob && mob.isBaby()) {
-                this.entityScale *= 0.7;
+                this.entityScale *= 0.75f;
             }
             this.entityScale = Math.min(this.entityScale, 32f);
         }
     }
 
-
-  private void drawSkin(MatrixStack matrix) {
-    RenderSystem.setShaderTexture(0, TOROHEALTH_FRAME_TEXTURE);
-    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-    int w = 179, h = 42;
-    this.drawTexture(matrix, 0, 0, 0, (ToroHealth.CONFIG.hudOptions.frameStyle.equals(FrameStype.LIGHT) ? 42 : 0), w, h);
-  }
-
-
-
-    // this method draws a single bar in InGameHud
-    private void renderBar(MatrixStack matrices, int x, int y, int color, int width) {
-        float r = (color >> 16 & 255) / 255.0F;
-        float g = (color >> 8 & 255) / 255.0F;
-        float b = (color & 255) / 255.0F;
-        RenderSystem.setShaderColor(r, g, b, 1);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, TOROHEALTH_BARS_TEXTURES);
-        this.drawTexture(matrices, x, y, 0, 6 * 2 * 5 + 5, width, 5);
+    private void renderFrame(MatrixStack matrix) {
+        RenderSystem.setShaderTexture(0, TOROHEALTH_FRAME_TEXTURE);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        int w = 179, h = 42;
+        this.drawTexture(matrix, 0, 0, 0, (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.LIGHT) ? 42 : 0), w, h);
     }
 
 
     private void renderInfo(MatrixStack matrix, LivingEntity entity, float tickDelta) {
         // render bar
-        this.renderHealthBar(matrix, entity, 0, 14, tickDelta);
-        // render text
-        int xOffset = 2;
+        this.renderHealthBar(matrix, entity, 0, BAR_Y, tickDelta);
 
+        int xOffset = INFO_X_BASE;
         // name
         String name = entity.getDisplayName().getString();
-        this.client.textRenderer.drawWithShadow(matrix, name, (float)xOffset, 4f, 0xFFFFFF);
-        xOffset += this.client.textRenderer.getWidth(name) + 5;
+        this.client.textRenderer.drawWithShadow(matrix, name, (float)xOffset, 1f, 0xFFFFFF);
+        xOffset += this.client.textRenderer.getWidth(name) + INFO_SPACING;
 
-        this.renderHeartIcon(matrix, xOffset, (int) 3);
+        this.renderHeartIcon(matrix, xOffset,0);
         xOffset += 10;
 
         // health
@@ -174,21 +160,19 @@ public class ToroHealthHud extends DrawableHelper {
             healthMax
         );
         String healthText = healthCurrent + "/" + healthMax;
-        this.client.textRenderer.drawWithShadow(matrix, healthText, (float)xOffset, (float)4f, 0xFFFFFF);
-        xOffset += this.client.textRenderer.getWidth(healthText) + 5;
-        // render health change
-
+        this.client.textRenderer.drawWithShadow(matrix, healthText, (float)xOffset, 1f, 0xffffff);
+        xOffset += this.client.textRenderer.getWidth(healthText) + INFO_SPACING;
 
         // armor
         int armor = entity.getArmor();
         if (armor > 0) {
-            renderArmorIcon(matrix, xOffset, (int) 3);
+            renderArmorIcon(matrix, xOffset, 0);
             xOffset += 10;
-            this.client.textRenderer.drawWithShadow(matrix, Integer.toString(entity.getArmor()), xOffset, 4, 0xe0e0e0);
+            this.client.textRenderer.drawWithShadow(matrix, Integer.toString(entity.getArmor()), xOffset, 1f, 0xffffff);
         }
 
-        this.renderHealthChange(matrix, entity, 130, 21);
         // render health change
+        this.renderHealthChangeText(matrix, entity, BAR_SIZE, HEALTH_CHANGE_Y);
     }
 
     private void renderHeartIcon(MatrixStack matrix, int x, int y) {
@@ -202,23 +186,18 @@ public class ToroHealthHud extends DrawableHelper {
         this.drawTexture(matrix, x, y, 34, 9, 9, 9);
     }
 
-    private void renderHealthChange(MatrixStack matrices, LivingEntity entity, int x, int y) {
+    private void renderHealthChangeText(MatrixStack matrices, LivingEntity entity, int x, int y) {
         int healthChange;
         BarState state = ((BarStateAccessor) entity).torohealth$getBarState();
         if (state == null) {
             return;
         }
-        switch (ToroHealth.CONFIG.hudOptions.healthChangeType) {
-            case LAST:
-                healthChange = -state.lastDmg;
-                break;
-            case CUMULATIVE:
-                healthChange = -state.lastDmgCumulative;
-                break;
-            default:
-                healthChange = 0;
-        }
-        int color = healthChange > 0 ? ToroHealth.CONFIG.particleOptions.healColor : ToroHealth.CONFIG.particleOptions.damageColor;
+        healthChange = switch (ToroHealth.getConfig().hudOptions.healthChangeType) {
+            case LAST -> -state.lastDmg;
+            case CUMULATIVE -> -state.lastDmgCumulative;
+            default -> 0;
+        };
+        int color = healthChange > 0 ? ToroHealth.getConfig().particleOptions.healColor : ToroHealth.getConfig().particleOptions.damageColor;
         if (healthChange != 0) {
             String text = Integer.toString(Math.abs(healthChange));
             this.client.textRenderer.drawWithShadow(matrices, text, x - this.client.textRenderer.getWidth(text), y, color);
@@ -233,22 +212,33 @@ public class ToroHealthHud extends DrawableHelper {
         }
         EntityUtil.Relation relation = EntityUtil.getRelation(entity);
 
-        int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barColor.friendColor : ToroHealth.CONFIG.barColor.foeColor;
-        int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.CONFIG.barColor.friendColorSecondary : ToroHealth.CONFIG.barColor.foeColorSecondary;
+        int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.getConfig().barColor.friendColor : ToroHealth.getConfig().barColor.foeColor;
+        int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.getConfig().barColor.friendColorSecondary : ToroHealth.getConfig().barColor.foeColorSecondary;
         float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
         float percent2 = Math.min(MathHelper.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
         int width = MathHelper.ceil(percent * 131.0f);
         int width2 = MathHelper.ceil(percent2 * 131.0f);
-        this.renderBar(matrices, x, y, DARK_GRAY, 130);
+        this.renderBar(matrices, x, y, 130, DARK_GRAY);
         if (width2 > 0) {
-            this.renderBar(matrices, x, y, color2, width2);
+            this.renderBar(matrices, x, y, width2, color2);
         }
         if (width > 0) {
-            this.renderBar(matrices, x, y, color, width);
+            this.renderBar(matrices, x, y, width, color);
         }
     }
 
+    // this method draws a single bar in InGameHud
+    private void renderBar(MatrixStack matrices, int x, int y, int width, int color) {
+        float r = (color >> 16 & 255) / 255.0F;
+        float g = (color >> 8 & 255) / 255.0F;
+        float b = (color & 255) / 255.0F;
+        RenderSystem.setShaderColor(r, g, b, 1);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, TOROHEALTH_BARS_TEXTURES);
+        this.drawTexture(matrices, x, y, 0, 6 * 2 * 5 + 5, width, 5);
+    }
 
+    //modified from vanilla InventoryScreen.drawEntity
     public static void drawEntity(MatrixStack matrices, float x, float y, float size, float mouseX, float mouseY, LivingEntity entity, float tickDelta) {
         float f = (float) Math.atan(mouseX / 40.0F);
         float g = (float) Math.atan(mouseY / 40.0F);

@@ -10,31 +10,29 @@ import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ThrowablePotionItem;
 import net.minecraft.item.TridentItem;
-
 import net.torocraft.torohealth.ToroHealth;
 import net.torocraft.torohealth.ModConfig;
 
 public class HoldingWeaponUpdater {
-  public static void update() {
-    if (ModConfig.InWorldBarVisibilityMode.NONE.equals(ToroHealth.CONFIG.inWorldBarOptions.inWorldBarVisibilityMode))
-      return;
-    MinecraftClient minecraft = MinecraftClient.getInstance();
-    PlayerEntity player = minecraft.player;
-    if (player == null) {
-      ToroHealth.IS_HOLDING_WEAPON = false;
-      return;
+    public static void update() {
+        if (ModConfig.InWorldBarVisibilityMode.NONE.equals(ToroHealth.getConfig().inWorldBarOptions.inWorldBarVisibilityMode))
+            return;
+        MinecraftClient minecraft = MinecraftClient.getInstance();
+        PlayerEntity player = minecraft.player;
+        if (player == null) {
+            ToroHealth.setHoldingWeapon(false);
+            return;
+        }
+        ToroHealth.setHoldingWeapon(isWeapon(player.getMainHandStack()) || isWeapon(player.getOffHandStack()));
     }
-    ToroHealth.IS_HOLDING_WEAPON =
-        isWeapon(player.getMainHandStack()) || isWeapon(player.getOffHandStack());
-  }
 
-  private static boolean isWeapon(ItemStack itemStack) {
-      Item item = itemStack.getItem();
-      return item instanceof AxeItem
-          || item instanceof BowItem
-          || item instanceof CrossbowItem
-          || item instanceof SwordItem
-          || item instanceof ThrowablePotionItem
-          || item instanceof TridentItem;
-  }
+    private static boolean isWeapon(ItemStack itemStack) {
+        Item item = itemStack.getItem();
+        return item instanceof AxeItem
+            || item instanceof BowItem
+            || item instanceof CrossbowItem
+            || item instanceof SwordItem
+            || item instanceof ThrowablePotionItem
+            || item instanceof TridentItem;
+    }
 }

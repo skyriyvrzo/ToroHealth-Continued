@@ -46,10 +46,10 @@ public class ModConfig implements ConfigData {
         public AnchorPoint anchorPoint = AnchorPoint.TOP_LEFT;
 
         @ConfigEntry.Gui.Tooltip
-        public int hudXPosition = 4;
+        public int hudXPosition = 2;
 
         @ConfigEntry.Gui.Tooltip
-        public int hudYPosition = 4;
+        public int hudYPosition = 2;
 
         @ConfigEntry.Gui.Tooltip
         public int hudScale = 1;

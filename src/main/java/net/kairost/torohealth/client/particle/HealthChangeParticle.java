@@ -80,9 +80,9 @@ public class HealthChangeParticle
             int healthChange = (int)Double.doubleToLongBits(g);
             int color = (healthChange > 0) ? ToroHealth.getConfig().particleOptions.healColor : ToroHealth.getConfig().particleOptions.damageColor;
             int value = Math.abs(healthChange);
-            double vx = random.nextGaussian() * 0.04;
-            double vy = 0.10 + (random.nextGaussian() * 0.05);
-            double vz = random.nextGaussian() * 0.04;
+            double vx = random.nextGaussian() * 0.035;
+            double vy = 0.15 + (random.nextGaussian() * 0.01);
+            double vz = random.nextGaussian() * 0.035;
             HealthChangeParticle healthChangeParticle = new HealthChangeParticle(clientWorld, color, value, d, e, f, vx, vy, vz);
             healthChangeParticle.setAlpha(1.0f);
             return healthChangeParticle;

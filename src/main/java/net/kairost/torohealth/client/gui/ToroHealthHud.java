@@ -1,6 +1,8 @@
 package net.kairost.torohealth.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
@@ -186,6 +188,10 @@ public class ToroHealthHud extends DrawableHelper {
                     break;
             }
         }
+        else if (this.entity instanceof VillagerEntity villager && villager.isSleeping())
+            this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * this.entityScale / 2;
+        else if (this.entity instanceof PlayerEntity player && player.isSleeping())
+            this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * this.entityScale / 2;
         else if (this.entity instanceof BatEntity bat && !bat.isRoosting())
             this.entityY = (float) FRAME_SIZE / 2 - ENTITY_RENDER_HEIGHT / 2 + entity.getHeight() * entityScale;
         else if (this.entity instanceof SpiderEntity spider && spider.isClimbing())

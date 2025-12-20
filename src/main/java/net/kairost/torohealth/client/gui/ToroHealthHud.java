@@ -1,6 +1,7 @@
 package net.kairost.torohealth.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
@@ -123,11 +124,16 @@ public class ToroHealthHud extends DrawableHelper {
     private void setEntityWork(LivingEntity entity)  {
         this.entity = entity;
         if  (entity !=  null) {
-            this.entityScale = Math.min(ENTITY_RENDER_HEIGHT / entity.getHeight(), ENTITY_RENDER_WIDTH / entity.getWidth());
-            if (entity instanceof MobEntity mob && mob.isBaby()) {
-                this.entityScale *= 0.75f;
+            if (entity instanceof EnderDragonEntity) {
+                this.entityScale = 2 * ENTITY_RENDER_HEIGHT / entity.getHeight();
             }
-            this.entityScale = Math.min(this.entityScale, 32f);
+            else {
+                this.entityScale = Math.min(ENTITY_RENDER_HEIGHT / entity.getHeight(), ENTITY_RENDER_WIDTH / entity.getWidth());
+                if (entity instanceof MobEntity mob && mob.isBaby()) {
+                    this.entityScale *= 0.75f;
+                }
+                this.entityScale = Math.min(this.entityScale, 32f);
+            }
 
             setEntityRenderPos();
         }
@@ -148,10 +154,13 @@ public class ToroHealthHud extends DrawableHelper {
             // default
             this.entityY = (float) FRAME_SIZE / 2 + ENTITY_RENDER_HEIGHT / 2;
         }
-        if (entity instanceof GhastEntity) {
+        if (this.entity instanceof GhastEntity) {
             this.entityY = 3;
         }
-        else if (entity instanceof ShulkerEntity shulker) {
+        else if (this.entity instanceof EnderDragonEntity) {
+            this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * this.entityScale / 4;
+        }
+        else if (this.entity instanceof ShulkerEntity shulker) {
             switch (shulker.getAttachedFace()){
                 case DOWN:
                     this.entityY = (float) FRAME_SIZE / 2 + ENTITY_RENDER_HEIGHT / 2;
@@ -164,13 +173,13 @@ public class ToroHealthHud extends DrawableHelper {
                     break;
             }
         }
-        else if (entity instanceof BatEntity bat && !bat.isRoosting())
+        else if (this.entity instanceof BatEntity bat && !bat.isRoosting())
             this.entityY = (float) FRAME_SIZE / 2 - ENTITY_RENDER_HEIGHT / 2 + entity.getHeight() * entityScale;
-        else if (entity instanceof SpiderEntity spider && spider.isClimbing())
+        else if (this.entity instanceof SpiderEntity spider && spider.isClimbing())
+            this.entityY = (float) FRAME_SIZE / 2 + this.entity.getHeight() * this.entityScale / 2;
+        else if (this.entity.hasVehicle() || EntityUtil.isFloating(this.entity) || this.entity.hasStatusEffect(StatusEffects.LEVITATION))
             this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * this.entityScale / 2;
-        else if (entity.hasVehicle() || EntityUtil.isFloating(entity) || entity.hasStatusEffect(StatusEffects.LEVITATION))
-            this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * this.entityScale / 2;
-        else if (entity.isOnGround())
+        else if (this.entity.isOnGround())
             this.entityY = (float) FRAME_SIZE / 2 + ENTITY_RENDER_HEIGHT / 2;
     }
 

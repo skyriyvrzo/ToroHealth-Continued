@@ -12,6 +12,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
+import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.world.World;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.RaycastContext;
@@ -49,6 +50,10 @@ public class RayTrace {
             if (g < e || crosshairTarget == null) {
                 if (entity22 instanceof LivingEntity) {
                     return (LivingEntity) entity22;
+                }
+                //end dragon
+                else if (entity22 instanceof EnderDragonPart part && !part.owner.isRemoved()) {
+                    return (part.owner);
                 }
             }
         }

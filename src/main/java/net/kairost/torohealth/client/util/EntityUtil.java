@@ -5,15 +5,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.mob.AmbientEntity;
-import net.minecraft.entity.mob.CreeperEntity;
-import net.minecraft.entity.mob.GhastEntity;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.SlimeEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.FishEntity;
-import net.minecraft.entity.passive.PassiveEntity;
-import net.minecraft.entity.passive.SquidEntity;
+import net.minecraft.entity.mob.*;
+import net.minecraft.entity.passive.*;
 
 public class EntityUtil {
 
@@ -53,5 +46,22 @@ public class EntityUtil {
                 || StreamSupport.stream(entity.getItemsEquipped().spliterator(), false).anyMatch(is -> !is.isEmpty()))
             && entity != client.player
             && !entity.isSpectator();
+    }
+
+    public static boolean isFloating(LivingEntity entity) {
+        if (entity.isTouchingWater() && !entity.isOnGround())
+            return true;
+
+        // air, FlyingEntity
+        if (entity instanceof ParrotEntity parrot && parrot.isInAir())
+            return true;
+
+        if (entity instanceof BatEntity bat && bat.isRoosting())
+            return true;
+
+        if (entity instanceof PhantomEntity || entity instanceof BeeEntity || entity instanceof VexEntity || entity instanceof AllayEntity || entity instanceof GhastEntity)
+            return true;
+
+        return false;
     }
 }

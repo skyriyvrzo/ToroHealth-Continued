@@ -6,15 +6,19 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.GhastEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.GhastEntity;
+import net.minecraft.entity.mob.ShulkerEntity;
+import net.minecraft.entity.mob.SpiderEntity;
+import net.minecraft.entity.passive.BatEntity;
+import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.util.math.MatrixStack;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.ModConfig.FrameStyle;
 import net.kairost.torohealth.data.BarStateAccessor;
@@ -97,39 +101,79 @@ public class ToroHealthHud extends DrawableHelper {
     }
 
     public void tick()  {
-        age++;
+        if (this.entity != null) {
+            setEntityRenderPos();
+            age++;
+        }
     }
 
     public void setEntity(LivingEntity entity) {
         if (entity != null) {
             this.age = 0;
+            if (entity != this.entity) {
+                setEntityWork(entity);
+            }
         }
 
         if (entity == null && age > ToroHealth.getConfig().hudOptions.hudHideDelay) {
             setEntityWork(null);
         }
-
-        if (entity != null && entity != this.entity) {
-            setEntityWork(entity);
-        }
     }
 
-    private  void  setEntityWork(LivingEntity  entity)  {
+    private void setEntityWork(LivingEntity entity)  {
         this.entity = entity;
-        if  (entity !=  null)  {
-            this.entityX = (float) FRAME_SIZE / 2;
-            this.entityY = (float) FRAME_SIZE / 2 + ENTITY_RENDER_HEIGHT / 2;
-            if (entity instanceof GhastEntity) {
-                this.entityY -= 10;
-            }
-
+        if  (entity !=  null) {
             this.entityScale = Math.min(ENTITY_RENDER_HEIGHT / entity.getHeight(), ENTITY_RENDER_WIDTH / entity.getWidth());
             if (entity instanceof MobEntity mob && mob.isBaby()) {
                 this.entityScale *= 0.75f;
             }
             this.entityScale = Math.min(this.entityScale, 32f);
+
+            setEntityRenderPos();
+        }
+        else {
+            this.entityScale = 0;
+            this.entityX = 0;
+            this.entityY = 0;
         }
     }
+
+
+    private void setEntityRenderPos() {
+        assert this.entity != null;
+        if (this.entityX == 0) {
+            this.entityX = (float) FRAME_SIZE / 2;
+        }
+        if (this.entityY == 0) {
+            // default
+            this.entityY = (float) FRAME_SIZE / 2 + ENTITY_RENDER_HEIGHT / 2;
+        }
+        if (entity instanceof GhastEntity) {
+            this.entityY = 3;
+        }
+        else if (entity instanceof ShulkerEntity shulker) {
+            switch (shulker.getAttachedFace()){
+                case DOWN:
+                    this.entityY = (float) FRAME_SIZE / 2 + ENTITY_RENDER_HEIGHT / 2;
+                    break;
+                case UP:
+                    this.entityY = (float) FRAME_SIZE / 2 - ENTITY_RENDER_HEIGHT / 2 + entity.getHeight() * entityScale;
+                    break;
+                case NORTH, SOUTH, EAST, WEST:
+                    this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * this.entityScale / 2;
+                    break;
+            }
+        }
+        else if (entity instanceof BatEntity bat && !bat.isRoosting())
+            this.entityY = (float) FRAME_SIZE / 2 - ENTITY_RENDER_HEIGHT / 2 + entity.getHeight() * entityScale;
+        else if (entity instanceof SpiderEntity spider && spider.isClimbing())
+            this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * this.entityScale / 2;
+        else if (entity.hasVehicle() || EntityUtil.isFloating(entity) || entity.hasStatusEffect(StatusEffects.LEVITATION))
+            this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * this.entityScale / 2;
+        else if (entity.isOnGround())
+            this.entityY = (float) FRAME_SIZE / 2 + ENTITY_RENDER_HEIGHT / 2;
+    }
+
 
     private void renderFrame(MatrixStack matrix) {
         RenderSystem.setShaderTexture(0, TOROHEALTH_FRAME_TEXTURE);

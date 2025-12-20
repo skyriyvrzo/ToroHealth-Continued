@@ -46,6 +46,7 @@
 
   "text.autoconfig.torohealth.option.inWorldBarOptions": "Opciones de barra sobre entidades",
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarVisibilityMode": "Modo de visibilidad de barra sobre entidades",
+  "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarLightMode": "Iluminación de las barras en el mundo",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenLookingAt": "Solo al mirar directamente",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenHurt": "Solo al recibir daño",
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarDistance": "Distancia máxima de barra sobre entidades",
@@ -74,6 +75,7 @@
   "text.autoconfig.torohealth.option.particleOptions.healColor.@Tooltip": "Color utilizado para las partículas de curación.",
 
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarVisibilityMode.@Tooltip": "Determina cuándo se muestran las barras de salud en el mundo encima de las entidades.",
+  "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarLightMode.@Tooltip": "Elige cómo se iluminan las barras de salud en el mundo: usando la luz del entorno circundante o siempre completamente brillantes (ignorando la oscuridad).",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenLookingAt.@Tooltip": "Si es verdadero, la barra de salud en el mundo solo se muestra al mirar directamente a la entidad.",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenHurt.@Tooltip": "Si es verdadero, la barra de salud en el mundo aparece solo cuando la entidad ha recibido daño.",
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarDistance.@Tooltip": "Distancia máxima (en bloques) a la que las barras de salud en el mundo son visibles.",

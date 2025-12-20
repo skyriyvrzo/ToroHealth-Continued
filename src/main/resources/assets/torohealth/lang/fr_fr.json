@@ -46,6 +46,7 @@
 
   "text.autoconfig.torohealth.option.inWorldBarOptions": "Options des barres de vie au-dessus des entités",
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarVisibilityMode": "Mode d'affichage des barres de vie au-dessus des entités",
+  "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarLightMode": "Éclairage des barres de vie au-dessus des entités",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenLookingAt": "Uniquement en la regardant directement",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenHurt": "Uniquement en cas de dégâts",
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarDistance": "Distance maximale des barres de vie au-dessus des entités",
@@ -74,6 +75,7 @@
   "text.autoconfig.torohealth.option.particleOptions.healColor.@Tooltip": "Couleur utilisée pour les nombres de soin.",
 
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarVisibilityMode.@Tooltip": "Détermine quand les barres de vie au-dessus des entités sont affichées.",
+  "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarLightMode.@Tooltip": "Choisissez comment les barres de vie au-dessus des entités sont éclairées : en utilisant l’éclairage de l’environnement, ou toujours en pleine luminosité (ignorant l’obscurité).",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenLookingAt.@Tooltip": "Si coché, la barre de vie au-dessus de l’entité n’apparaît que lorsqu’on la regarde directement.",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenHurt.@Tooltip": "Si coché, la barre de vie au-dessus de l’entité n’apparaît que lorsqu’elle subit des dégâts.",
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarDistance.@Tooltip": "Distance maximale (en blocs) à laquelle les barres de vie dans le monde sont visibles.",

@@ -86,6 +86,10 @@ public class ModConfig implements ConfigData {
         public InWorldBarVisibilityMode inWorldBarVisibilityMode = InWorldBarVisibilityMode.NONE;
 
         @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.Gui.EnumHandler(option = EnumDisplayOption.BUTTON)
+        public InWorldBarLightMode inWorldBarLightMode = InWorldBarLightMode.ENTITY_LIGHT;
+
+        @ConfigEntry.Gui.Tooltip
         public boolean onlyWhenLookingAt = false;
 
         @ConfigEntry.Gui.Tooltip
@@ -136,6 +140,10 @@ public class ModConfig implements ConfigData {
 
     public enum InWorldBarVisibilityMode {
         NONE, WHEN_HOLDING_WEAPON, ALWAYS
+    }
+
+    public enum InWorldBarLightMode {
+        ENTITY_LIGHT, FULL_BRIGHT
     }
 
     public enum HealthChangeType {

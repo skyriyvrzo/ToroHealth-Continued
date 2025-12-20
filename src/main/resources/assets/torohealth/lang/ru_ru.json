@@ -46,6 +46,7 @@
 
   "text.autoconfig.torohealth.option.inWorldBarOptions": "Полоски здоровья над сущностями",
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarVisibilityMode": "Режим отображения полосок над сущностями",
+  "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarLightMode": "Освещение полосок здоровья над сущностями",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenLookingAt": "Только при наведении",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenHurt": "Только при получении урона",
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarDistance": "Максимальная дистанция полосок над сущностями",
@@ -74,6 +75,7 @@
   "text.autoconfig.torohealth.option.particleOptions.healColor.@Tooltip": "Цвет, используемый для частиц исцеления.",
 
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarVisibilityMode.@Tooltip": "Определяет, когда отображаются полоски здоровья в мире над сущностями.",
+  "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarLightMode.@Tooltip": "Определяет освещение полосок здоровья над сущностями: использовать освещение окружающей среды или всегда полную яркость (игнорируя темноту).",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenLookingAt.@Tooltip": "Если включено, полоска здоровья в мире показывается только при прямом взгляде на сущность.",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenHurt.@Tooltip": "Если включено, полоска здоровья в мире появляется только после того, как сущность получила урон.",
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarDistance.@Tooltip": "Максимальная дистанция (в блоках), на которой отображаются полоски здоровья в мире.",

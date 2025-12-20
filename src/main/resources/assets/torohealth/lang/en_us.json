@@ -46,6 +46,7 @@
 
   "text.autoconfig.torohealth.option.inWorldBarOptions": "In-World Bar Options",
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarVisibilityMode": "In-World Bar Visibility Mode",
+  "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarLightMode": "In-World Bar Light Mode",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenLookingAt": "Only When Looking At",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenHurt": "Only When Hurt",
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarDistance": "In-World Bar Max Distance",
@@ -74,6 +75,7 @@
   "text.autoconfig.torohealth.option.particleOptions.healColor.@Tooltip": "Color used for healing number particles.",
 
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarVisibilityMode.@Tooltip": "Determines when in-world health bars are displayed above entities.",
+  "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarLightMode.@Tooltip": "Choose how in-world health bars are lit: using the surrounding environment lighting, or always fully bright (ignoring darkness).",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenLookingAt.@Tooltip": "If true, the in-world health bar is shown only when directly looking at the entity.",
   "text.autoconfig.torohealth.option.inWorldBarOptions.onlyWhenHurt.@Tooltip": "If true, the in-world health bar appears only when the entity has taken damage.",
   "text.autoconfig.torohealth.option.inWorldBarOptions.inWorldBarDistance.@Tooltip": "Maximum distance (in blocks) at which in-world health bars are visible.",

@@ -1,13 +1,11 @@
 plugins {
-    id 'fabric-loom' version '0.12-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
     id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
 group = project.maven_group
 version = project.mod_version
+
 base {
     archivesName = project.archives_base_name
 }
@@ -50,7 +48,7 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.named("remapJar") {
     archiveFileName.set(
-            "${archivesBaseName}-fabric-${project.minecraft_version}-${project.version}.jar"
+            "${project.archives_base_name}-fabric-${project.minecraft_version}-${project.version}.jar"
     )
 }
 
@@ -59,9 +57,6 @@ java {
     // if it is present.
     // If you remove this line, sources will not be generated.
     withSourcesJar()
-
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
 }
 
 jar {

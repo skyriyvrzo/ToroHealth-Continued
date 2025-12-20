@@ -1,6 +1,6 @@
 package net.kairost.torohealth;
 
-import blue.endless.jankson.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.ActionResult;

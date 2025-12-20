@@ -1,17 +1,16 @@
 package net.kairost.torohealth.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.GhastEntity;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.entity.passive.BatEntity;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.MinecraftClient;
@@ -35,6 +34,7 @@ public class ToroHealthHud extends DrawableHelper {
     private static final int FRAME_SIZE = 42;
     private static final float ENTITY_RENDER_HEIGHT = 32f;
     private static final float ENTITY_RENDER_WIDTH = 24f;
+    private static final float ENTITY_RENDER_SCALE = 32f;
     private static final int INFO_Y_BASE = 2;
     private static final int INFO_X_BASE = 2;
     private static final int INFO_SPACING = 4;
@@ -128,11 +128,24 @@ public class ToroHealthHud extends DrawableHelper {
                 this.entityScale = 2 * ENTITY_RENDER_HEIGHT / entity.getHeight();
             }
             else {
-                this.entityScale = Math.min(ENTITY_RENDER_HEIGHT / entity.getHeight(), ENTITY_RENDER_WIDTH / entity.getWidth());
-                if (entity instanceof MobEntity mob && mob.isBaby()) {
-                    this.entityScale *= 0.75f;
+                float scale = this.entity.getScaleFactor();
+                float height = this.entity.getHeight() / scale;
+                float width = this.entity.getWidth() / scale;
+                this.entityScale = Math.min(ENTITY_RENDER_HEIGHT / height, ENTITY_RENDER_WIDTH / width);
+
+                // restrict entity scale
+                if (this.entityScale > ENTITY_RENDER_SCALE) {
+                    this.entityScale = ENTITY_RENDER_SCALE;
                 }
-                this.entityScale = Math.min(this.entityScale, 32f);
+                else if (this.entityScale > ENTITY_RENDER_SCALE / 2) {
+                    // unchange
+                }
+                else if (this.entityScale > ENTITY_RENDER_SCALE / 2.5 ) {
+                    this.entityScale = ENTITY_RENDER_SCALE / 2;
+                }
+                else {
+                    this.entityScale = 5 * this.entityScale / 4;
+                }
             }
 
             setEntityRenderPos();

@@ -4,6 +4,7 @@ import java.util.stream.StreamSupport;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.mob.*;
@@ -60,7 +61,7 @@ public class EntityUtil {
         if (entity instanceof BatEntity bat && bat.isRoosting())
             return true;
 
-        if (entity instanceof PhantomEntity || entity instanceof BeeEntity || entity instanceof VexEntity || entity instanceof AllayEntity || entity instanceof GhastEntity || entity instanceof EnderDragonEntity)
+        if (entity instanceof PhantomEntity || entity instanceof BeeEntity || entity instanceof VexEntity || entity instanceof AllayEntity || entity instanceof GhastEntity || entity instanceof EnderDragonEntity || entity instanceof WitherEntity)
             return true;
 
         return false;

@@ -10,9 +10,10 @@
     "wbc3467"
   ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/torohealth-damage-indicators",
+    "homepage": "https://modrinth.com/mod/torohealth-continued",
     "issues": "https://github.com/ToroCraft/ToroHealth-Continued/issues",
-    "sources": "https://github.com/wbc3467-spec/ToroHealth-Continued/"
+    "sources": "https://github.com/wbc3467-spec/ToroHealth-Continued/",
+    "discord": "https://discord.gg/qJ9D3nBe"
   },
   "license": "GPL3",
   "icon": "assets/torohealth/icon.png",

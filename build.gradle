@@ -16,6 +16,13 @@ repositories {
     maven { url "https://maven.terraformersmc.com/" }
 }
 
+loom {
+    runs {
+        client {
+            configName = "Minecraft Client"
+        }
+    }
+}
 
 dependencies {
     //to change the versions see the gradle.properties file

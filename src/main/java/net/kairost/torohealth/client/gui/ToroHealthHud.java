@@ -14,12 +14,10 @@ import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.config.ModConfig.FrameStyle;
@@ -333,31 +331,24 @@ public class ToroHealthHud {
         entity.prevHeadYaw = l;
     }
 
+    //copied from InventoryScreen.drawEntity
     public static void drawEntity(DrawContext context, float x, float y, float size, Quaternionf quaternionf, Quaternionf quaternionf2, LivingEntity entity, float tickDelta) {
-        MatrixStack matrixStack = RenderSystem.getModelViewStack();
-        matrixStack.push();
-        matrixStack.multiplyPositionMatrix(context.getMatrices().peek().getPositionMatrix());
-        matrixStack.translate(x ,y ,1000.0D);
-        matrixStack.scale(1.0F ,1.0F ,-1.0F);
-        RenderSystem.applyModelViewMatrix();
-
-        MatrixStack matrices2 = new MatrixStack();
-        matrices2.translate(0, 0, 950.0D);
-        matrices2.multiplyPositionMatrix(new Matrix4f().scaling((float) size, (float) size, (float) size));
-        matrices2.multiply(quaternionf);
+        context.getMatrices().push();
+        context.getMatrices().translate((double)x, (double)y, 50.0);
+        context.getMatrices().multiplyPositionMatrix(new Matrix4f().scaling(size, size, -size));
+        context.getMatrices().multiply(quaternionf);
         DiffuseLighting.method_34742();
         EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
         if (quaternionf2 != null) {
             quaternionf2.conjugate();
             entityRenderDispatcher.setRotation(quaternionf2);
         }
+
         entityRenderDispatcher.setRenderShadows(false);
-        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, tickDelta, matrices2, immediate, 0xF000F0));
-        immediate.draw();
+        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, tickDelta, context.getMatrices(), context.getVertexConsumers(), 15728880));
+        context.draw();
         entityRenderDispatcher.setRenderShadows(true);
+        context.getMatrices().pop();
         DiffuseLighting.enableGuiDepthLighting();
-        matrixStack.pop();
-        RenderSystem.applyModelViewMatrix();
     }
 }

@@ -13,9 +13,6 @@ public abstract class EntityMixin {
     public World world;
 
     @Shadow
-    public abstract int getId();
-
-    @Shadow
     public abstract Vec3d getPos();
 
     @Shadow

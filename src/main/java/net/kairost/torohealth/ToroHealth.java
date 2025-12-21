@@ -1,6 +1,5 @@
 package net.kairost.torohealth;
 
-import net.kairost.torohealth.config.ModConfig;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -14,6 +13,7 @@ import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
+import net.kairost.torohealth.config.ModConfig;
 import net.kairost.torohealth.client.gui.ToroHealthHud;
 import net.kairost.torohealth.client.particle.HealthChangeParticle;
 import net.kairost.torohealth.client.util.HoldingWeaponUpdater;

@@ -217,7 +217,7 @@ public class ToroHealthHud extends DrawableHelper {
 
         int xOffset = INFO_X_BASE;
         // name
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         String name = entity.getDisplayName().getString();
         this.client.textRenderer.drawWithShadow(matrix, name, (float)xOffset, 1f, 0xFFFFFF);
         xOffset += this.client.textRenderer.getWidth(name) + INFO_SPACING;
@@ -258,7 +258,7 @@ public class ToroHealthHud extends DrawableHelper {
     private void renderArmorIcon(MatrixStack matrix, int x, int y) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, ICON_TEXTURES);
-        this.drawTexture(matrix, x, y, 34, 9, 9, 9);
+        drawTexture(matrix, x, y, 34, 9, 9, 9);
     }
 
     private void renderHealthChangeText(MatrixStack matrices, LivingEntity entity, int x, int y) {

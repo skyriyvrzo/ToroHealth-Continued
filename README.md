@@ -16,6 +16,6 @@ Health Bar can be rendered on entities' head in world.
 
 
 
-### [Download from here](https://placeholder.com)
+### [Download from here](https://modrinth.com/mod/torohealth-continued)
 
 ![Screenshot](images/allShown.png)

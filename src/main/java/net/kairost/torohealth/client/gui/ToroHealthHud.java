@@ -348,7 +348,7 @@ public class ToroHealthHud {
         }
 
         entityRenderDispatcher.setRenderShadows(false);
-        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, tickDelta, context.getMatrices(), context.getVertexConsumers(), 15728880));
+        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, tickDelta, context.getMatrices(), context.getVertexConsumers(), 0xF000F0));
         context.draw();
         entityRenderDispatcher.setRenderShadows(true);
         context.getMatrices().pop();

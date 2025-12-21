@@ -81,7 +81,7 @@ public class RayTrace {
             return world.raycastBlock(c.getStart(), c.getEnd(), pos, blockShape, block);
         }, (c) -> {
             Vec3d v = c.getStart().subtract(c.getEnd());
-            return BlockHitResult.createMissed(c.getEnd(), Direction.getFacing(v.x, v.y, v.z), new BlockPos(c.getEnd()));
+            return BlockHitResult.createMissed(c.getEnd(), Direction.getFacing(v.x, v.y, v.z), BlockPos.ofFloored(c.getEnd()));
         });
     }
 }

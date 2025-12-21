@@ -16,6 +16,7 @@ import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.font.TextRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kairost.torohealth.ToroHealth;
@@ -116,7 +117,7 @@ public class HealthChangeParticle
 
         BufferBuilder bufferBuilder = new BufferBuilder(256);
         VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(bufferBuilder);
-        client.textRenderer.draw(text, h, -3.0f, color, false, matrices.peek().getPositionMatrix(), immediate, false, 0, light);
+        client.textRenderer.draw(text, h, -3.0f, color, false, matrices.peek().getPositionMatrix(), immediate, TextRenderer.TextLayerType.NORMAL, 0, light);
         immediate.draw();
     }
 

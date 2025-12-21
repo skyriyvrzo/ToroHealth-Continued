@@ -208,7 +208,7 @@ public class ToroHealthHud extends DrawableHelper {
         RenderSystem.setShaderTexture(0, TOROHEALTH_FRAME_TEXTURE);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         int w = 179, h = 42;
-        this.drawTexture(matrix, 0, 0, 0, (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.LIGHT) ? 42 : 0), w, h);
+        drawTexture(matrix, 0, 0, 0, (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.LIGHT) ? 42 : 0), w, h);
     }
 
 
@@ -218,6 +218,7 @@ public class ToroHealthHud extends DrawableHelper {
 
         int xOffset = INFO_X_BASE;
         // name
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1);
         String name = entity.getDisplayName().getString();
         this.client.textRenderer.drawWithShadow(matrix, name, (float)xOffset, 1f, 0xFFFFFF);
         xOffset += this.client.textRenderer.getWidth(name) + INFO_SPACING;
@@ -250,8 +251,8 @@ public class ToroHealthHud extends DrawableHelper {
 
     private void renderHeartIcon(MatrixStack matrix, int x, int y) {
         RenderSystem.setShaderTexture(0, ICON_TEXTURES);
-        this.drawTexture(matrix, x, y, 16, 0, 9, 9);
-        this.drawTexture(matrix, x, y, 16 + 36, 0, 9, 9);
+        drawTexture(matrix, x, y, 16, 0, 9, 9);
+        drawTexture(matrix, x, y, 16 + 36, 0, 9, 9);
     }
 
     private void renderArmorIcon(MatrixStack matrix, int x, int y) {
@@ -308,7 +309,7 @@ public class ToroHealthHud extends DrawableHelper {
         RenderSystem.setShaderColor(r, g, b, 1);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, TOROHEALTH_BARS_TEXTURES);
-        this.drawTexture(matrices, x, y, 0, 6 * 2 * 5 + 5, width, 5);
+        drawTexture(matrices, x, y, 0, 6 * 2 * 5 + 5, width, 5);
     }
 
     //modified from vanilla InventoryScreen.drawEntity
@@ -322,7 +323,6 @@ public class ToroHealthHud extends DrawableHelper {
         matrixStack.scale(1.0F, 1.0F, -1.0F);
         RenderSystem.applyModelViewMatrix();
         MatrixStack matrixStack2 = new MatrixStack();
-        matrixStack2.push();
         matrixStack2.translate(0.0D, 0.0D, 1000.0D);
         matrixStack2.scale((float) size, (float) size, (float) size);
         Quaternion quaternion = Vec3f.POSITIVE_Z.getDegreesQuaternion(180.0F);

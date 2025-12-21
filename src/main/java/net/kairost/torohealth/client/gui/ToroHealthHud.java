@@ -1,5 +1,6 @@
 package net.kairost.torohealth.client.gui;
 
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -27,7 +28,9 @@ import net.kairost.torohealth.client.util.EntityUtil;
 import net.kairost.torohealth.client.util.EntityUtil.Relation;
 
 public class ToroHealthHud {
-    private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
+    public static final Identifier CONTAINER = new Identifier("minecraft", "textures/gui/sprites/hud/heart/container.png");
+    public static final Identifier FULL = new Identifier("minecraft", "textures/gui/sprites/hud/heart/full.png");
+    public static final Identifier ARMOR_FULL = new Identifier("minecraft", "textures/gui/sprites/hud/armor_full.png");
     private static final Identifier TOROHEALTH_BARS_TEXTURE = new Identifier(ToroHealth.MODID + ":textures/gui/bars.png");
     private static final Identifier TOROHEALTH_FRAME_TEXTURE = new Identifier(ToroHealth.MODID + ":textures/gui/frame.png");
     private static final int DARK_GRAY = 0x808080;
@@ -248,13 +251,13 @@ public class ToroHealthHud {
 
     private void renderHeartIcon(DrawContext context, int x, int y) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        context.drawTexture(ICONS, x, y, 16, 0, 9, 9);
-        context.drawTexture(ICONS, x, y, 16 + 36, 0, 9, 9);
+        context.drawTexture(CONTAINER, x, y, 0, 0, 9, 9, 9, 9);
+        context.drawTexture(FULL, x, y, 0, 0, 9, 9, 9, 9);
     }
 
     private void renderArmorIcon(DrawContext context, int x, int y) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        context.drawTexture(ICONS, x, y, 34, 9, 9, 9);
+        context.drawTexture(ARMOR_FULL, x, y, 0, 0, 9, 9, 9, 9);
     }
 
     private void renderHealthChangeText(DrawContext context, LivingEntity entity, int x, int y) {
@@ -332,7 +335,7 @@ public class ToroHealthHud {
     }
 
     //copied from InventoryScreen.drawEntity
-    public static void drawEntity(DrawContext context, float x, float y, float size, Quaternionf quaternionf, Quaternionf quaternionf2, LivingEntity entity, float tickDelta) {
+    public static void drawEntity(DrawContext context, float x, float y, float size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, float tickDelta) {
         context.getMatrices().push();
         context.getMatrices().translate((double)x, (double)y, 50.0);
         context.getMatrices().multiplyPositionMatrix(new Matrix4f().scaling(size, size, -size));

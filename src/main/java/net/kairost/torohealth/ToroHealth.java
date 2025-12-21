@@ -2,9 +2,10 @@ package net.kairost.torohealth;
 
 import net.kairost.torohealth.config.ModConfig;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.ActionResult;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.Registries;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.client.MinecraftClient;
@@ -48,7 +49,7 @@ public class ToroHealth implements ClientModInitializer {
 
         //toroHealth Particle
         Registry.register(
-            Registry.PARTICLE_TYPE,
+            Registries.PARTICLE_TYPE,
             new Identifier(MODID, "health_change"),
             HEALTH_CHANGE
         );

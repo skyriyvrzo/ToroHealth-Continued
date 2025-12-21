@@ -1,10 +1,9 @@
 package net.kairost.torohealth.client.gui;
 
+import org.joml.Quaternionf;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3f;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.GhastEntity;
 import net.minecraft.entity.mob.ShulkerEntity;
@@ -250,12 +249,14 @@ public class ToroHealthHud extends DrawableHelper {
     }
 
     private void renderHeartIcon(MatrixStack matrix, int x, int y) {
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, ICON_TEXTURES);
         drawTexture(matrix, x, y, 16, 0, 9, 9);
         drawTexture(matrix, x, y, 16 + 36, 0, 9, 9);
     }
 
     private void renderArmorIcon(MatrixStack matrix, int x, int y) {
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, ICON_TEXTURES);
         this.drawTexture(matrix, x, y, 34, 9, 9, 9);
     }
@@ -307,7 +308,7 @@ public class ToroHealthHud extends DrawableHelper {
         float g = (color >> 8 & 255) / 255.0F;
         float b = (color & 255) / 255.0F;
         RenderSystem.setShaderColor(r, g, b, 1);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderTexture(0, TOROHEALTH_BARS_TEXTURES);
         drawTexture(matrices, x, y, 0, 6 * 2 * 5 + 5, width, 5);
     }
@@ -325,10 +326,10 @@ public class ToroHealthHud extends DrawableHelper {
         MatrixStack matrixStack2 = new MatrixStack();
         matrixStack2.translate(0.0D, 0.0D, 1000.0D);
         matrixStack2.scale((float) size, (float) size, (float) size);
-        Quaternion quaternion = Vec3f.POSITIVE_Z.getDegreesQuaternion(180.0F);
-        Quaternion quaternion2 = Vec3f.POSITIVE_X.getDegreesQuaternion(g * 20.0F);
-        quaternion.hamiltonProduct(quaternion2);
-        matrixStack2.multiply(quaternion);
+        Quaternionf quaternionf = new Quaternionf().rotateZ((float) Math.PI);
+        Quaternionf quaternionf2 = new Quaternionf().rotateX(g * 20.0F * (float) (Math.PI / 180.0));
+        quaternionf.mul(quaternionf2);
+        matrixStack2.multiply(quaternionf);
         float i = entity.bodyYaw;
         float j = entity.prevBodyYaw;
         float k = entity.headYaw;
@@ -340,8 +341,8 @@ public class ToroHealthHud extends DrawableHelper {
         DiffuseLighting.method_34742();
         EntityRenderDispatcher entityRenderDispatcher =
             MinecraftClient.getInstance().getEntityRenderDispatcher();
-        quaternion2.conjugate();
-        entityRenderDispatcher.setRotation(quaternion2);
+        quaternionf2.conjugate();
+        entityRenderDispatcher.setRotation(quaternionf2);
         entityRenderDispatcher.setRenderShadows(false);
         VertexConsumerProvider.Immediate immediate =
             MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();

@@ -1,13 +1,6 @@
 package net.kairost.torohealth.client.util;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.AxeItem;
-import net.minecraft.item.BowItem;
-import net.minecraft.item.CrossbowItem;
-import net.minecraft.item.SwordItem;
-import net.minecraft.item.ThrowablePotionItem;
-import net.minecraft.item.TridentItem;
+import net.minecraft.item.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.kairost.torohealth.ToroHealth;
@@ -33,6 +26,7 @@ public class HoldingWeaponUpdater {
             || item instanceof CrossbowItem
             || item instanceof SwordItem
             || item instanceof ThrowablePotionItem
-            || item instanceof TridentItem;
+            || item instanceof TridentItem
+            || item instanceof EndCrystalItem;
     }
 }

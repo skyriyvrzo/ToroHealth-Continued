@@ -25,7 +25,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements BarStateA
     @Override
     public BarState torohealth$getBarState() {
         if (this.barState == null) {
-            this.barState = BarState.create(this.getId());
+            this.barState = BarState.create((LivingEntity) (Object) this);
         }
         return barState;
     }
@@ -36,7 +36,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements BarStateA
             this.barState.tick();
             return;
         }
-        this.barState = BarState.create(this.getId());
+        this.barState = BarState.create((LivingEntity) (Object) this);
     }
 
     @Inject(method = "onTrackedDataSet", at = @At("TAIL"))

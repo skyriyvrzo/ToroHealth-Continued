@@ -46,8 +46,8 @@ public class InWorldBarRenderer {
         BarState state = ((BarStateAccessor) entity).torohealth$getBarState();
         Matrix4f matrix = matrices.peek().getPositionMatrix();
         Relation relation = EntityUtil.getRelation(entity);
-        int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.getConfig().barColor.friendColor : ToroHealth.getConfig().barColor.foeColor;
-        int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.getConfig().barColor.friendColorSecondary : ToroHealth.getConfig().barColor.foeColorSecondary;
+        int color = relation.equals(Relation.FOE) ? ToroHealth.getConfig().barColor.foeColor : ToroHealth.getConfig().barColor.friendColor;
+        int color2 = relation.equals(Relation.FOE) ? ToroHealth.getConfig().barColor.foeColorSecondary : ToroHealth.getConfig().barColor.friendColorSecondary;
         float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
         float percent2 = Math.min(MathHelper.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
 

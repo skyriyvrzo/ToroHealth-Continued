@@ -26,6 +26,7 @@ import net.kairost.torohealth.ModConfig.FrameStyle;
 import net.kairost.torohealth.data.BarStateAccessor;
 import net.kairost.torohealth.data.BarState;
 import net.kairost.torohealth.client.util.EntityUtil;
+import net.kairost.torohealth.client.util.EntityUtil.Relation;
 
 public class ToroHealthHud extends DrawableHelper {
     private static final Identifier ICON_TEXTURES = new Identifier("textures/gui/icons.png");
@@ -284,8 +285,8 @@ public class ToroHealthHud extends DrawableHelper {
         }
         EntityUtil.Relation relation = EntityUtil.getRelation(entity);
 
-        int color = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.getConfig().barColor.friendColor : ToroHealth.getConfig().barColor.foeColor;
-        int color2 = relation.equals(EntityUtil.Relation.FRIEND) ? ToroHealth.getConfig().barColor.friendColorSecondary : ToroHealth.getConfig().barColor.foeColorSecondary;
+        int color = relation.equals(Relation.FOE) ? ToroHealth.getConfig().barColor.foeColor : ToroHealth.getConfig().barColor.friendColor;
+        int color2 = relation.equals(Relation.FOE) ? ToroHealth.getConfig().barColor.foeColorSecondary : ToroHealth.getConfig().barColor.friendColorSecondary;
         float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
         float percent2 = Math.min(MathHelper.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
         int width = MathHelper.ceil(percent * 131.0f);

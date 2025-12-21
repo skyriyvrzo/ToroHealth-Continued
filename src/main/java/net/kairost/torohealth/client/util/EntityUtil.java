@@ -17,21 +17,13 @@ public class EntityUtil {
     }
 
     public static Relation getRelation(Entity entity) {
-        if (entity instanceof HostileEntity) {
+        if (entity instanceof Monster) {
             return Relation.FOE;
-        } else if (entity instanceof SlimeEntity) {
-            return Relation.FOE;
-        } else if (entity instanceof GhastEntity) {
-            return Relation.FOE;
-        } else if (entity instanceof AnimalEntity) {
-            return Relation.FRIEND;
-        } else if (entity instanceof SquidEntity) {
-            return Relation.FRIEND;
-        } else if (entity instanceof AmbientEntity) {
-            return Relation.FRIEND;
         } else if (entity instanceof PassiveEntity) {
             return Relation.FRIEND;
-        } else if (entity instanceof FishEntity) {
+        } else if (entity instanceof WaterCreatureEntity) {
+            return Relation.FRIEND;
+        } else if (entity instanceof AmbientEntity) {
             return Relation.FRIEND;
         } else {
             return Relation.UNKNOWN;

@@ -1,15 +1,12 @@
 package net.kairost.torohealth.data;
 
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.client.MinecraftClient;
 
 public class BarState {
     private static final float HEALTH_DISPLAY_DELAY = 5;
     private static final float HEALTH_CUMULATE_DELAY = 20;
 
-    public final Integer entityID;
     public float health;
     public float lastHealth;
     public float healthDisplay;
@@ -21,8 +18,7 @@ public class BarState {
     private float animationSpeed;
 
 
-    private BarState(Integer id, float health){
-        this.entityID = id;
+    private BarState(float health){
         this.health = health;
         this.healthDisplay = health;
         this.lastHealthDisplay = health;
@@ -33,31 +29,18 @@ public class BarState {
         this.animationSpeed = 0;
     }
 
-    public static BarState create(Integer id){
-        MinecraftClient client = MinecraftClient.getInstance();
-        assert client.world != null;
-        Entity entity = client.world.getEntityById(id);
-        if (entity instanceof LivingEntity living) {
-            float currentHealth = Math.min(living.getHealth(), living.getMaxHealth());
-            return new BarState(id, currentHealth);
-        }
-        return  null;
+    public static BarState create(LivingEntity entity){
+        float currentHealth = Math.min(entity.getHealth(), entity.getMaxHealth());
+        return new BarState(currentHealth);
     }
 
     public void tick() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        assert client.world != null;
-        LivingEntity entity = (LivingEntity) client.world.getEntityById(entityID);
+        incrementTimers();
 
-        if (entity != null){
-            health = Math.min(entity.getHealth(), entity.getMaxHealth());
-            incrementTimers();
-
-             if (this.healthCumulateDelay == 0.0F) {
-                reset();
-            }
-            updateAnimations();
+         if (this.healthCumulateDelay <= 0) {
+            reset();
         }
+        updateAnimations();
     }
 
     private void reset() {

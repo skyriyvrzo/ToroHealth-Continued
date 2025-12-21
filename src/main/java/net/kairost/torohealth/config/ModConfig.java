@@ -1,10 +1,11 @@
-package net.kairost.torohealth;
+package net.kairost.torohealth.config;
 
+import com.google.gson.annotations.JsonAdapter;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
-import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.EnumHandler.EnumDisplayOption;
 
 
@@ -70,10 +71,12 @@ public class ModConfig implements ConfigData {
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.ColorPicker
+        @JsonAdapter(ColorJsonAdapter.class)
         public int damageColor = 0xff0000;
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.ColorPicker
+        @JsonAdapter(ColorJsonAdapter.class)
         public int healColor = 0x00ff00;
     }
 
@@ -107,24 +110,28 @@ public class ModConfig implements ConfigData {
     public static class BarColor {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.ColorPicker
+        @JsonAdapter(ColorJsonAdapter.class)
         public int friendColor = 0x00ff00;
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.ColorPicker
+        @JsonAdapter(ColorJsonAdapter.class)
         public int friendColorSecondary = 0x008000;
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.ColorPicker
+        @JsonAdapter(ColorJsonAdapter.class)
         public int foeColor = 0xff0000;
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.ColorPicker
+        @JsonAdapter(ColorJsonAdapter.class)
         public int foeColorSecondary = 0x800000;
     }
 
     public static void init()
     {
-        AutoConfig.register(ModConfig.class, JanksonConfigSerializer::new);
+        AutoConfig.register(ModConfig.class, GsonConfigSerializer::new);
         INSTANCE = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
         INSTANCE.postLoad();
     }

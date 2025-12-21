@@ -5,7 +5,7 @@ import net.fabricmc.api.Environment;
 import me.shedaniel.autoconfig.AutoConfig;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import net.kairost.torohealth.ModConfig;
+import net.kairost.torohealth.config.ModConfig;
 
 
 @Environment(EnvType.CLIENT)

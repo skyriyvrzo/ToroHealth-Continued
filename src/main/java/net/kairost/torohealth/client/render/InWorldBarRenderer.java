@@ -13,7 +13,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.OverlayTexture;
 import net.kairost.torohealth.ToroHealth;
-import net.kairost.torohealth.ModConfig;
+import net.kairost.torohealth.config.ModConfig;
 import net.kairost.torohealth.data.BarState;
 import net.kairost.torohealth.client.util.EntityUtil;
 import net.kairost.torohealth.client.util.EntityUtil.Relation;

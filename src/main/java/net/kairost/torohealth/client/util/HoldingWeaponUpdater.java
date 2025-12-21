@@ -11,7 +11,7 @@ import net.minecraft.item.SwordItem;
 import net.minecraft.item.ThrowablePotionItem;
 import net.minecraft.item.TridentItem;
 import net.kairost.torohealth.ToroHealth;
-import net.kairost.torohealth.ModConfig;
+import net.kairost.torohealth.config.ModConfig;
 
 public class HoldingWeaponUpdater {
     public static void update() {

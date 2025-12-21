@@ -22,7 +22,7 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.kairost.torohealth.ToroHealth;
-import net.kairost.torohealth.ModConfig.FrameStyle;
+import net.kairost.torohealth.config.ModConfig.FrameStyle;
 import net.kairost.torohealth.data.BarStateAccessor;
 import net.kairost.torohealth.data.BarState;
 import net.kairost.torohealth.client.util.EntityUtil;

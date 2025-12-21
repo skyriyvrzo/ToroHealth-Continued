@@ -1,5 +1,6 @@
 package net.kairost.torohealth;
 
+import net.kairost.torohealth.config.ModConfig;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Identifier;

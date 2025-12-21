@@ -24,35 +24,36 @@ public class RayTrace {
     public static LivingEntity getEntityInCrosshair(float tickDelta, float reachDistance) {
         MinecraftClient client = MinecraftClient.getInstance();
 
-        Entity entity2 = client.getCameraEntity();
-        if (entity2 == null) {
+        Entity entity = client.getCameraEntity();
+        if (entity == null) {
             return null;
         }
         if (client.world == null) {
             return null;
         }
-        HitResult crosshairTarget = raycastEntity(entity2, reachDistance, tickDelta, false);
-        Vec3d vec3d = entity2.getCameraPosVec(tickDelta);
+        HitResult crosshairTarget = raycastEntity(entity, reachDistance, tickDelta, false);
+        Vec3d vec3d = entity.getCameraPosVec(tickDelta);
         double e = reachDistance;
 
         e *= e;
         if (crosshairTarget != null) {
             e = crosshairTarget.getPos().squaredDistanceTo(vec3d);
         }
-        Vec3d vec3d2 = entity2.getRotationVec(1.0f);
+
+        Vec3d vec3d2 = entity.getRotationVec(1.0f);
         Vec3d vec3d3 = vec3d.add(vec3d2.x * reachDistance, vec3d2.y * reachDistance, vec3d2.z * reachDistance);
-        Box box = entity2.getBoundingBox().stretch(vec3d2.multiply(reachDistance)).expand(1.0, 1.0, 1.0);
-        EntityHitResult entityHitResult = ProjectileUtil.raycast(entity2, vec3d, vec3d3, box, entity -> !entity.isSpectator() && entity.collides(), e);
+        Box box = entity.getBoundingBox().stretch(vec3d2.multiply(reachDistance)).expand(1.0, 1.0, 1.0);
+        EntityHitResult entityHitResult = ProjectileUtil.raycast(entity, vec3d, vec3d3, box, entityx -> !entityx.isSpectator() && entityx.canHit(), e);
         if (entityHitResult != null) {
-            Entity entity22 = entityHitResult.getEntity();
+            Entity entity2 = entityHitResult.getEntity();
             Vec3d vec3d4 = entityHitResult.getPos();
             double g = vec3d.squaredDistanceTo(vec3d4);
             if (g < e || crosshairTarget == null) {
-                if (entity22 instanceof LivingEntity) {
-                    return (LivingEntity) entity22;
+                if (entity2 instanceof LivingEntity) {
+                    return (LivingEntity) entity2;
                 }
                 //end dragon
-                else if (entity22 instanceof EnderDragonPart part && !part.owner.isRemoved()) {
+                else if (entity2 instanceof EnderDragonPart part && !part.owner.isRemoved()) {
                     return (part.owner);
                 }
             }

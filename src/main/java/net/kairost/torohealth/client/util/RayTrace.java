@@ -66,19 +66,19 @@ public class RayTrace {
         Vec3d vec3d = entity.getCameraPosVec(tickDelta);
         Vec3d vec3d2 = entity.getRotationVec(tickDelta);
         Vec3d vec3d3 = vec3d.add(vec3d2.x * maxDistance, vec3d2.y * maxDistance, vec3d2.z * maxDistance);
-        return raycastBlockView(entity.world, new RaycastContext(vec3d, vec3d3, RaycastContext.ShapeType.OUTLINE, includeFluids ? RaycastContext.FluidHandling.ANY : RaycastContext.FluidHandling.NONE, entity));
+        return raycastBlockView(entity.getWorld(), new RaycastContext(vec3d, vec3d3, RaycastContext.ShapeType.OUTLINE, includeFluids ? RaycastContext.FluidHandling.ANY : RaycastContext.FluidHandling.NONE, entity));
     }
 
 
 
     private static BlockHitResult raycastBlockView(World world, RaycastContext context) {
         return BlockView.raycast(context.getStart(), context.getEnd(), context, (c, pos) -> {
-            BlockState block = world.getBlockState(pos);
-            if (!block.isOpaque()) {
+            BlockState blockState = world.getBlockState(pos);
+            if (!blockState.isOpaque()) {
                 return null;
             }
-            VoxelShape blockShape = c.getBlockShape(block, world, pos);
-            return world.raycastBlock(c.getStart(), c.getEnd(), pos, blockShape, block);
+            VoxelShape blockShape = c.getBlockShape(blockState, world, pos);
+            return world.raycastBlock(c.getStart(), c.getEnd(), pos, blockShape, blockState);
         }, (c) -> {
             Vec3d v = c.getStart().subtract(c.getEnd());
             return BlockHitResult.createMissed(c.getEnd(), Direction.getFacing(v.x, v.y, v.z), BlockPos.ofFloored(c.getEnd()));

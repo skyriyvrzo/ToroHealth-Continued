@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(Entity.class)
 public abstract class EntityMixin {
     @Shadow
-    public World world;
+    public abstract World getWorld();
 
     @Shadow
     public abstract Vec3d getPos();

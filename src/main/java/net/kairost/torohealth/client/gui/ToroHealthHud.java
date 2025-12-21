@@ -1,5 +1,6 @@
 package net.kairost.torohealth.client.gui;
 
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.util.Identifier;
@@ -317,19 +318,9 @@ public class ToroHealthHud extends DrawableHelper {
     public static void drawEntity(MatrixStack matrices, float x, float y, float size, float mouseX, float mouseY, LivingEntity entity, float tickDelta) {
         float f = (float) Math.atan(mouseX / 40.0F);
         float g = (float) Math.atan(mouseY / 40.0F);
-        MatrixStack matrixStack = RenderSystem.getModelViewStack();
-        matrixStack.push();
-        matrixStack.multiplyPositionMatrix(matrices.peek().getPositionMatrix());
-        matrixStack.translate(x ,y ,1050.0D);
-        matrixStack.scale(1.0F, 1.0F, -1.0F);
-        RenderSystem.applyModelViewMatrix();
-        MatrixStack matrixStack2 = new MatrixStack();
-        matrixStack2.translate(0.0D, 0.0D, 1000.0D);
-        matrixStack2.scale((float) size, (float) size, (float) size);
         Quaternionf quaternionf = new Quaternionf().rotateZ((float) Math.PI);
         Quaternionf quaternionf2 = new Quaternionf().rotateX(g * 20.0F * (float) (Math.PI / 180.0));
         quaternionf.mul(quaternionf2);
-        matrixStack2.multiply(quaternionf);
         float i = entity.bodyYaw;
         float j = entity.prevBodyYaw;
         float k = entity.headYaw;
@@ -338,23 +329,38 @@ public class ToroHealthHud extends DrawableHelper {
         entity.prevBodyYaw = 180.0f + f * 20.0f;
         entity.headYaw = 180.0f + f * 20.0f + k - i;
         entity.prevHeadYaw = 180.0f + f * 20.0f + l - j;
-        DiffuseLighting.method_34742();
-        EntityRenderDispatcher entityRenderDispatcher =
-            MinecraftClient.getInstance().getEntityRenderDispatcher();
-        quaternionf2.conjugate();
-        entityRenderDispatcher.setRotation(quaternionf2);
-        entityRenderDispatcher.setRenderShadows(false);
-        VertexConsumerProvider.Immediate immediate =
-            MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, tickDelta, matrixStack2, immediate, 0xF000F0));
-        immediate.draw();
-        entityRenderDispatcher.setRenderShadows(true);
+        drawEntity(matrices, x, y, size, quaternionf, quaternionf2, entity, tickDelta);
         entity.bodyYaw = i;
         entity.prevBodyYaw = j;
         entity.headYaw = k;
         entity.prevHeadYaw = l;
+    }
+
+    public static void drawEntity(MatrixStack matrices, float x, float y, float size, Quaternionf quaternionf, Quaternionf quaternionf2, LivingEntity entity, float tickDelta) {
+        MatrixStack matrixStack = RenderSystem.getModelViewStack();
+        matrixStack.push();
+        matrixStack.multiplyPositionMatrix(matrices.peek().getPositionMatrix());
+        matrixStack.translate(x ,y ,1000.0D);
+        matrixStack.scale(1.0F ,1.0F ,-1.0F);
+        RenderSystem.applyModelViewMatrix();
+
+        MatrixStack matrices2 = new MatrixStack();
+        matrices2.translate(0, 0, 950.0D);
+        matrices2.multiplyPositionMatrix(new Matrix4f().scaling((float) size, (float) size, (float) size));
+        matrices2.multiply(quaternionf);
+        DiffuseLighting.method_34742();
+        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
+        if (quaternionf2 != null) {
+            quaternionf2.conjugate();
+            entityRenderDispatcher.setRotation(quaternionf2);
+        }
+        entityRenderDispatcher.setRenderShadows(false);
+        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, tickDelta, matrices2, immediate, 0xF000F0));
+        immediate.draw();
+        entityRenderDispatcher.setRenderShadows(true);
+        DiffuseLighting.enableGuiDepthLighting();
         matrixStack.pop();
         RenderSystem.applyModelViewMatrix();
-        DiffuseLighting.enableGuiDepthLighting();
     }
 }

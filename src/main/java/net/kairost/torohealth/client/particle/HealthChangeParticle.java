@@ -3,7 +3,7 @@ package net.kairost.torohealth.client.particle;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
@@ -66,7 +66,7 @@ public class HealthChangeParticle
 
     @Environment(value=EnvType.CLIENT)
     public static class HealthChangeFactory
-        implements ParticleFactory<DefaultParticleType> {
+        implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
 
         public HealthChangeFactory(SpriteProvider spriteProvider) {
@@ -75,7 +75,7 @@ public class HealthChangeParticle
 
         //@Override
         @Override
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType simpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             Random random = clientWorld.getRandom();
             // use g to encode health change
             int healthChange = (int)Double.doubleToLongBits(g);

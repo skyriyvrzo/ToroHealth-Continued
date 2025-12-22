@@ -28,9 +28,9 @@ import net.kairost.torohealth.client.util.EntityUtil;
 import net.kairost.torohealth.client.util.EntityUtil.Relation;
 
 public class ToroHealthHud {
-    public static final Identifier CONTAINER = new Identifier("minecraft", "textures/gui/sprites/hud/heart/container.png");
-    public static final Identifier FULL = new Identifier("minecraft", "textures/gui/sprites/hud/heart/full.png");
-    public static final Identifier ARMOR_FULL = new Identifier("minecraft", "textures/gui/sprites/hud/armor_full.png");
+    public static final Identifier CONTAINER = new Identifier("hud/heart/container");
+    public static final Identifier FULL = new Identifier("hud/heart/full");
+    private static final Identifier ARMOR_FULL = new Identifier("hud/armor_full");
     private static final Identifier TOROHEALTH_BARS_TEXTURE = new Identifier(ToroHealth.MODID + ":textures/gui/bars.png");
     private static final Identifier TOROHEALTH_FRAME_TEXTURE = new Identifier(ToroHealth.MODID + ":textures/gui/frame.png");
     private static final int DARK_GRAY = 0x808080;
@@ -251,13 +251,16 @@ public class ToroHealthHud {
 
     private void renderHeartIcon(DrawContext context, int x, int y) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        context.drawTexture(CONTAINER, x, y, 0, 0, 9, 9, 9, 9);
-        context.drawTexture(FULL, x, y, 0, 0, 9, 9, 9, 9);
+        RenderSystem.enableBlend();
+        context.drawGuiTexture(CONTAINER, x, y, 9, 9);
+        context.drawGuiTexture(FULL, x, y, 9, 9);
+        RenderSystem.disableBlend();
     }
 
     private void renderArmorIcon(DrawContext context, int x, int y) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        context.drawTexture(ARMOR_FULL, x, y, 0, 0, 9, 9, 9, 9);
+        context.drawGuiTexture(ARMOR_FULL, x, y, 9, 9);
+        RenderSystem.disableBlend();
     }
 
     private void renderHealthChangeText(DrawContext context, LivingEntity entity, int x, int y) {

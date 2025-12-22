@@ -37,7 +37,7 @@ public class EntityUtil {
                 || entity.isGlowing()
                 || entity.isOnFire()
                 || entity instanceof CreeperEntity && ((CreeperEntity) entity).shouldRenderOverlay() // charged creeper
-                || StreamSupport.stream(entity.getItemsEquipped().spliterator(), false).anyMatch(is -> !is.isEmpty()))
+                || StreamSupport.stream(((LivingEntity) entity).getEquippedItems().spliterator(), false).anyMatch(is -> !is.isEmpty()))
             && entity != client.player
             && !entity.isSpectator();
     }

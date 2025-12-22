@@ -6,7 +6,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.Registries;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.client.MinecraftClient;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
@@ -21,7 +21,7 @@ import net.kairost.torohealth.client.util.HoldingWeaponUpdater;
 
 public class ToroHealth implements ClientModInitializer {
     public static final String MODID = "torohealth";
-    public static final DefaultParticleType HEALTH_CHANGE = FabricParticleTypes.simple();
+    public static final SimpleParticleType HEALTH_CHANGE = FabricParticleTypes.simple();
     private static ModConfig config;
     public static ToroHealthHud toroHealthHud = null;
     private static boolean holdingWeapon = false;

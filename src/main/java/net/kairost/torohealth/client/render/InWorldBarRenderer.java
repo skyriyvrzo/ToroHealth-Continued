@@ -75,10 +75,10 @@ public class InWorldBarRenderer {
         float b = (float)(color & 0xFF) / 255.0f;
 
         VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(TOROHEALTH_BARS_TEXTURE));
-        buffer.vertex(matrix, x1, y2, z).color(r, g, b, 1.0f).texture(u1, v2).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 0, 1);
-        buffer.vertex(matrix, x2, y2, z).color(r, g, b, 1.0f).texture(u2, v2).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 0, 1);
-        buffer.vertex(matrix, x2, y1, z).color(r, g, b, 1.0f).texture(u2, v1).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 0, 1);
-        buffer.vertex(matrix, x1, y1, z).color(r, g, b, 1.0f).texture(u1, v1).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 0, 1);
+        buffer.vertex(matrix, x1, y2, z).color(r, g, b, 1.0f).texture(u1, v2).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 1, 0);
+        buffer.vertex(matrix, x2, y2, z).color(r, g, b, 1.0f).texture(u2, v2).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 1, 0);
+        buffer.vertex(matrix, x2, y1, z).color(r, g, b, 1.0f).texture(u2, v1).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 1, 0);
+        buffer.vertex(matrix, x1, y1, z).color(r, g, b, 1.0f).texture(u1, v1).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 1, 0);
 
     }
 

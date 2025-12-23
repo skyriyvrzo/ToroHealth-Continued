@@ -18,7 +18,6 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.config.ModConfig.FrameStyle;
@@ -57,6 +56,9 @@ public class ToroHealthHud {
     }
 
     public void render(DrawContext context, float tickDelta) {
+        if (!ToroHealth.getConfig().enabled || !ToroHealth.getConfig().hudOptions.showHUD) {
+            return;
+        }
         if (entity == null) {
             return;
         }
@@ -207,8 +209,10 @@ public class ToroHealthHud {
 
     private void renderFrame(DrawContext context) {
         int w = 179, h = 42;
+        RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         context.drawTexture(TOROHEALTH_FRAME_TEXTURE, 0, 0, 0, (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.LIGHT) ? 42 : 0), w, h);
+        RenderSystem.disableBlend();
     }
 
 
@@ -258,6 +262,7 @@ public class ToroHealthHud {
     }
 
     private void renderArmorIcon(DrawContext context, int x, int y) {
+        RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         context.drawGuiTexture(ARMOR_FULL, x, y, 9, 9);
         RenderSystem.disableBlend();
@@ -309,10 +314,11 @@ public class ToroHealthHud {
         float r = (color >> 16 & 255) / 255.0F;
         float g = (color >> 8 & 255) / 255.0F;
         float b = (color & 255) / 255.0F;
+        RenderSystem.enableBlend();
         RenderSystem.setShaderColor(r, g, b, 1);
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderTexture(0, TOROHEALTH_BARS_TEXTURE);
         context.drawTexture(TOROHEALTH_BARS_TEXTURE, x, y, 0, 6 * 2 * 5 + 5, width, 5);
+        RenderSystem.disableBlend();
     }
 
     //modified from vanilla InventoryScreen.drawEntity

@@ -4,7 +4,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.particle.SimpleParticleType;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.client.particle.Particle;
@@ -58,7 +57,7 @@ public class HealthChangeParticle
 
     @Override
     public ParticleTextureSheet getType() {
-        return ParticleTextureSheet.CUSTOM;
+        return ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
     }
 
     @Environment(value=EnvType.CLIENT)
@@ -88,18 +87,14 @@ public class HealthChangeParticle
     }
 
     @Override
-    public void buildGeometry(VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
+    public void render(VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
         MinecraftClient client = MinecraftClient.getInstance();
+        ToroHealth.LOGGER.error("try render particle");
 
         Vec3d vec3d = camera.getPos();
         float x = (float)(MathHelper.lerp(tickDelta, this.prevPosX, this.x) - vec3d.getX());
         float y = (float)(MathHelper.lerp(tickDelta, this.prevPosY, this.y) - vec3d.getY());
         float z = (float)(MathHelper.lerp(tickDelta, this.prevPosZ, this.z) - vec3d.getZ());
-
-        MatrixStack matrices = new MatrixStack();
-        matrices.translate(x, y, z);
-        matrices.multiply(camera.getRotation());
-        matrices.scale(-0.025f, -0.025f, 0.025f);
 
         String text = Integer.toString(this.value);
         float h = -client.textRenderer.getWidth(text) / 2.0f;

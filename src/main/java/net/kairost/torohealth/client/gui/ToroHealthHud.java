@@ -317,6 +317,7 @@ public class ToroHealthHud {
     public static void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, float size, float mouseX, float mouseY, LivingEntity entity, float tickDelta) {
         float f = (float) Math.atan(mouseX / 40.0F);
         float g = (float) Math.atan(mouseY / 40.0F);
+        context.enableScissor(x1, y1, x2, y2);
         Quaternionf quaternionf = new Quaternionf().rotateZ((float) Math.PI);
         Quaternionf quaternionf2 = new Quaternionf().rotateX(g * 20.0F * (float) (Math.PI / 180.0));
         quaternionf.mul(quaternionf2);
@@ -334,6 +335,7 @@ public class ToroHealthHud {
         entity.lastBodyYaw = j;
         entity.headYaw = k;
         entity.lastHeadYaw = l;
+        context.disableScissor();
     }
 
     //copied from InventoryScreen.drawEntity

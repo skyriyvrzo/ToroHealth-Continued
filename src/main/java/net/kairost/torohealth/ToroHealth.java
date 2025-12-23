@@ -12,16 +12,18 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import net.kairost.torohealth.config.ModConfig;
 import net.kairost.torohealth.client.gui.ToroHealthHud;
-import net.kairost.torohealth.client.particle.HealthChangeParticle;
+import net.kairost.torohealth.client.particle.*;
 import net.kairost.torohealth.client.util.HoldingWeaponUpdater;
 
 public class ToroHealth implements ClientModInitializer {
     public static final String MODID = "torohealth";
     public static final SimpleParticleType HEALTH_CHANGE = FabricParticleTypes.simple();
+    private static TextParticleRenderer textParticleRenderer;
     private static ModConfig config;
     public static ToroHealthHud toroHealthHud = null;
     private static boolean holdingWeapon = false;
@@ -49,7 +51,7 @@ public class ToroHealth implements ClientModInitializer {
         //toroHealth Particle
         Registry.register(
             Registries.PARTICLE_TYPE,
-            new Identifier(MODID, "health_change"),
+            Identifier.of(MODID, "health_change"),
             HEALTH_CHANGE
         );
 
@@ -57,6 +59,15 @@ public class ToroHealth implements ClientModInitializer {
             ToroHealth.HEALTH_CHANGE,
             HealthChangeParticle.HealthChangeFactory::new
         );
+
+
+        // particleRenderer
+        textParticleRenderer = new TextParticleRenderer(MinecraftClient.getInstance());
+        WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
+            for (TextRenderEntry entry : TextRenderQueue.consume()) {
+                textParticleRenderer.render(entry.text(), context.camera(), entry.x(), entry.y(), entry.z(), entry.u(), entry.v(), entry.color(), context.consumers(), entry.light());
+            }
+        });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null || client.world == null) {
@@ -68,6 +79,7 @@ public class ToroHealth implements ClientModInitializer {
 
         // toroHealthHud
         toroHealthHud = new ToroHealthHud(MinecraftClient.getInstance());
+
     }
 
     public static ModConfig getConfig() {

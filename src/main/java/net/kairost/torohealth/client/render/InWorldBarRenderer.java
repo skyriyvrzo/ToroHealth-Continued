@@ -8,10 +8,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.config.ModConfig;
 import net.kairost.torohealth.data.BarState;
@@ -21,7 +21,7 @@ import net.kairost.torohealth.data.BarStateAccessor;
 
 public class InWorldBarRenderer {
     private static final int DARK_GRAY = 0x808080;
-    private static final Identifier TOROHEALTH_BARS_TEXTURES = new Identifier("torohealth:textures/gui/bars.png");
+    private static final Identifier TOROHEALTH_BARS_TEXTURE = Identifier.of(ToroHealth.MODID, "textures/gui/bars.png");
 
     // referencing vanilla entity draw name tag function
     public static void render(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,  EntityRenderDispatcher entityRenderDispatcher) {
@@ -37,12 +37,12 @@ public class InWorldBarRenderer {
         float f = entity.getHeight() + 0.7f;
         matrices.translate(0.0, f, 0.0);
         matrices.multiply(entityRenderDispatcher.getRotation());
-        matrices.scale(-0.025f, -0.025f, 0.025f);
-        VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayer.getText(TOROHEALTH_BARS_TEXTURES));
-        renderHealthBar(matrices, (LivingEntity)entity, -20.0F, 0.0F, light, buffer, tickDelta);
+        matrices.scale(0.025f, -0.025f, 0.025f);
+
+        renderHealthBar(matrices, (LivingEntity)entity, -20.0F, 0.0F, light, vertexConsumers, tickDelta);
         matrices.pop();
     }
-    private static void renderHealthBar(MatrixStack matrices, LivingEntity entity, float x, float y, int light, VertexConsumer buffer, float tickDelta) {
+    private static void renderHealthBar(MatrixStack matrices, LivingEntity entity, float x, float y, int light, VertexConsumerProvider vertexConsumers, float tickDelta) {
         BarState state = ((BarStateAccessor) entity).torohealth$getBarState();
         Matrix4f matrix = matrices.peek().getPositionMatrix();
         Relation relation = EntityUtil.getRelation(entity);
@@ -53,30 +53,32 @@ public class InWorldBarRenderer {
 
         int width = MathHelper.ceil(percent * 41.0f);
         int width2 = MathHelper.ceil(percent2 * 41.0f);
-        renderBar(matrix, x, y, 0.0f, DARK_GRAY, 40, light, buffer);
+        renderBar(matrix, x, y, 0.0f, DARK_GRAY, 40, light, vertexConsumers);
         if (width2 > 0) {
-            renderBar(matrix, x, y, -0.1f, color2, width2, light, buffer);
+            renderBar(matrix, x, y, 0.1f, color2, width2, light, vertexConsumers);
         }
         if (width > 0) {
-            renderBar(matrix, x, y, -0.2f, color, width, light, buffer);
+            renderBar(matrix, x, y, 0.2f, color, width, light, vertexConsumers);
         }
     }
 
 
-    private static void renderBar(Matrix4f matrix, float x0, float y0, float z, int color, int width, int light, VertexConsumer buffer) {
-        float x1 = x0 +(float)width;
-        float y1 = 5f + y0;
-        float u0 = 0f / 256f;
-        float u1 = 0f + width / 256f;
-        float v0 = 135f / 256f;
-        float v1 = 140f / 256f;
+    private static void renderBar(Matrix4f matrix, float x1, float y1, float z, int color, int width, int light, VertexConsumerProvider vertexConsumers) {
+        float x2 = x1 +(float)width;
+        float y2 = 5f + y1;
+        float u1 = 0f / 256f;
+        float u2 = 0f + width / 256f;
+        float v1 = 135f / 256f;
+        float v2 = 140f / 256f;
         float r = (float)(color >> 16 & 0xFF) / 255.0f;
         float g = (float)(color >> 8 & 0xFF) / 255.0f;
         float b = (float)(color & 0xFF) / 255.0f;
-        buffer.vertex(matrix, x0, y1, z).color(r, g, b, 1.0f).texture(u0, v1).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 1, 0).next();
-        buffer.vertex(matrix, x1, y1, z).color(r, g, b, 1.0f).texture(u1, v1).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 1, 0).next();
-        buffer.vertex(matrix, x1, y0, z).color(r, g, b, 1.0f).texture(u1, v0).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 1, 0).next();
-        buffer.vertex(matrix, x0, y0, z).color(r, g, b, 1.0f).texture(u0, v0).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 1, 0).next();
+
+        VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(TOROHEALTH_BARS_TEXTURE));
+        buffer.vertex(matrix, x1, y2, z).color(r, g, b, 1.0f).texture(u1, v2).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 0, 1);
+        buffer.vertex(matrix, x2, y2, z).color(r, g, b, 1.0f).texture(u2, v2).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 0, 1);
+        buffer.vertex(matrix, x2, y1, z).color(r, g, b, 1.0f).texture(u2, v1).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 0, 1);
+        buffer.vertex(matrix, x1, y1, z).color(r, g, b, 1.0f).texture(u1, v1).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 0, 1);
 
     }
 

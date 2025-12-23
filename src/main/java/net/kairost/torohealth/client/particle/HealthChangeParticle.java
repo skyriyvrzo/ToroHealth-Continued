@@ -13,10 +13,7 @@ import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.particle.BillboardParticle;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.font.TextRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kairost.torohealth.ToroHealth;
@@ -115,10 +112,9 @@ public class HealthChangeParticle
 
         int light = this.getBrightness(tickDelta);
 
-        BufferBuilder bufferBuilder = new BufferBuilder(256);
-        VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(bufferBuilder);
-        client.textRenderer.draw(text, h, -3.0f, color, false, matrices.peek().getPositionMatrix(), immediate, TextRenderer.TextLayerType.NORMAL, 0, light);
-        immediate.draw();
+        TextRenderQueue.submit(
+            new TextRenderEntry(text, x, y, z, h, -3.0f, color, light)
+        );
     }
 
     @Override

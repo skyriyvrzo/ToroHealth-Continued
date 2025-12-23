@@ -27,6 +27,8 @@ public class HoldingWeaponUpdater {
             || item instanceof SwordItem
             || item instanceof ThrowablePotionItem
             || item instanceof TridentItem
-            || item instanceof EndCrystalItem;
+            || item instanceof EndCrystalItem
+            || item instanceof MaceItem
+            || item instanceof WindChargeItem;
     }
 }

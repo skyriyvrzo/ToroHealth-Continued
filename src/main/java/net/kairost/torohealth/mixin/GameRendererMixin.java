@@ -16,7 +16,7 @@ public class GameRendererMixin {
     @Inject(method = "renderWorld", at = @At("HEAD"))
     private void torohealth$preRenderWorld(RenderTickCounter tickCounter, CallbackInfo info) {
         if (ToroHealth.getConfig().enabled) {
-            float tickDelta = tickCounter.getTickDelta(true);
+            float tickDelta = tickCounter.getTickProgress(true);
             LivingEntity entity = RayTrace.getEntityInCrosshair(tickDelta, Math.max(ToroHealth.getConfig().hudOptions.hudDistance, ToroHealth.getConfig().inWorldBarOptions.inWorldBarDistance));
             ToroHealth.setTargetedEntity(entity);
             ToroHealth.toroHealthHud.setEntity(entity);

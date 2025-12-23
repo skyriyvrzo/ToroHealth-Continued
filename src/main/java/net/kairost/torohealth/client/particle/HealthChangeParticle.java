@@ -39,9 +39,9 @@ public class HealthChangeParticle
 
     @Override
     public void tick() {
-        this.prevPosX = this.x;
-        this.prevPosY = this.y;
-        this.prevPosZ = this.z;
+        this.lastX = this.x;
+        this.lastY = this.y;
+        this.lastZ = this.z;
         if (this.age++ >= this.maxAge || this.alpha <= 0.0f) {
             this.markDead();
             return;
@@ -92,9 +92,9 @@ public class HealthChangeParticle
         ToroHealth.LOGGER.error("try render particle");
 
         Vec3d vec3d = camera.getPos();
-        float x = (float)(MathHelper.lerp(tickDelta, this.prevPosX, this.x) - vec3d.getX());
-        float y = (float)(MathHelper.lerp(tickDelta, this.prevPosY, this.y) - vec3d.getY());
-        float z = (float)(MathHelper.lerp(tickDelta, this.prevPosZ, this.z) - vec3d.getZ());
+        float x = (float)(MathHelper.lerp(tickDelta, this.lastX, this.x) - vec3d.getX());
+        float y = (float)(MathHelper.lerp(tickDelta, this.lastY, this.y) - vec3d.getY());
+        float z = (float)(MathHelper.lerp(tickDelta, this.lastZ, this.z) - vec3d.getZ());
 
         String text = Integer.toString(this.value);
         float h = -client.textRenderer.getWidth(text) / 2.0f;

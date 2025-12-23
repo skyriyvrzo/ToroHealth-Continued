@@ -79,7 +79,7 @@ public class ToroHealthHud {
         context.getMatrices().scale(scale, scale, scale);
         if (ToroHealth.getConfig().hudOptions.showEntity) {
             this.renderFrame(context);
-            drawEntity(context,  this.entityX,  this.entityY, this.entityScale, -80, -20, entity, tickCounter.getTickDelta(true));
+            drawEntity(context,  this.entityX,  this.entityY, this.entityScale, -80, -20, entity, tickCounter.getTickProgress(true));
             context.getMatrices().translate(FRAME_SIZE + 2, INFO_Y_BASE + (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.HEAVY) ? 2 : 0), 0);
         }
 
@@ -211,10 +211,8 @@ public class ToroHealthHud {
 
     private void renderFrame(DrawContext context) {
         int w = 179, h = 42;
-        RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         context.drawTexture(RenderLayer::getGuiTextured, TOROHEALTH_FRAME_TEXTURE, 0, 0, 0, (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.LIGHT) ? 42 : 0), w, h, 256, 256);
-        RenderSystem.disableBlend();
     }
 
 
@@ -257,17 +255,13 @@ public class ToroHealthHud {
 
     private void renderHeartIcon(DrawContext context, int x, int y) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.enableBlend();
         context.drawGuiTexture(RenderLayer::getGuiTextured, CONTAINER, x, y, 9, 9);
         context.drawGuiTexture(RenderLayer::getGuiTextured, FULL, x, y, 9, 9);
-        RenderSystem.disableBlend();
     }
 
     private void renderArmorIcon(DrawContext context, int x, int y) {
-        RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         context.drawGuiTexture(RenderLayer::getGuiTextured, ARMOR_FULL, x, y, 9, 9);
-        RenderSystem.disableBlend();
     }
 
     private void renderHealthChangeText(DrawContext context, LivingEntity entity, int x, int y) {
@@ -299,7 +293,7 @@ public class ToroHealthHud {
         int color = relation.equals(Relation.FOE) ? ToroHealth.getConfig().barColor.foeColor : ToroHealth.getConfig().barColor.friendColor;
         int color2 = relation.equals(Relation.FOE) ? ToroHealth.getConfig().barColor.foeColorSecondary : ToroHealth.getConfig().barColor.friendColorSecondary;
         float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
-        float percent2 = Math.min(MathHelper.lerp(tickCounter.getTickDelta(true), state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
+        float percent2 = Math.min(MathHelper.lerp(tickCounter.getTickProgress(true), state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
         int width = MathHelper.ceil(percent * 131.0f);
         int width2 = MathHelper.ceil(percent2 * 131.0f);
         this.renderBar(context, x, y, 130, DARK_GRAY);
@@ -314,10 +308,7 @@ public class ToroHealthHud {
     // this method draws a single bar in InGameHud
     private void renderBar(DrawContext context, int x, int y, int width, int color) {
         int color_argb = color | 0xFF000000;
-        RenderSystem.enableBlend();
-        RenderSystem.setShaderTexture(0, TOROHEALTH_BARS_TEXTURE);
         context.drawTexture(RenderLayer::getGuiTextured, TOROHEALTH_BARS_TEXTURE, x, y, 0, 6 * 2 * 5 + 5, width, 5, 256, 256, color_argb);
-        RenderSystem.disableBlend();
     }
 
     //modified from vanilla InventoryScreen.drawEntity
@@ -328,19 +319,19 @@ public class ToroHealthHud {
         Quaternionf quaternionf2 = new Quaternionf().rotateX(g * 20.0F * (float) (Math.PI / 180.0));
         quaternionf.mul(quaternionf2);
         float i = entity.bodyYaw;
-        float j = entity.prevBodyYaw;
+        float j = entity.lastBodyYaw;
         float k = entity.headYaw;
-        float l = entity.prevHeadYaw;
+        float l = entity.lastHeadYaw;
         entity.bodyYaw = 180.0f + f * 20.0f;
-        entity.prevBodyYaw = 180.0f + f * 20.0f;
+        entity.lastBodyYaw = 180.0f + f * 20.0f;
         entity.headYaw = 180.0f + f * 20.0f + k - i;
-        entity.prevHeadYaw = 180.0f + f * 20.0f + l - j;
+        entity.lastHeadYaw = 180.0f + f * 20.0f + l - j;
         Vector3f vector3f = new Vector3f(0.0F, 0.0F, 0.0F);
         drawEntity(context, x, y, size, vector3f, quaternionf, quaternionf2, entity, tickDelta);
         entity.bodyYaw = i;
-        entity.prevBodyYaw = j;
+        entity.lastBodyYaw = j;
         entity.headYaw = k;
-        entity.prevHeadYaw = l;
+        entity.lastHeadYaw = l;
     }
 
     //copied from InventoryScreen.drawEntity
@@ -351,7 +342,7 @@ public class ToroHealthHud {
         context.getMatrices().translate(vector3f.x, vector3f.y, vector3f.z);
         context.getMatrices().multiply(quaternionf);
         context.draw();
-        DiffuseLighting.method_34742();
+        DiffuseLighting.enableGuiShaderLighting();
         EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
         if (quaternionf2 != null) {
             entityRenderDispatcher.setRotation(quaternionf2.conjugate(new Quaternionf()).rotateY((float) Math.PI));

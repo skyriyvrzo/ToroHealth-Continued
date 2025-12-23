@@ -13,6 +13,8 @@ import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import net.kairost.torohealth.config.ModConfig;
@@ -36,6 +38,8 @@ public class ToroHealth implements ClientModInitializer {
     public void onInitializeClient() {
         // set config
         ModConfig.init();
+        // toroHealthHud
+        toroHealthHud = new ToroHealthHud(MinecraftClient.getInstance());
 
         ConfigHolder<ModConfig> holder =
             AutoConfig.getConfigHolder(ModConfig.class);
@@ -80,9 +84,13 @@ public class ToroHealth implements ClientModInitializer {
             ToroHealth.toroHealthHud.tick();
         });
 
-        // toroHealthHud
-        toroHealthHud = new ToroHealthHud(MinecraftClient.getInstance());
-
+        //hud
+        HudLayerRegistrationCallback.EVENT.register(layeredDrawer -> layeredDrawer.attachLayerAfter(IdentifiedLayer.MISC_OVERLAYS, Identifier.of("kairost", "torohealth_hud_overlay"), (context, tickCounter) -> {
+            if (config.enabled && config.hudOptions.showHUD) {
+                toroHealthHud.render(context, tickCounter);
+            }
+            }
+        ));
     }
 
     public static ModConfig getConfig() {

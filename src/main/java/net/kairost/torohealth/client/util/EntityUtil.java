@@ -1,6 +1,5 @@
 package net.kairost.torohealth.client.util;
 
-import java.util.stream.StreamSupport;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -37,7 +36,7 @@ public class EntityUtil {
                 || entity.isGlowing()
                 || entity.isOnFire()
                 || entity instanceof CreeperEntity && ((CreeperEntity) entity).isCharged() // charged creeper
-                || StreamSupport.stream(((LivingEntity) entity).getEquippedItems().spliterator(), false).anyMatch(is -> !is.isEmpty()))
+                || (((LivingEntity) entity).getArmorVisibility() > 0))
             && entity != client.player
             && !entity.isSpectator();
     }

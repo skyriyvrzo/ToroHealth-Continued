@@ -52,7 +52,7 @@ public class EntityUtil {
         if (entity instanceof BatEntity bat && bat.isRoosting())
             return true;
 
-        if (entity instanceof PhantomEntity || entity instanceof BeeEntity || entity instanceof VexEntity || entity instanceof AllayEntity || entity instanceof GhastEntity || entity instanceof EnderDragonEntity || entity instanceof WitherEntity)
+        if (entity instanceof PhantomEntity || entity instanceof BeeEntity || entity instanceof VexEntity || entity instanceof AllayEntity || entity instanceof GhastEntity || entity instanceof EnderDragonEntity || entity instanceof WitherEntity || entity instanceof HappyGhastEntity)
             return true;
 
         return false;

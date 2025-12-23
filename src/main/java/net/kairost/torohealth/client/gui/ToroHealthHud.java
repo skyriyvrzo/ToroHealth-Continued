@@ -3,7 +3,6 @@ package net.kairost.torohealth.client.gui;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import org.joml.Quaternionf;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.entity.LivingEntity;
@@ -16,11 +15,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.config.ModConfig.FrameStyle;
 import net.kairost.torohealth.data.BarStateAccessor;
@@ -71,21 +71,24 @@ public class ToroHealthHud {
             return;
         }
 
-        context.getMatrices().push();
+        context.getMatrices().pushMatrix();
         float x = determineX();
         float y = determineY();
-        context.getMatrices().translate(x, y, 0);
         int scale = ToroHealth.getConfig().hudOptions.hudScale;
-        context.getMatrices().scale(scale, scale, scale);
+        context.getMatrices().translate(x, y);
+        context.getMatrices().scale(scale, scale);
         if (ToroHealth.getConfig().hudOptions.showEntity) {
             this.renderFrame(context);
-            drawEntity(context,  this.entityX,  this.entityY, this.entityScale, -80, -20, entity, tickCounter.getTickProgress(true));
-            context.getMatrices().translate(FRAME_SIZE + 2, INFO_Y_BASE + (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.HEAVY) ? 2 : 0), 0);
+            context.getMatrices().translate(FRAME_SIZE + 2, INFO_Y_BASE + (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.HEAVY) ? 2 : 0));
         }
 
         // draw entity info
         this.renderInfo(context, tickCounter);
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
+
+        if (ToroHealth.getConfig().hudOptions.showEntity) {
+            drawEntity(context, (int) (x + scale * (this.entityX - 2 * FRAME_SIZE)), (int) (y + scale * (this.entityY - 2 * FRAME_SIZE)), (int) (x + scale * (this.entityX + 2 * FRAME_SIZE)), (int) (y + scale * (this.entityY + 2 * FRAME_SIZE)), this.entityScale * scale, -80, -20, entity, tickCounter.getTickProgress(true));
+        }
     }
 
     private float determineX() {
@@ -178,6 +181,9 @@ public class ToroHealthHud {
         if (this.entity instanceof GhastEntity) {
             this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * entityScale / 4 ;
         }
+        if (this.entity instanceof GhastEntity) {
+            this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * entityScale * 3 / 8 ;
+        }
         else if (this.entity instanceof EnderDragonEntity) {
             this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * this.entityScale / 4;
         }
@@ -211,8 +217,7 @@ public class ToroHealthHud {
 
     private void renderFrame(DrawContext context) {
         int w = 179, h = 42;
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        context.drawTexture(RenderLayer::getGuiTextured, TOROHEALTH_FRAME_TEXTURE, 0, 0, 0, (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.LIGHT) ? 42 : 0), w, h, 256, 256);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, TOROHEALTH_FRAME_TEXTURE, 0, 0, 0, (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.LIGHT) ? 42 : 0), w, h, 256, 256);
     }
 
 
@@ -222,9 +227,8 @@ public class ToroHealthHud {
 
         int xOffset = INFO_X_BASE;
         // name
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1);
         String name = this.entity.getDisplayName().getString();
-        context.drawTextWithShadow(this.client.textRenderer, name, xOffset, 1, 0xFFFFFF);
+        context.drawTextWithShadow(this.client.textRenderer, name, xOffset, 1, 0xFFFFFFFF);
         xOffset += this.client.textRenderer.getWidth(name) + INFO_SPACING;
 
         renderHeartIcon(context, xOffset,0);
@@ -238,7 +242,7 @@ public class ToroHealthHud {
             healthMax
         );
         String healthText = healthCurrent + "/" + healthMax;
-        context.drawTextWithShadow(this.client.textRenderer, healthText, xOffset, 1, 0xffffff);
+        context.drawTextWithShadow(this.client.textRenderer, healthText, xOffset, 1, 0xFFFFFFFF);
         xOffset += this.client.textRenderer.getWidth(healthText) + INFO_SPACING;
 
         // armor
@@ -246,7 +250,7 @@ public class ToroHealthHud {
         if (armor > 0) {
             renderArmorIcon(context, xOffset, 0);
             xOffset += 10;
-            context.drawTextWithShadow(this.client.textRenderer, Integer.toString(this.entity.getArmor()), xOffset, 1, 0xffffff);
+            context.drawTextWithShadow(this.client.textRenderer, Integer.toString(this.entity.getArmor()), xOffset, 1, 0xFFFFFFFF);
         }
 
         // render health change
@@ -254,14 +258,12 @@ public class ToroHealthHud {
     }
 
     private void renderHeartIcon(DrawContext context, int x, int y) {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        context.drawGuiTexture(RenderLayer::getGuiTextured, CONTAINER, x, y, 9, 9);
-        context.drawGuiTexture(RenderLayer::getGuiTextured, FULL, x, y, 9, 9);
+        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, CONTAINER, x, y, 9, 9);
+        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, FULL, x, y, 9, 9);
     }
 
     private void renderArmorIcon(DrawContext context, int x, int y) {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        context.drawGuiTexture(RenderLayer::getGuiTextured, ARMOR_FULL, x, y, 9, 9);
+        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, ARMOR_FULL, x, y, 9, 9);
     }
 
     private void renderHealthChangeText(DrawContext context, LivingEntity entity, int x, int y) {
@@ -275,7 +277,7 @@ public class ToroHealthHud {
             case CUMULATIVE -> state.healthChangeCumulate;
             default -> 0;
         };
-        int color = healthChange > 0 ? ToroHealth.getConfig().particleOptions.healColor : ToroHealth.getConfig().particleOptions.damageColor;
+        int color = (healthChange > 0 ? ToroHealth.getConfig().particleOptions.healColor : ToroHealth.getConfig().particleOptions.damageColor) | 0xFF000000;
         if (healthChange != 0) {
             String text = Integer.toString(Math.abs(healthChange));
             context.drawTextWithShadow(this.client.textRenderer, text, x - this.client.textRenderer.getWidth(text), y, color);
@@ -308,11 +310,11 @@ public class ToroHealthHud {
     // this method draws a single bar in InGameHud
     private void renderBar(DrawContext context, int x, int y, int width, int color) {
         int color_argb = color | 0xFF000000;
-        context.drawTexture(RenderLayer::getGuiTextured, TOROHEALTH_BARS_TEXTURE, x, y, 0, 6 * 2 * 5 + 5, width, 5, 256, 256, color_argb);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, TOROHEALTH_BARS_TEXTURE, x, y, 0, 6 * 2 * 5 + 5, width, 5, 256, 256, color_argb);
     }
 
     //modified from vanilla InventoryScreen.drawEntity
-    public static void drawEntity(DrawContext context, float x, float y, float size, float mouseX, float mouseY, LivingEntity entity, float tickDelta) {
+    public static void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, float size, float mouseX, float mouseY, LivingEntity entity, float tickDelta) {
         float f = (float) Math.atan(mouseX / 40.0F);
         float g = (float) Math.atan(mouseY / 40.0F);
         Quaternionf quaternionf = new Quaternionf().rotateZ((float) Math.PI);
@@ -327,7 +329,7 @@ public class ToroHealthHud {
         entity.headYaw = 180.0f + f * 20.0f + k - i;
         entity.lastHeadYaw = 180.0f + f * 20.0f + l - j;
         Vector3f vector3f = new Vector3f(0.0F, 0.0F, 0.0F);
-        drawEntity(context, x, y, size, vector3f, quaternionf, quaternionf2, entity, tickDelta);
+        drawEntity(context, x1, y1, x2, y2, size, vector3f, quaternionf, quaternionf2, entity, tickDelta);
         entity.bodyYaw = i;
         entity.lastBodyYaw = j;
         entity.headYaw = k;
@@ -335,24 +337,11 @@ public class ToroHealthHud {
     }
 
     //copied from InventoryScreen.drawEntity
-    public static void drawEntity(DrawContext context, float x, float y, float size, Vector3f vector3f, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, float tickDelta) {
-        context.getMatrices().push();
-        context.getMatrices().translate((double)x, (double)y, 50.0);
-        context.getMatrices().scale(size, size, -size);
-        context.getMatrices().translate(vector3f.x, vector3f.y, vector3f.z);
-        context.getMatrices().multiply(quaternionf);
-        context.draw();
-        DiffuseLighting.enableGuiShaderLighting();
+    public static void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, float size, Vector3f vector3f, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, float tickDelta) {
         EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
-        if (quaternionf2 != null) {
-            entityRenderDispatcher.setRotation(quaternionf2.conjugate(new Quaternionf()).rotateY((float) Math.PI));
-        }
-
-        entityRenderDispatcher.setRenderShadows(false);
-        context.draw(vertexConsumers -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, tickDelta, context.getMatrices(), vertexConsumers, 0xF000F0));
-        context.draw();
-        entityRenderDispatcher.setRenderShadows(true);
-        context.getMatrices().pop();
-        DiffuseLighting.enableGuiDepthLighting();
+        EntityRenderer<? super LivingEntity, ?> entityRenderer = entityRenderDispatcher.getRenderer(entity);
+        EntityRenderState entityRenderState = entityRenderer.getAndUpdateRenderState(entity, tickDelta);
+        entityRenderState.hitbox = null;
+        context.addEntity(entityRenderState, size, vector3f, quaternionf, quaternionf2, x1, y1, x2, y2);
     }
 }

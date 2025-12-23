@@ -13,8 +13,8 @@ import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import net.kairost.torohealth.config.ModConfig;
@@ -85,12 +85,12 @@ public class ToroHealth implements ClientModInitializer {
         });
 
         //hud
-        HudLayerRegistrationCallback.EVENT.register(layeredDrawer -> layeredDrawer.attachLayerAfter(IdentifiedLayer.MISC_OVERLAYS, Identifier.of("kairost", "torohealth_hud_overlay"), (context, tickCounter) -> {
+        HudElementRegistry.attachElementAfter(VanillaHudElements.MISC_OVERLAYS, Identifier.of("kairost", "torohealth_hud_overlay"), (context, tickCounter) -> {
             if (config.enabled && config.hudOptions.showHUD) {
                 toroHealthHud.render(context, tickCounter);
             }
             }
-        ));
+        );
     }
 
     public static ModConfig getConfig() {

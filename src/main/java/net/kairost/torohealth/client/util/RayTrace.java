@@ -20,7 +20,7 @@ import net.minecraft.client.MinecraftClient;
 
 
 public class RayTrace {
-    // modified from minecraft.client.render.GameRender.updateTargetedEntity
+    // modified from minecraft.client.render.GameRender.updateCrosshairTarget
     public static LivingEntity getEntityInCrosshair(float tickDelta, float reachDistance) {
         MinecraftClient client = MinecraftClient.getInstance();
 

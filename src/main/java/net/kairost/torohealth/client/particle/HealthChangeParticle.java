@@ -89,7 +89,6 @@ public class HealthChangeParticle
     @Override
     public void render(VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
         MinecraftClient client = MinecraftClient.getInstance();
-        ToroHealth.LOGGER.error("try render particle");
 
         Vec3d vec3d = camera.getPos();
         float x = (float)(MathHelper.lerp(tickDelta, this.lastX, this.x) - vec3d.getX());

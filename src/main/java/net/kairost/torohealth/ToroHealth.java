@@ -19,12 +19,9 @@ import net.kairost.torohealth.config.ModConfig;
 import net.kairost.torohealth.client.gui.ToroHealthHud;
 import net.kairost.torohealth.client.particle.*;
 import net.kairost.torohealth.client.util.HoldingWeaponUpdater;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 
 public class ToroHealth implements ClientModInitializer {
     public static final String MODID = "torohealth";
-    public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
     public static final SimpleParticleType HEALTH_CHANGE = FabricParticleTypes.simple();
     private static TextParticleRenderer textParticleRenderer;
     private static ModConfig config;

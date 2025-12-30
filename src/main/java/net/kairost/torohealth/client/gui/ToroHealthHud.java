@@ -14,6 +14,7 @@ import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -330,7 +331,14 @@ public class ToroHealthHud {
         entity.prevBodyYaw = 180.0f + f * 20.0f;
         entity.headYaw = 180.0f + f * 20.0f + k - i;
         entity.prevHeadYaw = 180.0f + f * 20.0f + l - j;
-        drawEntity(context, x, y, size, quaternionf, quaternionf2, entity, tickDelta);
+        if (entity instanceof EnderDragonEntity dragon) {
+            EndCrystalEntity endCrystal = dragon.connectedCrystal;
+            dragon.connectedCrystal = null;
+            drawEntity(context, x, y, size, quaternionf, quaternionf2, entity, tickDelta);
+            dragon.connectedCrystal = endCrystal;
+        } else {
+            drawEntity(context, x, y, size, quaternionf, quaternionf2, entity, tickDelta);
+        }
         entity.bodyYaw = i;
         entity.prevBodyYaw = j;
         entity.headYaw = k;

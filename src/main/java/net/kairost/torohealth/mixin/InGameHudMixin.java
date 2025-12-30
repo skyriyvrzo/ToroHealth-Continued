@@ -17,7 +17,7 @@ public class InGameHudMixin {
     @Shadow
     private LayeredDrawer layeredDrawer;
 
-    @Inject(method = "<init>(Lnet/minecraft/client/MinecraftClient;)V", at = @At("TAIL"))
+    @Inject(method = "<init>(Lnet/minecraft/client/MinecraftClient;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/LayeredDrawer;addLayer(Lnet/minecraft/client/gui/LayeredDrawer$Layer;)Lnet/minecraft/client/gui/LayeredDrawer;", ordinal = 1))
     private void torohealth$initInstance(MinecraftClient client, CallbackInfo info) {
         this.layeredDrawer.addLayer((context, tickCounter) -> ToroHealth.toroHealthHud.render(context, tickCounter));
     }

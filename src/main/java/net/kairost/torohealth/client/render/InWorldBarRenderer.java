@@ -55,8 +55,10 @@ public class InWorldBarRenderer {
 
         int width = Math.min(MathHelper.ceil(percent * 41.0f), BAR_WIDTH);
         int width2 = Math.min(MathHelper.ceil(percent2 * 41.0f), BAR_WIDTH);
-        renderBar(x, y, z, DARK_GRAY, BAR_WIDTH, light, quaternionf);
-        if (width2 > 0) {
+        if (40 > width && 40 > width2) {
+            renderBar(x, y, z, DARK_GRAY, BAR_WIDTH, light, quaternionf);
+        }
+        if (width2 > width) {
             renderBar(x, y, z, color2, width2, light, quaternionf);
         }
         if (width > 0) {

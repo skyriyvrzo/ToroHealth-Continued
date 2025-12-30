@@ -10,6 +10,7 @@ import net.minecraft.entity.mob.GhastEntity;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.entity.passive.BatEntity;
+import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
@@ -357,7 +358,14 @@ public class ToroHealthHud extends DrawableHelper {
         entityRenderDispatcher.setRenderShadows(false);
         VertexConsumerProvider.Immediate immediate =
             MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, tickDelta, matrixStack2, immediate, 0xF000F0));
+        if (entity instanceof EnderDragonEntity dragon) {
+            EndCrystalEntity endCrystal = dragon.connectedCrystal;
+            dragon.connectedCrystal = null;
+            RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, tickDelta, matrixStack2, immediate, 0xF000F0));
+            dragon.connectedCrystal = endCrystal;
+        } else {
+            RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, tickDelta, matrixStack2, immediate, 0xF000F0));
+        }
         immediate.draw();
         entityRenderDispatcher.setRenderShadows(true);
         entity.bodyYaw = i;

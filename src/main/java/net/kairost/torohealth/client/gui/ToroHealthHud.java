@@ -67,8 +67,8 @@ public class ToroHealthHud {
         context.getMatrices().push();
         float x = determineX();
         float y = determineY();
-        context.getMatrices().translate(x, y, 0);
         int scale = ToroHealth.getConfig().hudOptions.hudScale;
+        context.getMatrices().translate(x, y, -100 * scale);
         context.getMatrices().scale(scale, scale, scale);
         if (ToroHealth.getConfig().hudOptions.showEntity) {
             this.renderFrame(context);

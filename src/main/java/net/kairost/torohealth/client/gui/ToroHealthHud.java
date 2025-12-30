@@ -19,7 +19,7 @@ import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRenderManager;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.config.ModConfig.FrameStyle;
@@ -179,9 +179,6 @@ public class ToroHealthHud {
             this.entityY = (float) FRAME_SIZE / 2 + ENTITY_RENDER_HEIGHT / 2;
         }
         if (this.entity instanceof GhastEntity) {
-            this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * entityScale / 4 ;
-        }
-        if (this.entity instanceof GhastEntity) {
             this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * entityScale * 3 / 8 ;
         }
         else if (this.entity instanceof EnderDragonEntity) {
@@ -339,11 +336,14 @@ public class ToroHealthHud {
     }
 
     //copied from InventoryScreen.drawEntity
-    public static void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, float size, Vector3f vector3f, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, float tickDelta) {
-        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
-        EntityRenderer<? super LivingEntity, ?> entityRenderer = entityRenderDispatcher.getRenderer(entity);
+    public static void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, float scale, Vector3f translation, Quaternionf rotation, @Nullable Quaternionf overrideCameraAngle, LivingEntity entity, float tickDelta) {
+        EntityRenderManager entityRenderManager = MinecraftClient.getInstance().getEntityRenderDispatcher();
+        EntityRenderer<? super LivingEntity, ?> entityRenderer = entityRenderManager.getRenderer(entity);
         EntityRenderState entityRenderState = entityRenderer.getAndUpdateRenderState(entity, tickDelta);
+        entityRenderState.light = 0xF000F0;
         entityRenderState.hitbox = null;
-        context.addEntity(entityRenderState, size, vector3f, quaternionf, quaternionf2, x1, y1, x2, y2);
+        entityRenderState.shadowPieces.clear();
+        entityRenderState.outlineColor = 0;
+        context.addEntity(entityRenderState, scale, translation, rotation, overrideCameraAngle, x1, y1, x2, y2);
     }
 }

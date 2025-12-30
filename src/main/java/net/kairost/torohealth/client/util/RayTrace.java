@@ -66,7 +66,7 @@ public class RayTrace {
         Vec3d vec3d = entity.getCameraPosVec(tickDelta);
         Vec3d vec3d2 = entity.getRotationVec(tickDelta);
         Vec3d vec3d3 = vec3d.add(vec3d2.x * maxDistance, vec3d2.y * maxDistance, vec3d2.z * maxDistance);
-        return raycastBlockView(entity.getWorld(), new RaycastContext(vec3d, vec3d3, RaycastContext.ShapeType.OUTLINE, includeFluids ? RaycastContext.FluidHandling.ANY : RaycastContext.FluidHandling.NONE, entity));
+        return raycastBlockView(entity.getEntityWorld(), new RaycastContext(vec3d, vec3d3, RaycastContext.ShapeType.OUTLINE, includeFluids ? RaycastContext.FluidHandling.ANY : RaycastContext.FluidHandling.NONE, entity));
     }
 
 

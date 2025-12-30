@@ -1,5 +1,7 @@
 package net.kairost.torohealth.client.particle;
 
+
+
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
@@ -7,12 +9,11 @@ import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.particle.BillboardParticle;
+import net.minecraft.client.particle.BillboardParticleSubmittable;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kairost.torohealth.ToroHealth;
@@ -21,19 +22,20 @@ import net.kairost.torohealth.ToroHealth;
 public class HealthChangeParticle
     extends BillboardParticle{
     private final int value;
+
     HealthChangeParticle(ClientWorld world, int color, int value, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-        super(world, x, y, z);
+        super(world, x, y, z, null);
         this.collidesWithWorld = false;
         this.scale(1.0f);
         this.setBoundingBoxSpacing(0.25f, 0.25f);
         this.maxAge = 50;
-        this.gravityStrength = 1.0E-2f;
+        this.gravityStrength = -1.0E-2f;
         this.velocityX = velocityX;
-        this.velocityY = velocityY + (double)(this.random.nextFloat() / 500.0f);
+        this.velocityY = velocityY + (double) (this.random.nextFloat() / 500.0f);
         this.velocityZ = velocityZ;
-        this.red = (float)(color >> 16 & 0xFF) / 255.0f;
-        this.green = (float)(color >> 8 & 0xFF) / 255.0f;
-        this.blue = (float)(color & 0xFF) / 255.0f;
+        this.red = (float) (color >> 16 & 0xFF) / 255.0f;
+        this.green = (float) (color >> 8 & 0xFF) / 255.0f;
+        this.blue = (float) (color & 0xFF) / 255.0f;
         this.value = value;
     }
 
@@ -42,25 +44,25 @@ public class HealthChangeParticle
         this.lastX = this.x;
         this.lastY = this.y;
         this.lastZ = this.z;
-        if (this.age++ >= this.maxAge || this.alpha <= 0.0f) {
+        if (this.age++ <= this.maxAge && !(this.alpha <= 0.0f)) {
+            this.velocityX = this.velocityX + this.random.nextFloat() / 5000.0f * (float) (this.random.nextBoolean() ? 1 : -1);
+            this.velocityZ = this.velocityZ + this.random.nextFloat() / 5000.0f * (float) (this.random.nextBoolean() ? 1 : -1);
+            this.velocityY = this.velocityY + this.gravityStrength;
+            this.move(this.velocityX, this.velocityY, this.velocityZ);
+            if (this.age >= this.maxAge - 20 && this.alpha > 0.01f) {
+                this.alpha -= 0.05f;
+            }
+        } else {
             this.markDead();
-            return;
-        }
-        this.velocityX += (double)(this.random.nextFloat() / 5000.0f * (float)(this.random.nextBoolean() ? 1 : -1));
-        this.velocityZ += (double)(this.random.nextFloat() / 5000.0f * (float)(this.random.nextBoolean() ? 1 : -1));
-        this.velocityY -= (double)this.gravityStrength;
-        this.move(this.velocityX, this.velocityY, this.velocityZ);
-        if (this.age >= this.maxAge - 20 && this.alpha > 0.01f) {
-            this.alpha -= 0.05f;
         }
     }
 
     @Override
-    public ParticleTextureSheet getType() {
-        return ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
+    public BillboardParticle.RenderType getRenderType() {
+        return RenderType.PARTICLE_ATLAS_TRANSLUCENT;
     }
 
-    @Environment(value=EnvType.CLIENT)
+    @Environment(value = EnvType.CLIENT)
     public static class HealthChangeFactory
         implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
@@ -70,11 +72,9 @@ public class HealthChangeParticle
         }
 
         //@Override
-        @Override
-        public Particle createParticle(SimpleParticleType simpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
-            Random random = clientWorld.getRandom();
+        public Particle createParticle(SimpleParticleType simpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i, Random random) {
             // use g to encode health change
-            int healthChange = (int)Double.doubleToLongBits(g);
+            int healthChange = (int) Double.doubleToLongBits(g);
             int color = (healthChange > 0) ? ToroHealth.getConfig().particleOptions.healColor : ToroHealth.getConfig().particleOptions.damageColor;
             int value = Math.abs(healthChange);
             double vx = random.nextGaussian() * 0.035;
@@ -87,7 +87,7 @@ public class HealthChangeParticle
     }
 
     @Override
-    public void render(VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
+    public void render(BillboardParticleSubmittable submittable, Camera camera, float tickDelta) {
         MinecraftClient client = MinecraftClient.getInstance();
 
         Vec3d vec3d = camera.getPos();

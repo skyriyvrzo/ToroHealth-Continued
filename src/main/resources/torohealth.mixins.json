@@ -9,7 +9,8 @@
     "GameRendererMixin",
     "LivingEntityMixin",
     "EntityMixin",
-    "accessor.LivingEntityAccessor"
+    "accessor.LivingEntityAccessor",
+    "accessor.WorldRendererInvoker"
   ],
   "injectors": {
     "defaultRequire": 1

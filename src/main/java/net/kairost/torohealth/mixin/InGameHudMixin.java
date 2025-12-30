@@ -10,10 +10,10 @@ import net.kairost.torohealth.ToroHealth;
 
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
-  @Inject(method = "render", at = @At("RETURN"))
-  private void torohealth$render(DrawContext context, float tickDelta, CallbackInfo info) {
-      if (ToroHealth.getConfig().enabled && ToroHealth.getConfig().hudOptions.showHUD) {
-          ToroHealth.toroHealthHud.render(context, tickDelta);
-      }
-  }
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderCrosshair(Lnet/minecraft/client/gui/DrawContext;)V"))
+    private void torohealth$render(DrawContext context, float tickDelta, CallbackInfo info) {
+        if (ToroHealth.getConfig().enabled && ToroHealth.getConfig().hudOptions.showHUD) {
+            ToroHealth.toroHealthHud.render(context, tickDelta);
+        }
+    }
 }

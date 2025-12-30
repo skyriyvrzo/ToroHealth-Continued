@@ -53,8 +53,10 @@ public class InWorldBarRenderer {
 
         int width = MathHelper.ceil(percent * 41.0f);
         int width2 = MathHelper.ceil(percent2 * 41.0f);
-        renderBar(matrix, x, y, 0.0f, DARK_GRAY, 40, light, vertexConsumers);
-        if (width2 > 0) {
+        if (40 > width && 40 > width2) {
+            renderBar(matrix, x, y, 0.0f, DARK_GRAY, 40, light, vertexConsumers);
+        }
+        if (width2 > width) {
             renderBar(matrix, x, y, 0.1f, color2, width2, light, vertexConsumers);
         }
         if (width > 0) {

@@ -1,6 +1,6 @@
 package net.kairost.torohealth.client.gui;
 
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.entity.passive.AbstractNautilusEntity;
 import org.joml.Vector3f;
 import org.joml.Quaternionf;
 import net.minecraft.util.Identifier;
@@ -21,6 +21,7 @@ import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRenderManager;
 import net.minecraft.client.render.entity.state.EntityRenderState;
+import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.config.ModConfig.FrameStyle;
 import net.kairost.torohealth.data.BarStateAccessor;
@@ -314,36 +315,31 @@ public class ToroHealthHud {
     public static void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, float size, float mouseX, float mouseY, LivingEntity entity, float tickDelta) {
         float f = (float) Math.atan(mouseX / 40.0F);
         float g = (float) Math.atan(mouseY / 40.0F);
-        context.enableScissor(x1, y1, x2, y2);
         Quaternionf quaternionf = new Quaternionf().rotateZ((float) Math.PI);
         Quaternionf quaternionf2 = new Quaternionf().rotateX(g * 20.0F * (float) (Math.PI / 180.0));
         quaternionf.mul(quaternionf2);
-        float i = entity.bodyYaw;
-        float j = entity.lastBodyYaw;
-        float k = entity.headYaw;
-        float l = entity.lastHeadYaw;
-        entity.bodyYaw = 180.0f + f * 20.0f;
-        entity.lastBodyYaw = 180.0f + f * 20.0f;
-        entity.headYaw = 180.0f + f * 20.0f + k - i;
-        entity.lastHeadYaw = 180.0f + f * 20.0f + l - j;
+        EntityRenderState entityRenderState = drawEntity(entity, tickDelta);
+        if (entityRenderState instanceof LivingEntityRenderState livingEntityRenderState) {
+            livingEntityRenderState.bodyYaw = 180.0F + f * 20.0F;
+            if (entity instanceof AbstractNautilusEntity) {
+                livingEntityRenderState.bodyYaw += 180.0F;
+            }
+            livingEntityRenderState.width = livingEntityRenderState.width / livingEntityRenderState.baseScale;
+            livingEntityRenderState.height = livingEntityRenderState.height / livingEntityRenderState.baseScale;
+            livingEntityRenderState.baseScale = 1.0F;
+        }
         Vector3f vector3f = new Vector3f(0.0F, 0.0F, 0.0F);
-        drawEntity(context, x1, y1, x2, y2, size, vector3f, quaternionf, quaternionf2, entity, tickDelta);
-        entity.bodyYaw = i;
-        entity.lastBodyYaw = j;
-        entity.headYaw = k;
-        entity.lastHeadYaw = l;
-        context.disableScissor();
+        context.addEntity(entityRenderState, size, vector3f, quaternionf, quaternionf2, x1, y1, x2, y2);
     }
 
     //copied from InventoryScreen.drawEntity
-    public static void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, float scale, Vector3f translation, Quaternionf rotation, @Nullable Quaternionf overrideCameraAngle, LivingEntity entity, float tickDelta) {
+    private static EntityRenderState drawEntity(LivingEntity entity, float tickDelta) {
         EntityRenderManager entityRenderManager = MinecraftClient.getInstance().getEntityRenderDispatcher();
         EntityRenderer<? super LivingEntity, ?> entityRenderer = entityRenderManager.getRenderer(entity);
         EntityRenderState entityRenderState = entityRenderer.getAndUpdateRenderState(entity, tickDelta);
         entityRenderState.light = 0xF000F0;
-        entityRenderState.hitbox = null;
         entityRenderState.shadowPieces.clear();
         entityRenderState.outlineColor = 0;
-        context.addEntity(entityRenderState, scale, translation, rotation, overrideCameraAngle, x1, y1, x2, y2);
+        return entityRenderState;
     }
 }

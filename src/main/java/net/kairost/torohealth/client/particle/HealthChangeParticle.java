@@ -1,7 +1,5 @@
 package net.kairost.torohealth.client.particle;
 
-
-
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
@@ -90,7 +88,7 @@ public class HealthChangeParticle
     public void render(BillboardParticleSubmittable submittable, Camera camera, float tickDelta) {
         MinecraftClient client = MinecraftClient.getInstance();
 
-        Vec3d vec3d = camera.getPos();
+        Vec3d vec3d = camera.getCameraPos();
         float x = (float)(MathHelper.lerp(tickDelta, this.lastX, this.x) - vec3d.getX());
         float y = (float)(MathHelper.lerp(tickDelta, this.lastY, this.y) - vec3d.getY());
         float z = (float)(MathHelper.lerp(tickDelta, this.lastZ, this.z) - vec3d.getZ());

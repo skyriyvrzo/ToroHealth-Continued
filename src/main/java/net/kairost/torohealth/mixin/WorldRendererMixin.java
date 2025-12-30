@@ -65,7 +65,7 @@ public class WorldRendererMixin {
         boolean renderSky,
         CallbackInfo callbackInfo
     ) {
-        Vec3d vec3d = camera.getPos();
+        Vec3d vec3d = camera.getCameraPos();
         WorldRenderer worldRenderer = MinecraftClient.getInstance().worldRenderer;
         Frustum frustum = ((WorldRendererInvoker) worldRenderer).torohealth$invokeSetupFrustum(positionMatrix, projectionMatrix, vec3d);
         double d = vec3d.getX();

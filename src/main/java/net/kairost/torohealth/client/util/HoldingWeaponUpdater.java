@@ -31,7 +31,9 @@ public class HoldingWeaponUpdater {
             || item instanceof MaceItem
             || item instanceof WindChargeItem
             || itemStack.isIn(ItemTags.SWORDS)
-            || itemStack.isIn(ItemTags.SWORD_ENCHANTABLE)
+            || itemStack.isIn(ItemTags.SPEARS)
+            || itemStack.isIn(ItemTags.WEAPON_ENCHANTABLE)
+            || itemStack.isIn(ItemTags.SHARP_WEAPON_ENCHANTABLE)
             || itemStack.isIn(ItemTags.AXES)
             || itemStack.isIn(ItemTags.BOW_ENCHANTABLE)
             || itemStack.isIn(ItemTags.CROSSBOW_ENCHANTABLE)

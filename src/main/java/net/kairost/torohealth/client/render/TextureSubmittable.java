@@ -20,9 +20,11 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.command.LayeredCustomCommandRenderer;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.state.CameraRenderState;
+import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.BufferAllocator;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -99,13 +101,7 @@ public class TextureSubmittable implements OrderedRenderCommandQueue.LayeredCust
                 cache.write(builtBuffer.getBuffer());
                 RenderSystem.getSequentialBuffer(VertexFormat.DrawMode.QUADS).getIndexBuffer(builtBuffer.getDrawParameters().indexCount());
                 GpuBufferSlice gpuBufferSlice = RenderSystem.getDynamicUniforms()
-                    .write(
-                        RenderSystem.getModelViewMatrix(),
-                        new Vector4f(1.0F, 1.0F, 1.0F, 1.0F),
-                        new Vector3f(),
-                        RenderSystem.getTextureMatrix(),
-                        RenderSystem.getShaderLineWidth()
-                    );
+                    .write(RenderSystem.getModelViewMatrix(), new Vector4f(1.0F, 1.0F, 1.0F, 1.0F), new Vector3f(), new Matrix4f());
                 return new BillboardParticleSubmittable.Buffers(builtBuffer.getDrawParameters().indexCount(), gpuBufferSlice, map);
             }
 
@@ -132,7 +128,8 @@ public class TextureSubmittable implements OrderedRenderCommandQueue.LayeredCust
         for (Entry<BillboardParticle.RenderType, BillboardParticleSubmittable.Layer> entry : buffers.layers().entrySet()) {
             if (translucent == ((BillboardParticle.RenderType)entry.getKey()).translucent()) {
                 renderPass.setPipeline(((BillboardParticle.RenderType)entry.getKey()).pipeline());
-                renderPass.bindSampler("Sampler0", manager.getTexture(((BillboardParticle.RenderType)entry.getKey()).textureAtlasLocation()).getGlTextureView());
+                AbstractTexture abstractTexture = manager.getTexture(((BillboardParticle.RenderType)entry.getKey()).textureAtlasLocation());
+                renderPass.bindTexture("Sampler0", abstractTexture.getGlTextureView(), abstractTexture.getSampler());
                 renderPass.drawIndexed(
                     ((BillboardParticleSubmittable.Layer)entry.getValue()).vertexOffset(), 0, ((BillboardParticleSubmittable.Layer)entry.getValue()).indexCount(), 1
                 );

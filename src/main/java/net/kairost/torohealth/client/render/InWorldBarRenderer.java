@@ -33,7 +33,7 @@ public class InWorldBarRenderer {
             return;
         }
 
-        Vec3d vec3d = camera.getPos();
+        Vec3d vec3d = camera.getCameraPos();
         double x = MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX()) - vec3d.x;
         double y = MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY()) - vec3d.y;
         double z = MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ()) - vec3d.z;

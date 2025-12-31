@@ -1,5 +1,6 @@
 package net.kairost.torohealth.mixin;
 
+import net.kairost.torohealth.ToroHealth;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
@@ -26,7 +27,6 @@ import net.kairost.torohealth.config.ModConfig;
 import net.kairost.torohealth.client.render.InWorldBarRenderer;
 import net.kairost.torohealth.client.particle.TextRenderEntry;
 import net.kairost.torohealth.client.particle.TextRenderQueue;
-import net.kairost.torohealth.client.particle.TextParticleRenderer;
 import net.kairost.torohealth.mixin.accessor.WorldRendererInvoker;
 
 @Mixin(WorldRenderer.class)
@@ -98,7 +98,7 @@ public class WorldRendererMixin {
         CallbackInfo callbackInfo
     ) {
         for (TextRenderEntry entry : TextRenderQueue.consume()) {
-            TextParticleRenderer.render(entry.text(), camera, entry.x(), entry.y(), entry.z(), entry.u(), entry.v(), entry.color(), entityRenderCommandQueue, entry.light());
+            ToroHealth.textParticleRenderer.render(entry.text(), camera, entry.x(), entry.y(), entry.z(), entry.u(), entry.v(), entry.color(), entityRenderCommandQueue, entry.light());
         }
     }
 }

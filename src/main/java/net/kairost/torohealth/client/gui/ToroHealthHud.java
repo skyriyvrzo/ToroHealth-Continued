@@ -75,6 +75,7 @@ public class ToroHealthHud {
         context.getMatrices().translate(x, y, 0);
         int scale = ToroHealth.getConfig().hudOptions.hudScale;
         context.getMatrices().scale(scale, scale, scale);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         if (ToroHealth.getConfig().hudOptions.showEntity) {
             this.renderFrame(context);
             drawEntity(context,  this.entityX,  this.entityY, this.entityScale, -80, -20, entity, tickDelta);
@@ -210,7 +211,6 @@ public class ToroHealthHud {
     private void renderFrame(DrawContext context) {
         int w = 179, h = 42;
         RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         context.drawTexture(TOROHEALTH_FRAME_TEXTURE, 0, 0, 0, (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.LIGHT) ? 42 : 0), w, h);
         RenderSystem.disableBlend();
     }
@@ -254,7 +254,6 @@ public class ToroHealthHud {
     }
 
     private void renderHeartIcon(DrawContext context, int x, int y) {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableBlend();
         context.drawGuiTexture(CONTAINER, x, y, 9, 9);
         context.drawGuiTexture(FULL, x, y, 9, 9);
@@ -263,7 +262,6 @@ public class ToroHealthHud {
 
     private void renderArmorIcon(DrawContext context, int x, int y) {
         RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         context.drawGuiTexture(ARMOR_FULL, x, y, 9, 9);
         RenderSystem.disableBlend();
     }
@@ -314,9 +312,8 @@ public class ToroHealthHud {
         float r = (color >> 16 & 255) / 255.0F;
         float g = (color >> 8 & 255) / 255.0F;
         float b = (color & 255) / 255.0F;
-        RenderSystem.enableBlend();
         RenderSystem.setShaderColor(r, g, b, 1);
-        RenderSystem.setShaderTexture(0, TOROHEALTH_BARS_TEXTURE);
+        RenderSystem.enableBlend();
         context.drawTexture(TOROHEALTH_BARS_TEXTURE, x, y, 0, 6 * 2 * 5 + 5, width, 5);
         RenderSystem.disableBlend();
     }

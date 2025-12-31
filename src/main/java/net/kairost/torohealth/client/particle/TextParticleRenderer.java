@@ -18,6 +18,7 @@ public class TextParticleRenderer {
         matrices.translate(x, y, z);
         matrices.multiply(camera.getRotation());
         matrices.scale(0.025f, -0.025f, 0.025f);
+        matrices.translate(-client.textRenderer.getWidth(text), -3, 0);
 
         client.textRenderer.draw(text, u, v, color, false, matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.NORMAL, 0, light);
     }

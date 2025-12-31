@@ -77,6 +77,7 @@ public class ToroHealthHud {
         context.getMatrices().translate(x, y, 0);
         int scale = ToroHealth.getConfig().hudOptions.hudScale;
         context.getMatrices().scale(scale, scale, scale);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         if (ToroHealth.getConfig().hudOptions.showEntity) {
             this.renderFrame(context);
             drawEntity(context,  this.entityX,  this.entityY, this.entityScale, -80, -20, entity, tickCounter.getTickDelta(true));
@@ -212,7 +213,6 @@ public class ToroHealthHud {
     private void renderFrame(DrawContext context) {
         int w = 179, h = 42;
         RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         context.drawTexture(RenderLayer::getGuiTextured, TOROHEALTH_FRAME_TEXTURE, 0, 0, 0, (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.LIGHT) ? 42 : 0), w, h, 256, 256);
         RenderSystem.disableBlend();
     }
@@ -256,7 +256,6 @@ public class ToroHealthHud {
     }
 
     private void renderHeartIcon(DrawContext context, int x, int y) {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableBlend();
         context.drawGuiTexture(RenderLayer::getGuiTextured, CONTAINER, x, y, 9, 9);
         context.drawGuiTexture(RenderLayer::getGuiTextured, FULL, x, y, 9, 9);
@@ -265,7 +264,6 @@ public class ToroHealthHud {
 
     private void renderArmorIcon(DrawContext context, int x, int y) {
         RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         context.drawGuiTexture(RenderLayer::getGuiTextured, ARMOR_FULL, x, y, 9, 9);
         RenderSystem.disableBlend();
     }
@@ -315,7 +313,6 @@ public class ToroHealthHud {
     private void renderBar(DrawContext context, int x, int y, int width, int color) {
         int color_argb = color | 0xFF000000;
         RenderSystem.enableBlend();
-        RenderSystem.setShaderTexture(0, TOROHEALTH_BARS_TEXTURE);
         context.drawTexture(RenderLayer::getGuiTextured, TOROHEALTH_BARS_TEXTURE, x, y, 0, 6 * 2 * 5 + 5, width, 5, 256, 256, color_argb);
         RenderSystem.disableBlend();
     }

@@ -77,6 +77,7 @@ public class ToroHealthHud {
         context.getMatrices().translate(x, y, 0);
         int scale = ToroHealth.getConfig().hudOptions.hudScale;
         context.getMatrices().scale(scale, scale, scale);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         if (ToroHealth.getConfig().hudOptions.showEntity) {
             this.renderFrame(context);
             drawEntity(context,  this.entityX,  this.entityY, this.entityScale, -80, -20, entity, tickCounter.getTickProgress(true));
@@ -211,7 +212,6 @@ public class ToroHealthHud {
 
     private void renderFrame(DrawContext context) {
         int w = 179, h = 42;
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         context.drawTexture(RenderLayer::getGuiTextured, TOROHEALTH_FRAME_TEXTURE, 0, 0, 0, (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.LIGHT) ? 42 : 0), w, h, 256, 256);
     }
 
@@ -254,13 +254,11 @@ public class ToroHealthHud {
     }
 
     private void renderHeartIcon(DrawContext context, int x, int y) {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         context.drawGuiTexture(RenderLayer::getGuiTextured, CONTAINER, x, y, 9, 9);
         context.drawGuiTexture(RenderLayer::getGuiTextured, FULL, x, y, 9, 9);
     }
 
     private void renderArmorIcon(DrawContext context, int x, int y) {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         context.drawGuiTexture(RenderLayer::getGuiTextured, ARMOR_FULL, x, y, 9, 9);
     }
 

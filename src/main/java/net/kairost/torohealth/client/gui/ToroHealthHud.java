@@ -71,7 +71,7 @@ public class ToroHealthHud {
         float x = determineX();
         float y = determineY();
         int scale = ToroHealth.getConfig().hudOptions.hudScale;
-        context.getMatrices().translate(x, y, -100 * scale);
+        context.getMatrices().translate(x, y, -90);
         context.getMatrices().scale(scale, scale, scale);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         if (ToroHealth.getConfig().hudOptions.showEntity) {

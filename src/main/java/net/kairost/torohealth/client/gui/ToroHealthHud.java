@@ -76,12 +76,18 @@ public class ToroHealthHud extends DrawableHelper {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         if (ToroHealth.getConfig().hudOptions.showEntity) {
             this.renderFrame(matrix);
-            drawEntity(matrix,  this.entityX,  this.entityY, this.entityScale, -80, -20, entity, tickDelta);
+            matrix.push();
             matrix.translate(FRAME_SIZE + 2, INFO_Y_BASE + (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.HEAVY)? 2 : 0), 0);
         }
 
         // draw entity info
         this.renderInfo(matrix, entity, tickDelta);
+
+        // render entity
+        if (ToroHealth.getConfig().hudOptions.showEntity) {
+            matrix.pop();
+            drawEntity(matrix,  this.entityX,  this.entityY, this.entityScale, -80, -20, entity, tickDelta);
+        }
         matrix.pop();
     }
 

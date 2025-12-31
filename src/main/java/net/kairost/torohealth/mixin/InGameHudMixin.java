@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.kairost.torohealth.ToroHealth;
 
 @Mixin(InGameHud.class)
-public class InGameHudMixin {
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderCrosshair(Lnet/minecraft/client/util/math/MatrixStack;)V"))
+public class InGameHudMixin{
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderTexture(ILnet/minecraft/util/Identifier;)V", ordinal = 0))
     private void torohealth$render(MatrixStack matrixStack, float tickDelta, CallbackInfo info) {
         if (ToroHealth.getConfig().enabled && ToroHealth.getConfig().hudOptions.showHUD) {
             ToroHealth.toroHealthHud.render(matrixStack, tickDelta);

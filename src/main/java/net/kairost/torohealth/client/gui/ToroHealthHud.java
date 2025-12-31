@@ -60,6 +60,9 @@ public class ToroHealthHud {
         if (!ToroHealth.getConfig().enabled || !ToroHealth.getConfig().hudOptions.showHUD) {
             return;
         }
+        if (this.client.options.hudHidden) {
+            return;
+        }
         if (entity == null) {
             return;
         }

@@ -74,6 +74,7 @@ public class ToroHealthHud {
             return;
         }
 
+        float tickDelta = tickCounter.getTickDelta(false);
         context.getMatrices().push();
         float x = determineX();
         float y = determineY();
@@ -83,12 +84,12 @@ public class ToroHealthHud {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         if (ToroHealth.getConfig().hudOptions.showEntity) {
             this.renderFrame(context);
-            drawEntity(context,  this.entityX,  this.entityY, this.entityScale, -80, -20, entity, tickCounter.getTickDelta(true));
+            drawEntity(context,  this.entityX,  this.entityY, this.entityScale, -80, -20, entity, tickDelta);
             context.getMatrices().translate(FRAME_SIZE + 2, INFO_Y_BASE + (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.HEAVY) ? 2 : 0), 0);
         }
 
         // draw entity info
-        this.renderInfo(context, tickCounter);
+        this.renderInfo(context, tickDelta);
         context.getMatrices().pop();
     }
 
@@ -221,9 +222,9 @@ public class ToroHealthHud {
     }
 
 
-    private void renderInfo(DrawContext context, RenderTickCounter tickCounter) {
+    private void renderInfo(DrawContext context, float tickDelta) {
         // render bar
-        this.renderHealthBar(context, this.entity, 0, BAR_Y, tickCounter);
+        this.renderHealthBar(context, this.entity, 0, BAR_Y, tickDelta);
 
         int xOffset = INFO_X_BASE;
         // name
@@ -290,7 +291,7 @@ public class ToroHealthHud {
     }
 
     // draw a health Bar composed of 3 layers in InGameHud.
-    private void renderHealthBar(DrawContext context, LivingEntity entity, int x, int y, RenderTickCounter tickCounter) {
+    private void renderHealthBar(DrawContext context, LivingEntity entity, int x, int y, float tickDelta) {
         BarState state = ((BarStateAccessor) entity).torohealth$getBarState();
         if (state == null) {
             return;
@@ -300,7 +301,7 @@ public class ToroHealthHud {
         int color = relation.equals(Relation.FOE) ? ToroHealth.getConfig().barColor.foeColor : ToroHealth.getConfig().barColor.friendColor;
         int color2 = relation.equals(Relation.FOE) ? ToroHealth.getConfig().barColor.foeColorSecondary : ToroHealth.getConfig().barColor.friendColorSecondary;
         float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
-        float percent2 = Math.min(MathHelper.lerp(tickCounter.getTickDelta(true), state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
+        float percent2 = Math.min(MathHelper.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
         int width = MathHelper.ceil(percent * 131.0f);
         int width2 = MathHelper.ceil(percent2 * 131.0f);
         this.renderBar(context, x, y, 130, DARK_GRAY);

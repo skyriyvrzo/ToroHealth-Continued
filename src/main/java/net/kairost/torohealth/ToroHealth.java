@@ -1,5 +1,6 @@
 package net.kairost.torohealth;
 
+import net.kairost.torohealth.client.particle.TextParticleRenderer;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.ActionResult;
@@ -26,6 +27,7 @@ public class ToroHealth implements ClientModInitializer {
     public static final SimpleParticleType HEALTH_CHANGE = FabricParticleTypes.simple();
     private static ModConfig config;
     public static ToroHealthHud toroHealthHud = null;
+    public static TextParticleRenderer textParticleRenderer;
     private static boolean holdingWeapon = false;
     private static LivingEntity targetedEntity;
 
@@ -35,6 +37,8 @@ public class ToroHealth implements ClientModInitializer {
         ModConfig.init();
         // toroHealthHud
         toroHealthHud = new ToroHealthHud(MinecraftClient.getInstance());
+        // textParticleRenderer
+        textParticleRenderer = new TextParticleRenderer(MinecraftClient.getInstance());
 
         ConfigHolder<ModConfig> holder =
             AutoConfig.getConfigHolder(ModConfig.class);

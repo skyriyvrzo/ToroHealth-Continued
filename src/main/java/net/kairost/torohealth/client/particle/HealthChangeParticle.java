@@ -92,6 +92,7 @@ public class HealthChangeParticle
     @Override
     public void buildGeometry(VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
         MinecraftClient client = MinecraftClient.getInstance();
+        String text = Integer.toString(this.value);
 
         Vec3d vec3d = camera.getPos();
         float x = (float)(MathHelper.lerp(tickDelta, this.prevPosX, this.x) - vec3d.getX());
@@ -102,8 +103,8 @@ public class HealthChangeParticle
         matrices.translate(x, y, z);
         matrices.multiply(camera.getRotation());
         matrices.scale(-0.025f, -0.025f, 0.025f);
+        matrices.translate(-client.textRenderer.getWidth(text), -3, 0);
 
-        String text = Integer.toString(this.value);
         float h = -client.textRenderer.getWidth(text) / 2.0f;
 
         int a = (int)(this.alpha * 255.0f) & 0xFF;

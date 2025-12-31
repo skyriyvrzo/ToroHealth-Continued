@@ -72,6 +72,8 @@ public class ToroHealthHud extends DrawableHelper {
         matrix.translate(x, y, 0);
         int scale = ToroHealth.getConfig().hudOptions.hudScale;
         matrix.scale(scale, scale, scale);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         if (ToroHealth.getConfig().hudOptions.showEntity) {
             this.renderFrame(matrix);
             drawEntity(matrix,  this.entityX,  this.entityY, this.entityScale, -80, -20, entity, tickDelta);
@@ -205,10 +207,12 @@ public class ToroHealthHud extends DrawableHelper {
 
 
     private void renderFrame(MatrixStack matrix) {
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderTexture(0, TOROHEALTH_FRAME_TEXTURE);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         int w = 179, h = 42;
         drawTexture(matrix, 0, 0, 0, (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.LIGHT) ? 42 : 0), w, h);
+        RenderSystem.disableBlend();
     }
 
 
@@ -250,14 +254,20 @@ public class ToroHealthHud extends DrawableHelper {
     }
 
     private void renderHeartIcon(MatrixStack matrix, int x, int y) {
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderTexture(0, ICON_TEXTURES);
         drawTexture(matrix, x, y, 16, 0, 9, 9);
         drawTexture(matrix, x, y, 16 + 36, 0, 9, 9);
+        RenderSystem.disableBlend();
     }
 
     private void renderArmorIcon(MatrixStack matrix, int x, int y) {
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderTexture(0, ICON_TEXTURES);
-        this.drawTexture(matrix, x, y, 34, 9, 9, 9);
+        drawTexture(matrix, x, y, 34, 9, 9, 9);
+        RenderSystem.disableBlend();
     }
 
     private void renderHealthChangeText(MatrixStack matrices, LivingEntity entity, int x, int y) {
@@ -307,9 +317,11 @@ public class ToroHealthHud extends DrawableHelper {
         float g = (color >> 8 & 255) / 255.0F;
         float b = (color & 255) / 255.0F;
         RenderSystem.setShaderColor(r, g, b, 1);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderTexture(0, TOROHEALTH_BARS_TEXTURES);
         drawTexture(matrices, x, y, 0, 6 * 2 * 5 + 5, width, 5);
+        RenderSystem.disableBlend();
     }
 
     //modified from vanilla InventoryScreen.drawEntity

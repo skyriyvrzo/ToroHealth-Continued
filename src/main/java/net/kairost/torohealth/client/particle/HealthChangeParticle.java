@@ -30,7 +30,7 @@ public class HealthChangeParticle
         this.scale(1.0f);
         this.setBoundingBoxSpacing(0.25f, 0.25f);
         this.maxAge = 50;
-        this.gravityStrength = 1.0E-2f;
+        this.gravityStrength = -1.0E-2f;
         this.velocityX = velocityX;
         this.velocityY = velocityY + (double)(this.random.nextFloat() / 500.0f);
         this.velocityZ = velocityZ;
@@ -51,7 +51,7 @@ public class HealthChangeParticle
         }
         this.velocityX += (double)(this.random.nextFloat() / 5000.0f * (float)(this.random.nextBoolean() ? 1 : -1));
         this.velocityZ += (double)(this.random.nextFloat() / 5000.0f * (float)(this.random.nextBoolean() ? 1 : -1));
-        this.velocityY -= (double)this.gravityStrength;
+        this.velocityY += (double)this.gravityStrength;
         this.move(this.velocityX, this.velocityY, this.velocityZ);
         if (this.age >= this.maxAge - 20 && this.alpha > 0.01f) {
             this.alpha -= 0.05f;

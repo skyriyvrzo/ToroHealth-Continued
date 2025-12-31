@@ -17,7 +17,6 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.config.ModConfig.FrameStyle;
@@ -70,6 +69,7 @@ public class ToroHealthHud {
         int scale = ToroHealth.getConfig().hudOptions.hudScale;
         context.getMatrices().translate(x, y, -100 * scale);
         context.getMatrices().scale(scale, scale, scale);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         if (ToroHealth.getConfig().hudOptions.showEntity) {
             this.renderFrame(context);
             drawEntity(context,  this.entityX,  this.entityY, this.entityScale, -80, -20, entity, tickDelta);
@@ -204,8 +204,9 @@ public class ToroHealthHud {
 
     private void renderFrame(DrawContext context) {
         int w = 179, h = 42;
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
         context.drawTexture(TOROHEALTH_FRAME_TEXTURE, 0, 0, 0, (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.LIGHT) ? 42 : 0), w, h);
+        RenderSystem.disableBlend();
     }
 
 
@@ -247,14 +248,16 @@ public class ToroHealthHud {
     }
 
     private void renderHeartIcon(DrawContext context, int x, int y) {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
         context.drawTexture(ICONS, x, y, 16, 0, 9, 9);
         context.drawTexture(ICONS, x, y, 16 + 36, 0, 9, 9);
+        RenderSystem.disableBlend();
     }
 
     private void renderArmorIcon(DrawContext context, int x, int y) {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
         context.drawTexture(ICONS, x, y, 34, 9, 9, 9);
+        RenderSystem.disableBlend();
     }
 
     private void renderHealthChangeText(DrawContext context, LivingEntity entity, int x, int y) {
@@ -304,9 +307,9 @@ public class ToroHealthHud {
         float g = (color >> 8 & 255) / 255.0F;
         float b = (color & 255) / 255.0F;
         RenderSystem.setShaderColor(r, g, b, 1);
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        RenderSystem.setShaderTexture(0, TOROHEALTH_BARS_TEXTURE);
+        RenderSystem.enableBlend();
         context.drawTexture(TOROHEALTH_BARS_TEXTURE, x, y, 0, 6 * 2 * 5 + 5, width, 5);
+        RenderSystem.disableBlend();
     }
 
     //modified from vanilla InventoryScreen.drawEntity

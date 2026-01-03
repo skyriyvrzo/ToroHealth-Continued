@@ -243,7 +243,7 @@ public class ToroHealthHud extends DrawableHelper {
 
     private void renderInfo(MatrixStack matrix, LivingEntity entity, float tickDelta) {
         // render bar
-        this.renderHealthBar(matrix, entity, (this.at_left ? 0 : -130), (this.at_top ? BAR_Y : -(BAR_Y + 5)), tickDelta);
+        this.renderHealthBar(matrix, entity, (this.at_left ? 0 : -BAR_SIZE), (this.at_top ? BAR_Y : -(BAR_Y + 5)), tickDelta);
         int x_pos_scalar = this.at_left ? 1 : -1;
         int y_pos_scalar = this.at_top ? 1 : -1;
 
@@ -348,10 +348,12 @@ public class ToroHealthHud extends DrawableHelper {
         int color2 = relation.equals(Relation.FOE) ? ToroHealth.getConfig().barColor.foeColorSecondary : ToroHealth.getConfig().barColor.friendColorSecondary;
         float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
         float percent2 = Math.min(MathHelper.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
-        int width = MathHelper.ceil(percent * 131.0f);
-        int width2 = MathHelper.ceil(percent2 * 131.0f);
-        this.renderBar(matrices, x, y, 130, DARK_GRAY);
-        if (width2 > 0) {
+        int width = MathHelper.ceil(percent * (BAR_SIZE + 1));
+        int width2 = MathHelper.ceil(percent2 * (BAR_SIZE + 1));
+        if (BAR_SIZE > width && BAR_SIZE > width2) {
+            this.renderBar(matrices, x, y, BAR_SIZE, DARK_GRAY);
+        }
+        if (width2 > width) {
             this.renderBar(matrices, x, y, width2, color2);
         }
         if (width > 0) {
@@ -364,7 +366,7 @@ public class ToroHealthHud extends DrawableHelper {
         float r = (color >> 16 & 255) / 255.0F;
         float g = (color >> 8 & 255) / 255.0F;
         float b = (color & 255) / 255.0F;
-        int shift = this.at_left ? 0 : (130 - width);
+        int shift = this.at_left ? 0 : (BAR_SIZE - width);
         RenderSystem.setShaderColor(r, g, b, 1);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();

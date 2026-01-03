@@ -250,7 +250,7 @@ public class ToroHealthHud {
 
     private void renderInfo(DrawContext context, float tickDelta) {
         // render bar
-        this.renderHealthBar(context, this.entity, (this.at_left ? 0 : -130), (this.at_top ? BAR_Y : -(BAR_Y + 5)), tickDelta);
+        this.renderHealthBar(context, this.entity, (this.at_left ? 0 : -BAR_SIZE), (this.at_top ? BAR_Y : -(BAR_Y + 5)), tickDelta);
         int x_pos_scalar = this.at_left ? 1 : -1;
         int y_pos_scalar = this.at_top ? 1 : -1;
 
@@ -351,10 +351,12 @@ public class ToroHealthHud {
         int color2 = relation.equals(Relation.FOE) ? ToroHealth.getConfig().barColor.foeColorSecondary : ToroHealth.getConfig().barColor.friendColorSecondary;
         float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
         float percent2 = Math.min(MathHelper.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
-        int width = MathHelper.ceil(percent * 131.0f);
-        int width2 = MathHelper.ceil(percent2 * 131.0f);
-        this.renderBar(context, x, y, 130, DARK_GRAY);
-        if (width2 > 0) {
+        int width = MathHelper.ceil(percent * (BAR_SIZE + 1));
+        int width2 = MathHelper.ceil(percent2 * (BAR_SIZE + 1));
+        if (BAR_SIZE > width && BAR_SIZE > width2) {
+            this.renderBar(context, x, y, BAR_SIZE, DARK_GRAY);
+        }
+        if (width2 > width) {
             this.renderBar(context, x, y, width2, color2);
         }
         if (width > 0) {

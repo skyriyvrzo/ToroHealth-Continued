@@ -55,14 +55,17 @@ public class InWorldBarRenderer {
 
         int width = Math.min(MathHelper.ceil(percent * 41.0f), BAR_WIDTH);
         int width2 = Math.min(MathHelper.ceil(percent2 * 41.0f), BAR_WIDTH);
+
+        Vector3f shift = new Vector3f(0f, 0f, 0.1f).rotate(quaternionf).mul(SIZE);
+
         if (40 > width && 40 > width2) {
             renderBar(x, y, z, DARK_GRAY, BAR_WIDTH, light, quaternionf);
         }
         if (width2 > width) {
-            renderBar(x, y, z, color2, width2, light, quaternionf);
+            renderBar(x + shift.x, y + shift.y, z + shift.z, color2, width2, light, quaternionf);
         }
         if (width > 0) {
-            renderBar(x, y, z, color, width, light, quaternionf);
+            renderBar(x + 2 * shift.x, y + 2 * shift.y, z + 2 * shift.z, color, width, light, quaternionf);
         }
     }
 

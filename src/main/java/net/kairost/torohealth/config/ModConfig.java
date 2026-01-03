@@ -138,7 +138,7 @@ public class ModConfig implements ConfigData {
 
 
     public enum AnchorPoint {
-        TOP_LEFT, TOP_CENTER, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT
+        TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
     }
 
     public enum FrameStyle {

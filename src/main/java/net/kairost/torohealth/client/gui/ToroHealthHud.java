@@ -52,6 +52,8 @@ public class ToroHealthHud {
     private float entityX;
     private float entityY;
     private float entityScale;
+    private boolean at_left;
+    private boolean at_top;
 
     public ToroHealthHud(MinecraftClient client) {
         this.client = client;
@@ -80,7 +82,8 @@ public class ToroHealthHud {
         context.getMatrices().scale(scale, scale);
         if (ToroHealth.getConfig().hudOptions.showEntity) {
             this.renderFrame(context);
-            context.getMatrices().translate(FRAME_SIZE + 2, INFO_Y_BASE + (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.HEAVY) ? 2 : 0));
+            context.getMatrices().translate((this.at_left ? 1 : -1) * (FRAME_SIZE + 2), (this.at_top ? 1 : -1) * (INFO_Y_BASE + (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.HEAVY)? 2 : 0)));
+
         }
 
         // draw entity info
@@ -88,7 +91,7 @@ public class ToroHealthHud {
         context.getMatrices().popMatrix();
 
         if (ToroHealth.getConfig().hudOptions.showEntity) {
-            drawEntity(context, (int) (x + scale * (this.entityX - 2 * FRAME_SIZE)), (int) (y + scale * (this.entityY - 2 * FRAME_SIZE)), (int) (x + scale * (this.entityX + 2 * FRAME_SIZE)), (int) (y + scale * (this.entityY + 2 * FRAME_SIZE)), this.entityScale * scale, -80, -20, entity, tickDelta);
+            drawEntity(context, (int) (x + scale * (this.entityX - 2 * FRAME_SIZE + (this.at_left ? 0 : -FRAME_SIZE))), (int) (y + scale * (this.entityY - 2 * FRAME_SIZE + (this.at_top ? 0 : -FRAME_SIZE))), (int) (x + scale * (this.entityX + 2 * FRAME_SIZE + (this.at_left ? 0 : -FRAME_SIZE))), (int) (y + scale * (this.entityY + 2 * FRAME_SIZE + (this.at_top ? 0 : -FRAME_SIZE))), this.entityScale * scale, (this.at_left ? -80 : 80), -20, entity, tickDelta);
         }
     }
 
@@ -97,9 +100,14 @@ public class ToroHealthHud {
         float wScreen = this.client.getWindow().getScaledWidth();
 
         return switch (ToroHealth.getConfig().hudOptions.anchorPoint) {
-                case BOTTOM_CENTER, TOP_CENTER -> (wScreen / 2) + x;
-                case BOTTOM_RIGHT, TOP_RIGHT -> (wScreen) + x;
-                default -> x;
+            case BOTTOM_LEFT, TOP_LEFT: {
+                this.at_left = true;
+                yield x;
+            }
+            case BOTTOM_RIGHT, TOP_RIGHT: {
+                this.at_left = false;
+                yield wScreen + x;
+            }
         };
     }
 
@@ -108,8 +116,14 @@ public class ToroHealthHud {
         float hScreen = client.getWindow().getScaledHeight();
 
         return switch (ToroHealth.getConfig().hudOptions.anchorPoint) {
-            case BOTTOM_CENTER, BOTTOM_LEFT, BOTTOM_RIGHT -> y + hScreen;
-            default -> y;
+            case TOP_LEFT, TOP_RIGHT: {
+                this.at_top = true;
+                yield y;
+            }
+            case BOTTOM_LEFT, BOTTOM_RIGHT: {
+                this.at_top = false;
+                yield hScreen + y;
+            }
         };
     }
 
@@ -214,23 +228,30 @@ public class ToroHealthHud {
 
 
     private void renderFrame(DrawContext context) {
-        int w = 179, h = 42;
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, TOROHEALTH_FRAME_TEXTURE, 0, 0, 0, (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.LIGHT) ? 42 : 0), w, h, 256, 256);
+        boolean light_style = (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.LIGHT));
+        int h = 42;
+        int w = light_style ? 42 : 179;
+        int x = this.at_left ? 0 : -w;
+        int y = this.at_top ? 0 : -h;
+        int u = light_style ? 0 : 42;
+        int v = (this.at_top ? 0 : 42) + (this.at_left ? 0 : 84);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, TOROHEALTH_FRAME_TEXTURE, x, y, u, v, w, h, 256, 256);
     }
 
 
     private void renderInfo(DrawContext context, float tickDelta) {
         // render bar
-        this.renderHealthBar(context, this.entity, 0, BAR_Y, tickDelta);
+        this.renderHealthBar(context, this.entity, (this.at_left ? 0 : -130), (this.at_top ? BAR_Y : -(BAR_Y + 5)), tickDelta);
+        int x_pos_scalar = this.at_left ? 1 : -1;
+        int y_pos_scalar = this.at_top ? 1 : -1;
 
-        int xOffset = INFO_X_BASE;
+        int xOffset = x_pos_scalar * INFO_X_BASE;
+
         // name
         String name = this.entity.getDisplayName().getString();
-        context.drawTextWithShadow(this.client.textRenderer, name, xOffset, 1, 0xFFFFFFFF);
-        xOffset += this.client.textRenderer.getWidth(name) + INFO_SPACING;
+        context.drawTextWithShadow(this.client.textRenderer, name, xOffset + (this.at_left ? 0 : -this.client.textRenderer.getWidth(name)), (this.at_top ? 1 : -8), 0xFFFFFFFF);
+        xOffset += x_pos_scalar * (this.client.textRenderer.getWidth(name) + INFO_SPACING);
 
-        renderHeartIcon(context, xOffset,0);
-        xOffset += 10;
 
         // health
         int healthMax = MathHelper.ceil(this.entity.getMaxHealth());
@@ -240,19 +261,41 @@ public class ToroHealthHud {
             healthMax
         );
         String healthText = healthCurrent + "/" + healthMax;
-        context.drawTextWithShadow(this.client.textRenderer, healthText, xOffset, 1, 0xFFFFFFFF);
-        xOffset += this.client.textRenderer.getWidth(healthText) + INFO_SPACING;
+        int healthTextY = this.at_top ? 1 : -8;
+        if (this.at_left) {
+            renderHeartIcon(context, xOffset, healthTextY - 1);
+
+            xOffset += 10;
+
+            context.drawTextWithShadow(this.client.textRenderer, healthText, xOffset, healthTextY, 0xFFFFFFFF);
+            xOffset +=this.client.textRenderer.getWidth(healthText) + INFO_SPACING;
+        } else {
+            context.drawTextWithShadow(this.client.textRenderer, healthText, xOffset - this.client.textRenderer.getWidth(healthText), healthTextY, 0xFFFFFFFF);
+
+            xOffset -= (this.client.textRenderer.getWidth(healthText) + 1);
+
+            renderHeartIcon(context, xOffset - 9, (healthTextY - 1));
+            xOffset -= (9 + INFO_SPACING);
+        }
 
         // armor
         int armor = this.entity.getArmor();
         if (armor > 0) {
-            renderArmorIcon(context, xOffset, 0);
-            xOffset += 10;
-            context.drawTextWithShadow(this.client.textRenderer, Integer.toString(this.entity.getArmor()), xOffset, 1, 0xFFFFFFFF);
+            String armorText = Integer.toString(armor);
+            int armorTextY = this.at_top ? 1 : -8;
+            if (this.at_left) {
+                renderArmorIcon(context, xOffset, armorTextY - 1);
+                xOffset += 10;
+                context.drawTextWithShadow(this.client.textRenderer, armorText, xOffset, armorTextY, 0xFFFFFFFF);
+            } else {
+                context.drawTextWithShadow(this.client.textRenderer, armorText, xOffset - this.client.textRenderer.getWidth(armorText), armorTextY, 0xFFFFFFFF);
+                xOffset -= (this.client.textRenderer.getWidth(Integer.toString(entity.getArmor())) + 1);
+                renderArmorIcon(context, xOffset - 9, armorTextY - 1);
+            }
         }
 
         // render health change
-        this.renderHealthChangeText(context, this.entity, BAR_SIZE, HEALTH_CHANGE_Y);
+        this.renderHealthChangeText(context, entity, (this.at_left ? 1 : -1) * BAR_SIZE, y_pos_scalar * HEALTH_CHANGE_Y);
     }
 
     private void renderHeartIcon(DrawContext context, int x, int y) {
@@ -278,7 +321,7 @@ public class ToroHealthHud {
         int color = (healthChange > 0 ? ToroHealth.getConfig().particleOptions.healColor : ToroHealth.getConfig().particleOptions.damageColor) | 0xFF000000;
         if (healthChange != 0) {
             String text = Integer.toString(Math.abs(healthChange));
-            context.drawTextWithShadow(this.client.textRenderer, text, x - this.client.textRenderer.getWidth(text), y, color);
+            context.drawTextWithShadow(this.client.textRenderer, text, x - (this.at_left ? 1 : -1) * this.client.textRenderer.getWidth(text), (this.at_top ? y : (y - this.client.textRenderer.getWrappedLinesHeight(text, 10000))), color);
         }
     }
 
@@ -308,7 +351,8 @@ public class ToroHealthHud {
     // this method draws a single bar in InGameHud
     private void renderBar(DrawContext context, int x, int y, int width, int color) {
         int color_argb = color | 0xFF000000;
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, TOROHEALTH_BARS_TEXTURE, x, y, 0, 6 * 2 * 5 + 5, width, 5, 256, 256, color_argb);
+        int shift = this.at_left ? 0 : (130 - width);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, TOROHEALTH_BARS_TEXTURE, x + shift, y, shift, 6 * 2 * 5 + 5, width, 5, 256, 256, color_argb);
     }
 
     //modified from vanilla InventoryScreen.drawEntity

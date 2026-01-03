@@ -1,5 +1,6 @@
 package net.kairost.torohealth.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.kairost.torohealth.ToroHealth;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
@@ -27,7 +28,6 @@ import net.kairost.torohealth.config.ModConfig;
 import net.kairost.torohealth.client.render.InWorldBarRenderer;
 import net.kairost.torohealth.client.particle.TextRenderEntry;
 import net.kairost.torohealth.client.particle.TextRenderQueue;
-import net.kairost.torohealth.mixin.accessor.WorldRendererInvoker;
 
 @Mixin(WorldRenderer.class)
 public class WorldRendererMixin {
@@ -63,11 +63,10 @@ public class WorldRendererMixin {
         GpuBufferSlice fogBuffer,
         Vector4f fogColor,
         boolean renderSky,
-        CallbackInfo callbackInfo
+        CallbackInfo callbackInfo,
+        @Local(ordinal = 0) Frustum frustum
     ) {
         Vec3d vec3d = camera.getPos();
-        WorldRenderer worldRenderer = MinecraftClient.getInstance().worldRenderer;
-        Frustum frustum = ((WorldRendererInvoker) worldRenderer).torohealth$invokeSetupFrustum(positionMatrix, projectionMatrix, vec3d);
         double d = vec3d.getX();
         double e = vec3d.getY();
         double f = vec3d.getZ();

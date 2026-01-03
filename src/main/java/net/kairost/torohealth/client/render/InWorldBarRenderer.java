@@ -37,8 +37,8 @@ public class InWorldBarRenderer {
         double x = MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX()) - vec3d.x;
         double y = MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY()) - vec3d.y;
         double z = MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ()) - vec3d.z;
-        float f = entity.getHeight() + 0.7f - SIZE * 5f;
-        Vector3f vector3f = new Vector3f((float) -BAR_WIDTH / 2, 0, 0.0F).rotate(camera.getRotation()).mul(SIZE).add((float) x, (float) y + f, (float) z);
+        float f = entity.getHeight() + 0.7f;
+        Vector3f vector3f = new Vector3f((float) -BAR_WIDTH / 2, -5, 0.0F).rotate(camera.getRotation()).mul(SIZE).add((float) x, (float) y + f, (float) z);
 
         renderHealthBar((LivingEntity)entity, vector3f.x, vector3f.y, vector3f.z, new Quaternionf(camera.getRotation()), light, tickDelta);
     }

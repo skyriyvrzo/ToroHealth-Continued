@@ -10,7 +10,6 @@
     "LivingEntityMixin",
     "EntityMixin",
     "accessor.LivingEntityAccessor",
-    "accessor.WorldRendererInvoker"
   ],
   "injectors": {
     "defaultRequire": 1

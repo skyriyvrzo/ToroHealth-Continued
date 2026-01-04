@@ -335,7 +335,7 @@ public class ToroHealthHud {
         int color = healthChange > 0 ? ToroHealth.getConfig().particleOptions.healColor : ToroHealth.getConfig().particleOptions.damageColor;
         if (healthChange != 0) {
             String text = Integer.toString(Math.abs(healthChange));
-            context.drawTextWithShadow(this.client.textRenderer, text, x - (this.at_left ? 1 : -1) * this.client.textRenderer.getWidth(text), (this.at_top ? y : (y - this.client.textRenderer.getWrappedLinesHeight(text, 10000))), color);
+            context.drawTextWithShadow(this.client.textRenderer, text, x + (this.at_left ? -this.client.textRenderer.getWidth(text) : 2), (this.at_top ? y : (y - 8)), color);
         }
     }
 

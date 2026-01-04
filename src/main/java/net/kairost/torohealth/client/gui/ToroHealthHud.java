@@ -13,6 +13,7 @@ import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
@@ -365,7 +366,16 @@ public class ToroHealthHud {
         Quaternionf quaternionf = new Quaternionf().rotateZ((float) Math.PI);
         Quaternionf quaternionf2 = new Quaternionf().rotateX(g * 20.0F * (float) (Math.PI / 180.0));
         quaternionf.mul(quaternionf2);
-        EntityRenderState entityRenderState = drawEntity(entity, tickDelta);
+        EntityRenderState entityRenderState;
+        if (entity instanceof EnderDragonEntity enderDragon) {
+            EndCrystalEntity endCrystal = enderDragon.connectedCrystal;
+            enderDragon.connectedCrystal = null;
+            entityRenderState = drawEntity(entity, tickDelta);
+            enderDragon.connectedCrystal = endCrystal;
+        } else {
+            entityRenderState = drawEntity(entity, tickDelta);
+        }
+
         if (entityRenderState instanceof LivingEntityRenderState livingEntityRenderState) {
             livingEntityRenderState.bodyYaw = 180.0F + f * 20.0F;
             if (entity instanceof AbstractNautilusEntity) {

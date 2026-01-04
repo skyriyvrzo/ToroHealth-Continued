@@ -41,14 +41,18 @@ public abstract class LivingEntityMixin extends EntityMixin implements BarStateA
 
     @Inject(method = "onTrackedDataSet", at = @At("TAIL"))
     private void torohealth$onTrackedData(TrackedData<?> data, CallbackInfo callbackInfo) {
-        if (data.equals(LivingEntityAccessor.getHealthData()) && this.barState != null) {
-            this.barState.updateHealth(this.getHealth());
-            if (this.barState.health != this.barState.lastHealth) {
-                this.barState.handleHealthChange();
-                // create healthChangeParticle
-                if (this.barState.healthChangeLast != 0 && ToroHealth.getConfig().particleOptions.showParticle && ToroHealth.getConfig().enabled) {
-                    Vec3d entityLocation = this.getPos();
-                    this.world.addImportantParticle(ToroHealth.HEALTH_CHANGE, true, entityLocation.x, entityLocation.y + this.getHeight() / 2, entityLocation.z, Double.longBitsToDouble(this.barState.healthChangeLast & 0xFFFFFFFFL), 0, 0);
+        if (data.equals(LivingEntityAccessor.getHealthData())) {
+            if (this.barState == null) {
+                this.barState = BarState.create((LivingEntity) (Object) this);
+            } else {
+                this.barState.updateHealth(this.getHealth());
+                if (this.barState.health != this.barState.lastHealth) {
+                    this.barState.handleHealthChange();
+                    // create healthChangeParticle
+                    if (this.barState.healthChangeLast != 0 && ToroHealth.getConfig().particleOptions.showParticle && ToroHealth.getConfig().enabled) {
+                        Vec3d entityLocation = this.getPos();
+                        this.world.addImportantParticle(ToroHealth.HEALTH_CHANGE, true, entityLocation.x, entityLocation.y + this.getHeight() / 2, entityLocation.z, Double.longBitsToDouble(this.barState.healthChangeLast & 0xFFFFFFFFL), 0, 0);
+                    }
                 }
             }
         }

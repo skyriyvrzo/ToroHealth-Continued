@@ -13,7 +13,7 @@ import net.kairost.torohealth.client.util.RayTrace;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
-    @Inject(method = "renderWorld", at = @At("HEAD"))
+    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;updateCrosshairTarget(F)V", shift = At.Shift.AFTER))
     private void torohealth$preRenderWorld(RenderTickCounter tickCounter, CallbackInfo info) {
         if (ToroHealth.getConfig().enabled) {
             float tickDelta = tickCounter.getTickProgress(true);

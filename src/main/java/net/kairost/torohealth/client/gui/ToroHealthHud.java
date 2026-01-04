@@ -12,6 +12,7 @@ import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.effect.StatusEffects;
@@ -27,6 +28,7 @@ import net.kairost.torohealth.data.BarStateAccessor;
 import net.kairost.torohealth.data.BarState;
 import net.kairost.torohealth.client.util.EntityUtil;
 import net.kairost.torohealth.client.util.EntityUtil.Relation;
+import net.kairost.torohealth.mixin.accessor.WitherEntityAccessor;
 
 public class ToroHealthHud extends DrawableHelper {
     private static final Identifier ICON_TEXTURES = new Identifier("textures/gui/icons.png");
@@ -390,6 +392,19 @@ public class ToroHealthHud extends DrawableHelper {
             dragon.connectedCrystal = null;
             drawEntity(matrices, x, y, size, quaternionf, quaternionf2, entity, tickDelta);
             dragon.connectedCrystal = endCrystal;
+        } else if (entity instanceof WitherEntity wither) {
+            WitherEntityAccessor witherEntityAccessor = (WitherEntityAccessor) wither;
+            float[] sideHeadYaws = witherEntityAccessor.torohealth$getSideHeadYaws();
+            float[] prevSideHeadYaws = witherEntityAccessor.torohealth$getPrevSideHeadYaws();
+            float[] m = sideHeadYaws.clone();
+            float[] n = prevSideHeadYaws.clone();
+            sideHeadYaws[0]  =  180.0f + f * 20.0f + sideHeadYaws[0] - i;
+            sideHeadYaws[1]  =  180.0f + f * 20.0f + sideHeadYaws[1] - i;
+            prevSideHeadYaws[0]  =  180.0f + f * 20.0f + prevSideHeadYaws[0] - i;
+            prevSideHeadYaws[1]  =  180.0f + f * 20.0f + prevSideHeadYaws[1] - i;
+            drawEntity(matrices, x, y, size, quaternionf, quaternionf2, entity, tickDelta);
+            System.arraycopy(m, 0, sideHeadYaws, 0, m.length);
+            System.arraycopy(n, 0, prevSideHeadYaws, 0, n.length);
         } else {
             drawEntity(matrices, x, y, size, quaternionf, quaternionf2, entity, tickDelta);
         }

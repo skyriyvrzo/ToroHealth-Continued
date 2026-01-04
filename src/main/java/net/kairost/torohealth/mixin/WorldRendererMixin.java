@@ -71,12 +71,10 @@ public class WorldRendererMixin {
         double e = vec3d.getY();
         double f = vec3d.getZ();
         for (Entity entity : this.world.getEntities()) {
-            if (!entity.hasPassengers()) {
-                float tickDelta = tickCounter.getTickProgress(false);
-                int light = ModConfig.INSTANCE.inWorldBarOptions.inWorldBarLightMode.equals(ModConfig.InWorldBarLightMode.FULL_BRIGHT) ? LightmapTextureManager.MAX_LIGHT_COORDINATE : this.entityRenderManager.getLight(entity, tickDelta);
-                if (this.entityRenderManager.shouldRender(entity, frustum, d, e, f) || entity.hasPassengerDeep(this.client.player)) {
-                    InWorldBarRenderer.render(entity, camera, tickDelta, light, entityRenderManager);
-                }
+            float tickDelta = tickCounter.getTickProgress(false);
+            int light = ModConfig.INSTANCE.inWorldBarOptions.inWorldBarLightMode.equals(ModConfig.InWorldBarLightMode.FULL_BRIGHT) ? LightmapTextureManager.MAX_LIGHT_COORDINATE : this.entityRenderManager.getLight(entity, tickDelta);
+            if (this.entityRenderManager.shouldRender(entity, frustum, d, e, f) || entity.hasPassengerDeep(this.client.player)) {
+                InWorldBarRenderer.render(entity, camera, tickDelta, light, entityRenderManager);
             }
         }
         this.particleBatch.add(InWorldBarRenderer.getSubmittable());

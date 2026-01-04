@@ -41,6 +41,9 @@ public abstract class LivingEntityMixin extends EntityMixin implements BarStateA
 
     @Inject(method = "onTrackedDataSet", at = @At("TAIL"))
     private void torohealth$onTrackedData(TrackedData<?> data, CallbackInfo callbackInfo) {
+        if (this.barState == null) {
+            return;
+        }
         if (data.equals(LivingEntityAccessor.getHealthData())) {
             this.barState.updateHealth(this.getHealth());
             if (this.barState.health != this.barState.lastHealth) {

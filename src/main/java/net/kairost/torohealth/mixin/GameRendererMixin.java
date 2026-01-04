@@ -12,8 +12,8 @@ import net.kairost.torohealth.client.util.RayTrace;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
-    @Inject(method = "renderWorld", at = @At("HEAD"))
-    private void torohealth$preRenderWorld(float tickDelta, long limitTime, CallbackInfo info) {
+    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;updateCrosshairTarget(F)V", shift = At.Shift.AFTER))
+    private void torohealth$onUpdateTargetedEntity(float tickDelta, long limitTime, CallbackInfo info) {
         if (ToroHealth.getConfig().enabled) {
             LivingEntity entity = RayTrace.getEntityInCrosshair(tickDelta, Math.max(ToroHealth.getConfig().hudOptions.hudDistance, ToroHealth.getConfig().inWorldBarOptions.inWorldBarDistance));
             ToroHealth.setTargetedEntity(entity);

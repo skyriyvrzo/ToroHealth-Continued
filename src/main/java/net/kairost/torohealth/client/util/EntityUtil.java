@@ -39,6 +39,7 @@ public class EntityUtil {
                 || entity instanceof CreeperEntity && ((CreeperEntity) entity).shouldRenderOverlay() // charged creeper
                 || StreamSupport.stream(entity.getItemsEquipped().spliterator(), false).anyMatch(is -> !is.isEmpty()))
             && entity != client.player
+            && !entity.hasPassengers()
             && !entity.isSpectator();
     }
 

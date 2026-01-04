@@ -197,9 +197,6 @@ public class ToroHealthHud {
             this.entityY = (float) FRAME_SIZE / 2 + ENTITY_RENDER_HEIGHT / 2;
         }
         if (this.entity instanceof GhastEntity) {
-            this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * entityScale / 4 ;
-        }
-        if (this.entity instanceof GhastEntity) {
             this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * entityScale * 3 / 8 ;
         }
         else if (this.entity instanceof EnderDragonEntity) {

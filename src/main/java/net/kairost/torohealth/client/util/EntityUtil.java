@@ -38,6 +38,7 @@ public class EntityUtil {
                 || entity instanceof CreeperEntity && ((CreeperEntity) entity).isCharged() // charged creeper
                 || (((LivingEntity) entity).getArmorVisibility() > 0))
             && entity != client.player
+            && !entity.hasPassengers()
             && !entity.isSpectator();
     }
 

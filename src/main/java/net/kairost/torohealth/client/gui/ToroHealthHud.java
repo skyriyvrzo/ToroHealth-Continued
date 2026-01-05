@@ -12,6 +12,7 @@ import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.effect.StatusEffects;
@@ -29,6 +30,7 @@ import net.kairost.torohealth.data.BarStateAccessor;
 import net.kairost.torohealth.data.BarState;
 import net.kairost.torohealth.client.util.EntityUtil;
 import net.kairost.torohealth.client.util.EntityUtil.Relation;
+import net.kairost.torohealth.mixin.accessor.WitherEntityAccessor;
 
 public class ToroHealthHud {
     public static final Identifier CONTAINER = Identifier.of("minecraft", "hud/heart/container");
@@ -367,7 +369,21 @@ public class ToroHealthHud {
         Quaternionf quaternionf2 = new Quaternionf().rotateX(g * 20.0F * (float) (Math.PI / 180.0));
         quaternionf.mul(quaternionf2);
         EntityRenderState entityRenderState;
-        if (entity instanceof EnderDragonEntity enderDragon) {
+        if (entity instanceof WitherEntity wither) {
+            WitherEntityAccessor witherEntityAccessor = (WitherEntityAccessor) wither;
+            float[] sideHeadYaws = witherEntityAccessor.torohealth$getSideHeadYaws();
+            float[] lastSideHeadYaws = witherEntityAccessor.torohealth$getLastSideHeadYaws();
+            float i = entity.bodyYaw;
+            float[] m = sideHeadYaws.clone();
+            float[] n = lastSideHeadYaws.clone();
+            sideHeadYaws[0] = 180.0f + f * 20.0f + sideHeadYaws[0] - i;
+            sideHeadYaws[1] = 180.0f + f * 20.0f + sideHeadYaws[1] - i;
+            lastSideHeadYaws[0] = 180.0f + f * 20.0f + lastSideHeadYaws[0] - i;
+            lastSideHeadYaws[1] = 180.0f + f * 20.0f + lastSideHeadYaws[1] - i;
+            entityRenderState = drawEntity(entity, tickDelta);
+            System.arraycopy(m, 0, sideHeadYaws, 0, m.length);
+            System.arraycopy(n, 0, lastSideHeadYaws, 0, n.length);
+        } else if (entity instanceof EnderDragonEntity enderDragon) {
             EndCrystalEntity endCrystal = enderDragon.connectedCrystal;
             enderDragon.connectedCrystal = null;
             entityRenderState = drawEntity(entity, tickDelta);

@@ -2,14 +2,17 @@ package net.kairost.torohealth.client.render;
 
 import org.joml.Matrix4f;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.EntityAttachmentType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.OverlayTexture;
 import net.kairost.torohealth.ToroHealth;
@@ -33,9 +36,16 @@ public class InWorldBarRenderer {
         double x = MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX());
         double y = MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY());
         double z = MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ());
-        matrices.translate(x - cameraX, y - cameraY, z - cameraZ);
-        float f = entity.getHeight() + 0.7f;
-        matrices.translate(0.0, f, 0.0);
+        EntityRenderer<? super Entity> entityRenderer = entityRenderDispatcher.getRenderer(entity);
+        Vec3d vec3d = entityRenderer.getPositionOffset(entity, tickDelta);
+        matrices.translate(x - cameraX + vec3d.getX(), y - cameraY + vec3d.getY(), z - cameraZ + vec3d.getZ());
+        Vec3d labelPos = entity.getAttachments().getPointNullable(EntityAttachmentType.NAME_TAG, 0, entity.getYaw(tickDelta));
+        if (labelPos != null) {
+            matrices.translate(labelPos.x, labelPos.y + 0.7f, labelPos.z);
+        } else {
+            float f = entity.getHeight() + 0.7f;
+            matrices.translate(0.0, f, 0.0);
+        }
         matrices.multiply(entityRenderDispatcher.getRotation());
         matrices.scale(-0.025f, -0.025f, 0.025f);
         VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayer.getText(TOROHEALTH_BARS_TEXTURES));

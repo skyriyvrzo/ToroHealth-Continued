@@ -40,6 +40,7 @@
 
   "text.autoconfig.torohealth.option.particleOptions": "Particle Options",
   "text.autoconfig.torohealth.option.particleOptions.showParticle": "Display Particles",
+  "text.autoconfig.torohealth.option.particleOptions.particleLightMode": "Particle Light Mode",
   "text.autoconfig.torohealth.option.particleOptions.particleDistance": "Particle Max Distance",
   "text.autoconfig.torohealth.option.particleOptions.damageColor": "Damage Color",
   "text.autoconfig.torohealth.option.particleOptions.healColor": "Heal Color",
@@ -71,6 +72,7 @@
 
   "text.autoconfig.torohealth.option.particleOptions.showParticle.@Tooltip": "If true, displays floating damage/heal particle numbers whenever an entity's health changes.",
   "text.autoconfig.torohealth.option.particleOptions.particleDistance.@Tooltip": "Maximum distance (in blocks) at which damage/heal particles are rendered.",
+  "text.autoconfig.torohealth.option.particleOptions.particleLightMode.@Tooltip": "Determines the lighting mode for damage and healing particles: match the surrounding environment's light level, or always fully bright (ignoring darkness)",
   "text.autoconfig.torohealth.option.particleOptions.damageColor.@Tooltip": "Color used for damage number particles.",
   "text.autoconfig.torohealth.option.particleOptions.healColor.@Tooltip": "Color used for healing number particles.",
 

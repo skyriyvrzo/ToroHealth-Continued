@@ -40,6 +40,7 @@
 
   "text.autoconfig.torohealth.option.particleOptions": "Ajustes de partículas",
   "text.autoconfig.torohealth.option.particleOptions.showParticle": "Mostrar partículas",
+  "text.autoconfig.torohealth.option.particleOptions.particleLightMode": "Modo de iluminación de partículas",
   "text.autoconfig.torohealth.option.particleOptions.particleDistance": "Distancia máxima de partículas",
   "text.autoconfig.torohealth.option.particleOptions.damageColor": "Color de daño",
   "text.autoconfig.torohealth.option.particleOptions.healColor": "Color de curación",
@@ -70,6 +71,7 @@
   "text.autoconfig.torohealth.option.hudOptions.hudScale.@Tooltip": "Escala el tamaño del HUD. 1 = tamaño predeterminado.",
 
   "text.autoconfig.torohealth.option.particleOptions.showParticle.@Tooltip": "Si está activado, muestra números flotantes de daño o curación cuando cambia la salud de una entidad.",
+  "text.autoconfig.torohealth.option.particleOptions.particleLightMode.@Tooltip": "Determina el modo de iluminación de las partículas de daño y curación: coincidir con el nivel de luz del entorno circundante, o siempre completamente brillantes (ignorando la oscuridad).",
   "text.autoconfig.torohealth.option.particleOptions.particleDistance.@Tooltip": "Distancia máxima (en bloques) a la que se renderizan las partículas de daño/curación.",
   "text.autoconfig.torohealth.option.particleOptions.damageColor.@Tooltip": "Color utilizado para las partículas de daño.",
   "text.autoconfig.torohealth.option.particleOptions.healColor.@Tooltip": "Color utilizado para las partículas de curación.",

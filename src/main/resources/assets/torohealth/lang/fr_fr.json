@@ -40,6 +40,7 @@
 
   "text.autoconfig.torohealth.option.particleOptions": "Options des particules",
   "text.autoconfig.torohealth.option.particleOptions.showParticle": "Afficher les particules",
+  "text.autoconfig.torohealth.option.particleOptions.particleLightMode": "Mode d'éclairage des particules",
   "text.autoconfig.torohealth.option.particleOptions.particleDistance": "Distance maximale des particules",
   "text.autoconfig.torohealth.option.particleOptions.damageColor": "Couleur des dégâts",
   "text.autoconfig.torohealth.option.particleOptions.healColor": "Couleur de soin",
@@ -70,6 +71,7 @@
   "text.autoconfig.torohealth.option.hudOptions.hudScale.@Tooltip": "Met à l’échelle l’affichage HUD. 1 = taille par défaut.",
 
   "text.autoconfig.torohealth.option.particleOptions.showParticle.@Tooltip": "Si activé, affiche des nombres flottants de dégâts et de soins lorsque la vie d’une entité change.",
+  "text.autoconfig.torohealth.option.particleOptions.particleLightMode.@Tooltip": "Détermine le mode d'éclairage des particules de dégâts et de soin : correspondre au niveau de lumière de l'environnement environnant, ou toujours pleinement lumineuses (ignorant l'obscurité).",
   "text.autoconfig.torohealth.option.particleOptions.particleDistance.@Tooltip": "Distance maximale (en blocs) à laquelle les particules de dégâts/soins sont affichées.",
   "text.autoconfig.torohealth.option.particleOptions.damageColor.@Tooltip": "Couleur utilisée pour les particules de dégâts.",
   "text.autoconfig.torohealth.option.particleOptions.healColor.@Tooltip": "Couleur utilisée pour les nombres de soin.",

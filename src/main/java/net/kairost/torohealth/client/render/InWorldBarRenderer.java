@@ -8,11 +8,14 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.EntityAttachmentType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.particle.BillboardParticle;
 import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRenderManager;
+import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.config.ModConfig;
 import net.kairost.torohealth.data.BarState;
@@ -33,12 +36,19 @@ public class InWorldBarRenderer {
             return;
         }
 
-        Vec3d vec3d = camera.getPos();
-        double x = MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX()) - vec3d.x;
-        double y = MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY()) - vec3d.y;
-        double z = MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ()) - vec3d.z;
-        float f = entity.getHeight() + 0.7f;
-        Vector3f vector3f = new Vector3f((float) -BAR_WIDTH / 2, -5, 0.0F).rotate(camera.getRotation()).mul(SIZE).add((float) x, (float) y + f, (float) z);
+        Vec3d cameraPos = camera.getPos();
+        EntityRenderState entityRenderState = entityRenderManager.getAndUpdateRenderState(entity, tickDelta);
+        EntityRenderer<Entity, EntityRenderState> entityRenderer = (EntityRenderer<Entity, EntityRenderState>) entityRenderManager.getRenderer(entityRenderState);
+        Vec3d vec3d = entityRenderer.getPositionOffset(entityRenderState);
+        double x = MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX()) - cameraPos.x + vec3d.getX();
+        double y = MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY()) - cameraPos.y + vec3d.getY();
+        double z = MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ()) - cameraPos.z + vec3d.getZ();
+        Vec3d labelPos = entity.getAttachments().getPointNullable(EntityAttachmentType.NAME_TAG, 0, entity.getYaw(tickDelta));
+        if (labelPos == null) {
+            float f = entity.getHeight();
+            labelPos = new Vec3d(0.0, f, 0.0);
+        }
+        Vector3f vector3f = new Vector3f((float) -BAR_WIDTH / 2, -5, 0.0F).rotate(camera.getRotation()).mul(SIZE).add((float) (x + labelPos.x), (float) (y + labelPos.y + 0.7), (float) (z + labelPos.z));
 
         renderHealthBar((LivingEntity)entity, vector3f.x, vector3f.y, vector3f.z, new Quaternionf(camera.getRotation()), light, tickDelta);
     }

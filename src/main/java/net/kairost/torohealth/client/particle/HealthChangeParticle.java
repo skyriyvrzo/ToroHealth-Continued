@@ -14,9 +14,11 @@ import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.particle.BillboardParticle;
 import net.minecraft.client.particle.BillboardParticleSubmittable;
 import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kairost.torohealth.ToroHealth;
+import net.kairost.torohealth.config.ModConfig;
 
 @Environment(value=EnvType.CLIENT)
 public class HealthChangeParticle
@@ -104,7 +106,7 @@ public class HealthChangeParticle
         int b = (int)(this.blue * 255.0f) & 0xFF;
         int color = (a << 24) | (r << 16) | (g << 8) | b;
 
-        int light = this.getBrightness(tickDelta);
+        int light = ToroHealth.getConfig().particleOptions.particleLightMode.equals(ModConfig.ParticleLightMode.FULL_BRIGHT) ? LightmapTextureManager.MAX_LIGHT_COORDINATE : this.getBrightness(tickDelta);
 
         TextRenderQueue.submit(
             new TextRenderEntry(text, x, y, z, h, -3.0f, color, light)

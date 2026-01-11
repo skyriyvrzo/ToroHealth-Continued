@@ -40,6 +40,7 @@
 
   "text.autoconfig.torohealth.option.particleOptions": "Параметры частиц",
   "text.autoconfig.torohealth.option.particleOptions.showParticle": "Показывать частицы",
+  "text.autoconfig.torohealth.option.particleOptions.particleLightMode": "Режим освещения частиц",
   "text.autoconfig.torohealth.option.particleOptions.particleDistance": "Максимальная дистанция частиц",
   "text.autoconfig.torohealth.option.particleOptions.damageColor": "Цвет урона",
   "text.autoconfig.torohealth.option.particleOptions.healColor": "Цвет лечения",
@@ -70,6 +71,7 @@
   "text.autoconfig.torohealth.option.hudOptions.hudScale.@Tooltip": "Масштаб HUD. 1.0 = стандартный размер.",
 
   "text.autoconfig.torohealth.option.particleOptions.showParticle.@Tooltip": "Если включено, показывает плавающие цифры урона и лечения при изменении здоровья сущности.",
+  "text.autoconfig.torohealth.option.particleOptions.particleLightMode.@Tooltip": "Определяет режим освещения частиц урона и лечения: соответствовать уровню освещённости окружающей среды или всегда отображать полностью яркими (игнорируя темноту).",
   "text.autoconfig.torohealth.option.particleOptions.particleDistance.@Tooltip": "Максимальная дистанция (в блоках), на которой отображаются частицы урона/исцеления.",
   "text.autoconfig.torohealth.option.particleOptions.damageColor.@Tooltip": "Цвет, используемый для частиц урона.",
   "text.autoconfig.torohealth.option.particleOptions.healColor.@Tooltip": "Цвет, используемый для частиц исцеления.",

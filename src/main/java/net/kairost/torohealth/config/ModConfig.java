@@ -64,6 +64,10 @@ public class ModConfig implements ConfigData {
         public boolean showParticle = true;
 
         @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.Gui.EnumHandler(option = EnumDisplayOption.BUTTON)
+        public ParticleLightMode particleLightMode = ParticleLightMode.WORLD_LIGHT;
+
+        @ConfigEntry.Gui.Tooltip
         public float particleDistance = 64f;
 
         @ConfigEntry.Gui.Excluded
@@ -143,6 +147,10 @@ public class ModConfig implements ConfigData {
 
     public enum FrameStyle {
         LIGHT, HEAVY
+    }
+
+    public enum ParticleLightMode {
+        WORLD_LIGHT, FULL_BRIGHT
     }
 
     public enum InWorldBarVisibilityMode {

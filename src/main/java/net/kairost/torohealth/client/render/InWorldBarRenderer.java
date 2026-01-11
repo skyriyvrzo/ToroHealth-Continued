@@ -2,6 +2,7 @@ package net.kairost.torohealth.client.render;
 
 import org.joml.Matrix4f;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -10,6 +11,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.OverlayTexture;
 import net.kairost.torohealth.ToroHealth;
@@ -30,9 +32,11 @@ public class InWorldBarRenderer {
         }
 
         matrices.push();
-        double x = MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX());
-        double y = MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY());
-        double z = MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ());
+        EntityRenderer<? super Entity> entityRenderer = entityRenderDispatcher.getRenderer(entity);
+        Vec3d vec3d = entityRenderer.getPositionOffset(entity, tickDelta);
+        double x = MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX() + vec3d.getX());
+        double y = MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY() + vec3d.getY());
+        double z = MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ() + vec3d.getZ());
         matrices.translate(x - cameraX, y - cameraY, z - cameraZ);
         float f = entity.getHeight() + 0.7f;
         matrices.translate(0.0, f, 0.0);

@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.data.BarState;
 import net.kairost.torohealth.data.BarStateAccessor;
+import net.kairost.torohealth.client.util.EntityUtil;
 import net.kairost.torohealth.mixin.accessor.LivingEntityAccessor;
 
 @Mixin(LivingEntity.class)
@@ -49,7 +50,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements BarStateA
             if (this.barState.health != this.barState.lastHealth) {
                 this.barState.handleHealthChange();
                 // create healthChangeParticle
-                if (this.barState.healthChangeLast != 0 && ToroHealth.getConfig().particleOptions.showParticle && ToroHealth.getConfig().enabled) {
+                if (this.barState.healthChangeLast != 0 && ToroHealth.getConfig().particleOptions.showParticle && ToroHealth.getConfig().enabled && EntityUtil.getSquaredDistanceToCamera((LivingEntity) (Object) this) < ToroHealth.getConfig().particleOptions.particleDistanceSquared) {
                     Vec3d entityLocation = this.getPos();
                     this.getWorld().addImportantParticleClient(ToroHealth.HEALTH_CHANGE, true, entityLocation.x, entityLocation.y + this.getHeight() / 2, entityLocation.z, Double.longBitsToDouble(this.barState.healthChangeLast & 0xFFFFFFFFL), 0, 0);
                 }

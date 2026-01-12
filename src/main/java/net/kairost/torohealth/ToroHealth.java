@@ -39,10 +39,6 @@ public class ToroHealth implements ClientModInitializer {
             return ActionResult.SUCCESS;
         });
 
-        holder.registerLoadListener((h, c) -> {
-            c.postLoad();
-            return ActionResult.SUCCESS;
-        });
         config = ModConfig.INSTANCE;
 
         //toroHealth Particle

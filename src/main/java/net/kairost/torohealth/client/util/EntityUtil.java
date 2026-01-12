@@ -1,6 +1,7 @@
 package net.kairost.torohealth.client.util;
 
 import java.util.stream.StreamSupport;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -9,6 +10,7 @@ import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.*;
+import net.minecraft.entity.player.PlayerEntity;
 
 public class EntityUtil {
 
@@ -58,5 +60,16 @@ public class EntityUtil {
             return true;
 
         return false;
+    }
+
+    public static double getSquaredDistanceToCamera(LivingEntity entity) {
+        MinecraftClient minecraft = MinecraftClient.getInstance();
+        PlayerEntity player = minecraft.player;
+        if (player != null) {
+            Vec3d vec3d = player.getCameraPosVec(0f);
+            return entity.getPos().squaredDistanceTo(vec3d);
+        } else {
+            return 0d;
+        }
     }
 }

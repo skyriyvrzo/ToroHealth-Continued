@@ -3,13 +3,11 @@
   "minVersion": "0.8",
   "package": "net.kairost.torohealth.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [],
   "client": [
-    "InGameHudMixin",
-    "WorldRendererMixin",
     "GameRendererMixin",
     "LivingEntityMixin",
     "EntityMixin",
+    "WorldRendererMixin",
     "accessor.LivingEntityAccessor",
     "accessor.WitherEntityAccessor"
   ],

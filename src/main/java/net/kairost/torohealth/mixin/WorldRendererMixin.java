@@ -1,32 +1,31 @@
 package net.kairost.torohealth.mixin;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.kairost.torohealth.client.render.InWorldBarRenderer;
+import net.kairost.torohealth.config.ToroHealthConfig;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import net.kairost.torohealth.config.ModConfig;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.world.entity.Entity;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.kairost.torohealth.ToroHealth;
-import net.kairost.torohealth.client.render.InWorldBarRenderer;
 
-@Mixin(WorldRenderer.class)
+@Mixin(LevelRenderer.class)
 public class WorldRendererMixin {
     @Final
     @Shadow
     private EntityRenderDispatcher entityRenderDispatcher;
 
     @Inject(method = "renderEntity", at = @At(value = "RETURN"))
-    private void torohealth$renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta,
-        MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo info) {
-        if (ToroHealth.getConfig().enabled && !ToroHealth.getConfig().inWorldBarOptions.inWorldBarVisibilityMode.equals(ModConfig.InWorldBarVisibilityMode.NONE)) {
-            int light = ModConfig.INSTANCE.inWorldBarOptions.inWorldBarLightMode.equals(ModConfig.InWorldBarLightMode.FULL_BRIGHT) ? LightmapTextureManager.MAX_LIGHT_COORDINATE : this.entityRenderDispatcher.getLight(entity, tickDelta);
+    private void torohealth$renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, CallbackInfo info) {
+        if (ToroHealthConfig.CONFIG.enabled.get() && !ToroHealthConfig.CONFIG.inWorldBarOptions.inWorldBarVisibilityMode.get().equals(ToroHealthConfig.InWorldBarVisibilityMode.NONE)) {
+            int light = ToroHealthConfig.CONFIG.inWorldBarOptions.inWorldBarLightMode.equals(ToroHealthConfig.InWorldBarLightMode.FULL_BRIGHT) ? LightTexture.FULL_BRIGHT : this.entityRenderDispatcher.getPackedLightCoords(entity, tickDelta);
             InWorldBarRenderer.render(entity, cameraX, cameraY, cameraZ, tickDelta, matrices, vertexConsumers, light, this.entityRenderDispatcher);
         }
     }

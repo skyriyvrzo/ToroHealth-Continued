@@ -1,14 +1,14 @@
 package net.kairost.torohealth.mixin.accessor;
 
-import net.minecraft.entity.boss.WitherEntity;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(WitherEntity.class)
+@Mixin(WitherBoss.class)
 public interface WitherEntityAccessor {
-    @Accessor("sideHeadYaws")
+    @Accessor("yRotHeads")
     float[] torohealth$getSideHeadYaws();
 
-    @Accessor("prevSideHeadYaws")
+    @Accessor("yRotOHeads")
     float[] torohealth$getPrevSideHeadYaws();
 }

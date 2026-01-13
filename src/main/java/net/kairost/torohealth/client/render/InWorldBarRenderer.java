@@ -1,62 +1,62 @@
 package net.kairost.torohealth.client.render;
 
 import org.joml.Matrix4f;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.render.OverlayTexture;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.kairost.torohealth.ToroHealth;
-import net.kairost.torohealth.config.ModConfig;
+import net.kairost.torohealth.config.ToroHealthConfig;
 import net.kairost.torohealth.data.BarState;
 import net.kairost.torohealth.client.util.EntityUtil;
 import net.kairost.torohealth.client.util.EntityUtil.Relation;
 import net.kairost.torohealth.data.BarStateAccessor;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 
 public class InWorldBarRenderer {
     private static final int DARK_GRAY = 0x808080;
-    private static final Identifier TOROHEALTH_BARS_TEXTURES = new Identifier("torohealth:textures/gui/bars.png");
+    private static final ResourceLocation TOROHEALTH_BARS_TEXTURES = new ResourceLocation("torohealth:textures/gui/bars.png");
 
     // referencing vanilla entity draw name tag function
-    public static void render(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,  EntityRenderDispatcher entityRenderDispatcher) {
+    public static void render(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light,  EntityRenderDispatcher entityRenderDispatcher) {
         if (!shouldRender(entity, entityRenderDispatcher)) {
             return;
         }
 
-        matrices.push();
-        double x = MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX());
-        double y = MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY());
-        double z = MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ());
+        matrices.pushPose();
+        double x = Mth.lerp(tickDelta, entity.xOld, entity.getX());
+        double y = Mth.lerp(tickDelta, entity.yOld, entity.getY());
+        double z = Mth.lerp(tickDelta, entity.zOld, entity.getZ());
         EntityRenderer<? super Entity> entityRenderer = entityRenderDispatcher.getRenderer(entity);
-        Vec3d vec3d = entityRenderer.getPositionOffset(entity, tickDelta);
-        matrices.translate(x - cameraX + vec3d.getX(), y - cameraY + vec3d.getY(), z - cameraZ + vec3d.getZ());
-        float f = entity.getNameLabelHeight() + 0.2f;
+        Vec3 vec3d = entityRenderer.getRenderOffset(entity, tickDelta);
+        matrices.translate(x - cameraX + vec3d.x(), y - cameraY + vec3d.y(), z - cameraZ + vec3d.z());
+        float f = entity.getNameTagOffsetY() + 0.2f;
         matrices.translate(0.0, f, 0.0);
-        matrices.multiply(entityRenderDispatcher.getRotation());
+        matrices.mulPose(entityRenderDispatcher.cameraOrientation());
         matrices.scale(-0.025f, -0.025f, 0.025f);
-        VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayer.getText(TOROHEALTH_BARS_TEXTURES));
+        VertexConsumer buffer = vertexConsumers.getBuffer(RenderType.text(TOROHEALTH_BARS_TEXTURES));
         renderHealthBar(matrices, (LivingEntity)entity, -20.0F, 0.0F, light, buffer, tickDelta);
-        matrices.pop();
+        matrices.popPose();
     }
-    private static void renderHealthBar(MatrixStack matrices, LivingEntity entity, float x, float y, int light, VertexConsumer buffer, float tickDelta) {
+    private static void renderHealthBar(PoseStack matrices, LivingEntity entity, float x, float y, int light, VertexConsumer buffer, float tickDelta) {
         BarState state = ((BarStateAccessor) entity).torohealth$getBarState();
-        Matrix4f matrix = matrices.peek().getPositionMatrix();
+        Matrix4f matrix = matrices.last().pose();
         Relation relation = EntityUtil.getRelation(entity);
-        int color = relation.equals(Relation.FOE) ? ToroHealth.getConfig().barColor.foeColor : ToroHealth.getConfig().barColor.friendColor;
-        int color2 = relation.equals(Relation.FOE) ? ToroHealth.getConfig().barColor.foeColorSecondary : ToroHealth.getConfig().barColor.friendColorSecondary;
+        int color = relation.equals(Relation.FOE) ? ToroHealthConfig.CONFIG.barColor.foeColor.get() : ToroHealthConfig.CONFIG.barColor.friendColor.get();
+        int color2 = relation.equals(Relation.FOE) ? ToroHealthConfig.CONFIG.barColor.foeColorSecondary.get() : ToroHealthConfig.CONFIG.barColor.friendColorSecondary.get();
         float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
-        float percent2 = Math.min(MathHelper.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
+        float percent2 = Math.min(Mth.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
 
-        int width = MathHelper.ceil(percent * 41.0f);
-        int width2 = MathHelper.ceil(percent2 * 41.0f);
+        int width = Mth.ceil(percent * 41.0f);
+        int width2 = Mth.ceil(percent2 * 41.0f);
         if (40 > width && 40 > width2) {
             renderBar(matrix, x, y, 0.0f, DARK_GRAY, 40, light, buffer);
         }
@@ -79,33 +79,33 @@ public class InWorldBarRenderer {
         float r = (float)(color >> 16 & 0xFF) / 255.0f;
         float g = (float)(color >> 8 & 0xFF) / 255.0f;
         float b = (float)(color & 0xFF) / 255.0f;
-        buffer.vertex(matrix, x0, y1, z).color(r, g, b, 1.0f).texture(u0, v1).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 1, 0).next();
-        buffer.vertex(matrix, x1, y1, z).color(r, g, b, 1.0f).texture(u1, v1).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 1, 0).next();
-        buffer.vertex(matrix, x1, y0, z).color(r, g, b, 1.0f).texture(u1, v0).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 1, 0).next();
-        buffer.vertex(matrix, x0, y0, z).color(r, g, b, 1.0f).texture(u0, v0).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(0, 1, 0).next();
+        buffer.vertex(matrix, x0, y1, z).color(r, g, b, 1.0f).uv(u0, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(0, 1, 0).endVertex();
+        buffer.vertex(matrix, x1, y1, z).color(r, g, b, 1.0f).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(0, 1, 0).endVertex();
+        buffer.vertex(matrix, x1, y0, z).color(r, g, b, 1.0f).uv(u1, v0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(0, 1, 0).endVertex();
+        buffer.vertex(matrix, x0, y0, z).color(r, g, b, 1.0f).uv(u0, v0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(0, 1, 0).endVertex();
 
     }
 
 
     private static boolean shouldRender(Entity entity, EntityRenderDispatcher entityRenderDispatcher) {
-        if (ToroHealth.getConfig().inWorldBarOptions.inWorldBarVisibilityMode.equals(ModConfig.InWorldBarVisibilityMode.NONE)) {
+        if (ToroHealthConfig.CONFIG.inWorldBarOptions.inWorldBarVisibilityMode.get().equals(ToroHealthConfig.InWorldBarVisibilityMode.NONE)) {
             return false;
         }
-        if (ToroHealth.getConfig().inWorldBarOptions.inWorldBarVisibilityMode.equals(ModConfig.InWorldBarVisibilityMode.WHEN_HOLDING_WEAPON) && !ToroHealth.isHoldingWeapon()) {
+        if (ToroHealthConfig.CONFIG.inWorldBarOptions.inWorldBarVisibilityMode.get().equals(ToroHealthConfig.InWorldBarVisibilityMode.WHEN_HOLDING_WEAPON) && !ToroHealth.isHoldingWeapon()) {
             return false;
         }
         if (!(entity instanceof LivingEntity livingEntity)) {
             return false;
         }
-        if (entityRenderDispatcher.getSquaredDistanceToCamera(entity) > ToroHealth.getConfig().inWorldBarOptions.inWorldBarDistanceSquared) {
+        if (entityRenderDispatcher.distanceToSqr(entity) > ToroHealthConfig.CONFIG.inWorldBarOptions.inWorldBarDistanceSquared) {
             return false;
         }
-        if (ToroHealth.getConfig().inWorldBarOptions.onlyWhenHurt && livingEntity.getHealth() >= livingEntity.getMaxHealth()) {
+        if (ToroHealthConfig.CONFIG.inWorldBarOptions.onlyWhenHurt.get() && livingEntity.getHealth() >= livingEntity.getMaxHealth()) {
             return false;
         }
-        if (ToroHealth.getConfig().inWorldBarOptions.onlyWhenLookingAt && ToroHealth.getTargetedEntity() != entity) {
+        if (ToroHealthConfig.CONFIG.inWorldBarOptions.onlyWhenLookingAt.get() && ToroHealth.getTargetedEntity() != entity) {
             return false;
         }
-        return EntityUtil.showHealthBar(entity, MinecraftClient.getInstance());
+        return EntityUtil.showHealthBar(entity, Minecraft.getInstance());
     }
 }

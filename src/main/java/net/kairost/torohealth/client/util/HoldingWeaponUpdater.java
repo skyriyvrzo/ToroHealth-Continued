@@ -1,22 +1,30 @@
 package net.kairost.torohealth.client.util;
 
-import net.minecraft.item.*;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
+import net.kairost.torohealth.config.ToroHealthConfig;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.EndCrystalItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.ThrowablePotionItem;
+import net.minecraft.world.item.TridentItem;
 import net.kairost.torohealth.ToroHealth;
-import net.kairost.torohealth.config.ModConfig;
 
 public class HoldingWeaponUpdater {
     public static void update() {
-        if (ModConfig.InWorldBarVisibilityMode.NONE.equals(ToroHealth.getConfig().inWorldBarOptions.inWorldBarVisibilityMode))
+        if (ToroHealthConfig.InWorldBarVisibilityMode.NONE.equals(ToroHealthConfig.CONFIG.inWorldBarOptions.inWorldBarVisibilityMode.get()))
             return;
-        MinecraftClient minecraft = MinecraftClient.getInstance();
-        PlayerEntity player = minecraft.player;
+        Minecraft minecraft = Minecraft.getInstance();
+        Player player = minecraft.player;
         if (player == null) {
             ToroHealth.setHoldingWeapon(false);
             return;
         }
-        ToroHealth.setHoldingWeapon(isWeapon(player.getMainHandStack()) || isWeapon(player.getOffHandStack()));
+        ToroHealth.setHoldingWeapon(isWeapon(player.getMainHandItem()) || isWeapon(player.getOffhandItem()));
     }
 
     private static boolean isWeapon(ItemStack itemStack) {

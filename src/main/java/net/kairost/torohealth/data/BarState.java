@@ -1,7 +1,7 @@
 package net.kairost.torohealth.data;
 
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 
 public class BarState {
     private static final float HEALTH_DISPLAY_DELAY = 5;
@@ -37,7 +37,7 @@ public class BarState {
     public void tick() {
         incrementTimers();
 
-         if (this.healthCumulateDelay <= 0) {
+        if (this.healthCumulateDelay <= 0) {
             reset();
         }
         updateAnimations();
@@ -58,14 +58,14 @@ public class BarState {
     }
 
     public void handleHealthChange() {
-        this.healthChangeLast = MathHelper.ceil(this.health) - MathHelper.ceil(this.lastHealth);
+        this.healthChangeLast = Mth.ceil(this.health) - Mth.ceil(this.lastHealth);
         this.healthChangeCumulate += this.healthChangeLast;
         this.healthCumulateDelay = HEALTH_CUMULATE_DELAY;
         this.healthDisplay = Math.max(Math.max(this.lastHealth, this.healthDisplay), this.health);
         if (this.healthDisplay <= this.lastHealth) {
             this.healthDisplayDelay = HEALTH_DISPLAY_DELAY;
         }
-    	this.updateAnimationSpeed();
+        this.updateAnimationSpeed();
     }
 
     private void updateAnimationSpeed() {

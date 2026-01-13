@@ -1,14 +1,28 @@
 package net.kairost.torohealth.client.util;
 
 import java.util.stream.StreamSupport;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.boss.WitherEntity;
-import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.mob.*;
-import net.minecraft.entity.passive.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.monster.*;
+import net.minecraft.world.entity.npc.*;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ambient.AmbientCreature;
+import net.minecraft.world.entity.ambient.Bat;
+import net.minecraft.world.entity.animal.Bee;
+import net.minecraft.world.entity.animal.Parrot;
+import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.animal.allay.Allay;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.Ghast;
+import net.minecraft.world.entity.monster.Phantom;
+import net.minecraft.world.entity.monster.Vex;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 public class EntityUtil {
 
@@ -17,46 +31,57 @@ public class EntityUtil {
     }
 
     public static Relation getRelation(Entity entity) {
-        if (entity instanceof Monster) {
+        if (entity instanceof Enemy) {
             return Relation.FOE;
-        } else if (entity instanceof PassiveEntity) {
+        } else if (entity instanceof AgeableMob) {
             return Relation.FRIEND;
-        } else if (entity instanceof WaterCreatureEntity) {
+        } else if (entity instanceof WaterAnimal) {
             return Relation.FRIEND;
-        } else if (entity instanceof AmbientEntity) {
+        } else if (entity instanceof AmbientCreature) {
             return Relation.FRIEND;
         } else {
             return Relation.UNKNOWN;
         }
     }
 
-    public static boolean showHealthBar(Entity entity, MinecraftClient client) {
+    public static boolean showHealthBar(Entity entity, Minecraft client) {
         return entity instanceof LivingEntity
-            && !(entity instanceof ArmorStandEntity)
+            && !(entity instanceof ArmorStand)
             && (!entity.isInvisibleTo(client.player)
-                || entity.isGlowing()
-                || entity.isOnFire()
-                || entity instanceof CreeperEntity && ((CreeperEntity) entity).shouldRenderOverlay() // charged creeper
-                || StreamSupport.stream(entity.getItemsEquipped().spliterator(), false).anyMatch(is -> !is.isEmpty()))
+            || entity.isCurrentlyGlowing()
+            || entity.isOnFire()
+            || entity instanceof Creeper && ((Creeper) entity).isPowered() // charged creeper
+            || StreamSupport.stream(entity.getAllSlots().spliterator(), false).anyMatch(is -> !is.isEmpty()))
             && entity != client.player
-            && !entity.hasPassengers()
+            && !entity.isVehicle()
             && !entity.isSpectator();
     }
 
     public static boolean isFloating(LivingEntity entity) {
-        if (entity.isTouchingWater() && !entity.isOnGround())
+        if (entity.isInWater() && !entity.onGround())
             return true;
 
         // air, FlyingEntity
-        if (entity instanceof ParrotEntity parrot && parrot.isInAir())
+        if (entity instanceof Parrot parrot && parrot.isFlying())
             return true;
 
-        if (entity instanceof BatEntity bat && bat.isRoosting())
+        if (entity instanceof Bat bat && bat.isResting())
             return true;
 
-        if (entity instanceof PhantomEntity || entity instanceof BeeEntity || entity instanceof VexEntity || entity instanceof AllayEntity || entity instanceof GhastEntity || entity instanceof EnderDragonEntity || entity instanceof WitherEntity)
+        if (entity instanceof Phantom || entity instanceof Bee || entity instanceof Vex || entity instanceof Allay || entity instanceof Ghast || entity instanceof EnderDragon || entity instanceof WitherBoss)
             return true;
 
         return false;
+    }
+
+    public static double getSquaredDistanceToCamera(LivingEntity entity) {
+        Minecraft minecraft = Minecraft.getInstance();
+        Player player = minecraft.player;
+        if (player != null) {
+            Vec3 vec3d = player.getEyePosition(0f);
+            return entity.position().distanceToSqr(vec3d);
+        } else {
+            return 0d;
+        }
     }
 }

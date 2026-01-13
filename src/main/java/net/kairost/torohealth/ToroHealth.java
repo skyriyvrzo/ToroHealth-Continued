@@ -1,77 +1,102 @@
 package net.kairost.torohealth;
 
-import org.jetbrains.annotations.Nullable;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.ActionResult;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.Registries;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.particle.DefaultParticleType;
-import net.minecraft.client.MinecraftClient;
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.ConfigHolder;
-import net.kairost.torohealth.config.ModConfig;
-import net.kairost.torohealth.client.gui.ToroHealthHud;
+import com.mojang.logging.LogUtils;
 import net.kairost.torohealth.client.particle.HealthChangeParticle;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.neoforge.client.event.RenderGuiEvent;
+import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
+import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
+import org.slf4j.Logger;
+import net.kairost.torohealth.config.ToroHealthConfig;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.javafmlmod.FMLJavaModLanguageProvider;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.TickEvent;
+import org.jetbrains.annotations.Nullable;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.LivingEntity;
+import net.kairost.torohealth.client.gui.ToroHealthHud;
 import net.kairost.torohealth.client.util.HoldingWeaponUpdater;
 
-public class ToroHealth implements ClientModInitializer {
+@Mod(ToroHealth.MODID)
+public class ToroHealth {
     public static final String MODID = "torohealth";
-    public static final DefaultParticleType HEALTH_CHANGE = FabricParticleTypes.simple();
-    private static ModConfig config;
     public static ToroHealthHud toroHealthHud = null;
     private static boolean holdingWeapon = false;
     private static LivingEntity targetedEntity;
+    public static final Logger LOGGER = LogUtils.getLogger();
 
-    @Override
-    public void onInitializeClient() {
-        // set config
-        ModConfig.init();
 
-        ConfigHolder<ModConfig> holder =
-            AutoConfig.getConfigHolder(ModConfig.class);
 
-        holder.registerSaveListener((h, c) -> {
-            c.postLoad();
-            return ActionResult.SUCCESS;
-        });
+    public ToroHealth(IEventBus modBus) {
 
-        holder.registerLoadListener((h, c) -> {
-            c.postLoad();
-            return ActionResult.SUCCESS;
-        });
-        config = ModConfig.INSTANCE;
+        modBus.addListener(ToroHealthConfig::onConfigLoad);
+        modBus.addListener(ToroHealthConfig::onConfigReload);
 
-        //toroHealth Particle
-        Registry.register(
-            Registries.PARTICLE_TYPE,
-            new Identifier(MODID, "health_change"),
-            HEALTH_CHANGE
+        ModLoadingContext.get().registerConfig(
+            ModConfig.Type.CLIENT,
+            ToroHealthConfig.SPEC
         );
 
-        ParticleFactoryRegistry.getInstance().register(
-            ToroHealth.HEALTH_CHANGE,
-            HealthChangeParticle.HealthChangeFactory::new
-        );
+        modBus.addListener(this::onClientSetup);
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.player == null || client.world == null) {
-                return;
-            }
-            HoldingWeaponUpdater.update();
-            ToroHealth.toroHealthHud.tick();
-        });
 
-        // toroHealthHud
-        toroHealthHud = new ToroHealthHud(MinecraftClient.getInstance());
+        ToroHealthParticles.register(modBus);
+        modBus.addListener(this::onRegisterParticleFactories);
+
+        NeoForge.EVENT_BUS.addListener(this::onClientTick);
+        NeoForge.EVENT_BUS.register(ToroHealthHudEvents.class);
     }
 
-    public static ModConfig getConfig() {
-        return config;
+    private void onRegisterParticleFactories(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(
+            ToroHealthParticles.HEALTH_CHANGE.get(),
+            HealthChangeParticle.HealthChangeFactory::new
+        );
+    }
+
+    public final class ToroHealthHudEvents {
+        @SubscribeEvent
+        public static void test(RenderGuiOverlayEvent.Pre event) {
+            if (event.getOverlay().id() == VanillaGuiOverlay.CROSSHAIR.id()) {
+                if (!ToroHealthConfig.CONFIG.enabled.get()) return;
+                if (!ToroHealthConfig.CONFIG.hudOptions.showHUD.get()) return;
+                if (ToroHealth.toroHealthHud == null) return;
+
+                ToroHealth.toroHealthHud.render(
+                    event.getGuiGraphics(),
+                    event.getPartialTick()
+                );
+            }
+        }
+    }
+
+
+
+
+
+    public void onClientTick(TickEvent.ClientTickEvent event) {
+        Minecraft mc = Minecraft.getInstance();
+
+        if (mc.player == null || mc.level == null) return;
+
+        HoldingWeaponUpdater.update();
+
+        if (toroHealthHud != null) {
+            toroHealthHud.tick();
+        }
+    }
+
+
+    private void onClientSetup(final FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            toroHealthHud = new ToroHealthHud(Minecraft.getInstance());
+        });
     }
 
     public static @Nullable LivingEntity getTargetedEntity() {

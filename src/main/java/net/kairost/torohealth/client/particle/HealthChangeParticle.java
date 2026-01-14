@@ -1,6 +1,11 @@
 package net.kairost.torohealth.client.particle;
 
-import net.kairost.torohealth.config.ToroHealthConfig;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.RandomSource;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -13,14 +18,8 @@ import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.phys.Vec3;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.kairost.torohealth.ToroHealth;
-
+import net.kairost.torohealth.config.ToroHealthConfig;
+import org.jetbrains.annotations.NotNull;
 
 public class HealthChangeParticle
     extends SingleQuadParticle{
@@ -60,7 +59,7 @@ public class HealthChangeParticle
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
+    public @NotNull ParticleRenderType getRenderType() {
         return ParticleRenderType.CUSTOM;
     }
 
@@ -74,7 +73,7 @@ public class HealthChangeParticle
 
         //@Override
         @Override
-        public Particle createParticle(SimpleParticleType defaultParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(@NotNull SimpleParticleType defaultParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i) {
             RandomSource random = clientWorld.getRandom();
             // use g to encode health change
             int healthChange = (int)Double.doubleToLongBits(g);
@@ -90,7 +89,7 @@ public class HealthChangeParticle
     }
 
     @Override
-    public void render(VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
+    public void render(@NotNull VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
         Minecraft client = Minecraft.getInstance();
         String text = Integer.toString(this.value);
 

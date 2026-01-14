@@ -15,7 +15,7 @@ config="torohealth.mixins.json"
 [[dependencies."${mod_id}"]]
 modId="neoforge"
 mandatory=true
-versionRange="[${neo_version},)"
+versionRange="[${neo_version_low},)"
 ordering="NONE"
 side="CLIENT"
 

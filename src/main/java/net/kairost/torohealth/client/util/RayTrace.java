@@ -18,7 +18,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-
 public class RayTrace {
     // modified from minecraft.client.render.GameRender.updateTargetedEntity
     public static LivingEntity getEntityInCrosshair(float tickDelta, float reachDistance) {

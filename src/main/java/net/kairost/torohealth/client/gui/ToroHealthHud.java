@@ -1,23 +1,15 @@
 package net.kairost.torohealth.client.gui;
 
-import net.kairost.torohealth.config.ToroHealthConfig;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import net.minecraft.util.Mth;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.kairost.torohealth.ToroHealth;
-import net.kairost.torohealth.config.ToroHealthConfig.FrameStyle;
-import net.kairost.torohealth.data.BarStateAccessor;
-import net.kairost.torohealth.data.BarState;
-import net.kairost.torohealth.client.util.EntityUtil;
-import net.kairost.torohealth.client.util.EntityUtil.Relation;
-import net.kairost.torohealth.mixin.accessor.WitherEntityAccessor;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ambient.Bat;
@@ -29,6 +21,13 @@ import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.kairost.torohealth.ToroHealth;
+import net.kairost.torohealth.config.ToroHealthConfig;
+import net.kairost.torohealth.data.BarState;
+import net.kairost.torohealth.data.BarStateAccessor;
+import net.kairost.torohealth.client.util.EntityUtil;
+import net.kairost.torohealth.client.util.EntityUtil.Relation;
+import net.kairost.torohealth.mixin.accessor.WitherEntityAccessor;
 
 public class ToroHealthHud {
     public static final ResourceLocation CONTAINER = new ResourceLocation("minecraft", "textures/gui/sprites/hud/heart/container.png");
@@ -82,7 +81,7 @@ public class ToroHealthHud {
         if (ToroHealthConfig.CONFIG.hudOptions.showEntity.get()) {
             this.renderFrame(context);
             context.pose().pushPose();
-            context.pose().translate((this.at_left ? 1 : -1) * (FRAME_SIZE + 2), (this.at_top ? 1 : -1) * (INFO_Y_BASE + (ToroHealthConfig.CONFIG.hudOptions.frameStyle.get().equals(FrameStyle.HEAVY)? 2 : 0)), 0);
+            context.pose().translate((this.at_left ? 1 : -1) * (FRAME_SIZE + 2), (this.at_top ? 1 : -1) * (INFO_Y_BASE + (ToroHealthConfig.CONFIG.hudOptions.frameStyle.get().equals(ToroHealthConfig.FrameStyle.HEAVY)? 2 : 0)), 0);
         }
 
         // draw entity info
@@ -229,7 +228,7 @@ public class ToroHealthHud {
 
 
     private void renderFrame(GuiGraphics context) {
-        boolean light_style = (ToroHealthConfig.CONFIG.hudOptions.frameStyle.get().equals(FrameStyle.LIGHT));
+        boolean light_style = (ToroHealthConfig.CONFIG.hudOptions.frameStyle.get().equals(ToroHealthConfig.FrameStyle.LIGHT));
         int h = 42;
         int w = light_style ? 42 : 179;
         int x = this.at_left ? 0 : -w;

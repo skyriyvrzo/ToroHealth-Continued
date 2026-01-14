@@ -1,6 +1,5 @@
 package net.kairost.torohealth.client.util;
 
-import net.kairost.torohealth.config.ToroHealthConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
@@ -13,6 +12,7 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.ThrowablePotionItem;
 import net.minecraft.world.item.TridentItem;
 import net.kairost.torohealth.ToroHealth;
+import net.kairost.torohealth.config.ToroHealthConfig;
 
 public class HoldingWeaponUpdater {
     public static void update() {

@@ -2,6 +2,7 @@ package net.kairost.torohealth.client.util;
 
 import java.util.stream.StreamSupport;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.npc.*;
 import net.minecraft.world.entity.AgeableMob;
@@ -22,7 +23,6 @@ import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
 
 public class EntityUtil {
 

@@ -8,9 +8,11 @@ import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.EndCrystalItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.MaceItem;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.ThrowablePotionItem;
 import net.minecraft.world.item.TridentItem;
+import net.minecraft.world.item.WindChargeItem;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.config.ToroHealthConfig;
 
@@ -35,6 +37,8 @@ public class HoldingWeaponUpdater {
             || item instanceof SwordItem
             || item instanceof ThrowablePotionItem
             || item instanceof TridentItem
-            || item instanceof EndCrystalItem;
+            || item instanceof EndCrystalItem
+            || item instanceof MaceItem
+            || item instanceof WindChargeItem;
     }
 }

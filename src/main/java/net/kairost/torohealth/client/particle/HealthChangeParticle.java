@@ -1,14 +1,12 @@
 package net.kairost.torohealth.client.particle;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
+import org.jetbrains.annotations.NotNull;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.RandomSource;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
@@ -16,10 +14,8 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.kairost.torohealth.config.ToroHealthConfig;
-import org.jetbrains.annotations.NotNull;
 
 public class HealthChangeParticle
     extends SingleQuadParticle{
@@ -73,7 +69,7 @@ public class HealthChangeParticle
 
         //@Override
         @Override
-        public Particle createParticle(@NotNull SimpleParticleType defaultParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(@NotNull SimpleParticleType simpleParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i) {
             RandomSource random = clientWorld.getRandom();
             // use g to encode health change
             int healthChange = (int)Double.doubleToLongBits(g);
@@ -91,19 +87,13 @@ public class HealthChangeParticle
     @Override
     public void render(@NotNull VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
         Minecraft client = Minecraft.getInstance();
-        String text = Integer.toString(this.value);
 
         Vec3 vec3d = camera.getPosition();
         float x = (float)(Mth.lerp(tickDelta, this.xo, this.x) - vec3d.x());
         float y = (float)(Mth.lerp(tickDelta, this.yo, this.y) - vec3d.y());
         float z = (float)(Mth.lerp(tickDelta, this.zo, this.z) - vec3d.z());
 
-        PoseStack matrices = new PoseStack();
-        matrices.translate(x, y, z);
-        matrices.mulPose(camera.rotation());
-        matrices.scale(-0.025f, -0.025f, 0.025f);
-        matrices.translate(-client.font.width(text), -3, 0);
-
+        String text = Integer.toString(this.value);
         float h = -client.font.width(text) / 2.0f;
 
         int a = (int)(this.alpha * 255.0f) & 0xFF;
@@ -114,10 +104,9 @@ public class HealthChangeParticle
 
         int light = ToroHealthConfig.CONFIG.particleOptions.particleLightMode.get().equals(ToroHealthConfig.ParticleLightMode.FULL_BRIGHT) ? LightTexture.FULL_BRIGHT : this.getLightColor(tickDelta);
 
-        BufferBuilder bufferBuilder = new BufferBuilder(256);
-        MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(bufferBuilder);
-        client.font.drawInBatch(text, h, -3.0f, color, false, matrices.last().pose(), immediate, Font.DisplayMode.NORMAL, 0, light);
-        immediate.endBatch();
+        TextRenderQueue.submit(
+            new TextRenderEntry(text, x, y, z, h, -3.0f, color, light)
+        );
     }
 
     @Override

@@ -1,13 +1,14 @@
 package net.kairost.torohealth.client.gui;
 
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.Quaternionf;
 import net.minecraft.util.Mth;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.effect.MobEffects;
@@ -30,11 +31,11 @@ import net.kairost.torohealth.client.util.EntityUtil.Relation;
 import net.kairost.torohealth.mixin.accessor.WitherEntityAccessor;
 
 public class ToroHealthHud {
-    public static final ResourceLocation CONTAINER = new ResourceLocation("hud/heart/container");
-    public static final ResourceLocation FULL = new ResourceLocation("hud/heart/full");
-    private static final ResourceLocation ARMOR_FULL = new ResourceLocation("hud/armor_full");
-    private static final ResourceLocation TOROHEALTH_BARS_TEXTURE = new ResourceLocation(ToroHealth.MODID + ":textures/gui/bars.png");
-    private static final ResourceLocation TOROHEALTH_FRAME_TEXTURE = new ResourceLocation(ToroHealth.MODID + ":textures/gui/frame.png");
+    public static final ResourceLocation CONTAINER = ResourceLocation.fromNamespaceAndPath("minecraft", "hud/heart/container");
+    public static final ResourceLocation FULL = ResourceLocation.fromNamespaceAndPath("minecraft", "hud/heart/full");
+    private static final ResourceLocation ARMOR_FULL = ResourceLocation.fromNamespaceAndPath("minecraft", "hud/armor_full");
+    private static final ResourceLocation TOROHEALTH_BARS_TEXTURE = ResourceLocation.fromNamespaceAndPath(ToroHealth.MODID, "textures/gui/bars.png");
+    private static final ResourceLocation TOROHEALTH_FRAME_TEXTURE = ResourceLocation.fromNamespaceAndPath(ToroHealth.MODID, "textures/gui/frame.png");
     private static final int DARK_GRAY = 0x808080;
     private static final int LIGHT_GRAY = 0xe0e0e0;
     private static final int FRAME_SIZE = 42;
@@ -60,7 +61,7 @@ public class ToroHealthHud {
         this.client = client;
     }
 
-    public void render(GuiGraphics context, float tickDelta) {
+    public void render(GuiGraphics context, DeltaTracker tickCounter) {
         if (this.client.options.hideGui) {
             return;
         }
@@ -74,6 +75,7 @@ public class ToroHealthHud {
             return;
         }
 
+        float tickDelta = tickCounter.getGameTimeDeltaPartialTick(false);
         context.pose().pushPose();
         float x = determineX();
         float y = determineY();
@@ -367,8 +369,8 @@ public class ToroHealthHud {
         float g = (color >> 8 & 255) / 255.0F;
         float b = (color & 255) / 255.0F;
         int shift = this.at_left ? 0 : (BAR_SIZE - width);
-        RenderSystem.setShaderColor(r, g, b, 1);
         RenderSystem.enableBlend();
+        RenderSystem.setShaderColor(r, g, b, 1);
         context.blit(TOROHEALTH_BARS_TEXTURE, x + shift, y, shift, 6 * 2 * 5 + 5, width, 5);
         RenderSystem.disableBlend();
     }
@@ -391,7 +393,7 @@ public class ToroHealthHud {
         if (entity instanceof EnderDragon dragon) {
             EndCrystal endCrystal = dragon.nearestCrystal;
             dragon.nearestCrystal = null;
-            drawEntity(context, x, y, size, quaternionf, quaternionf2, entity, tickDelta);
+            drawEntity(context, x, y, size, new Vector3f(0.0F, 0.0F, 0.0F), quaternionf, quaternionf2, entity, tickDelta);
             dragon.nearestCrystal = endCrystal;
         } else if (entity instanceof WitherBoss wither) {
             WitherEntityAccessor witherEntityAccessor = (WitherEntityAccessor) wither;
@@ -403,11 +405,11 @@ public class ToroHealthHud {
             sideHeadYaws[1]  =  180.0f + f * 20.0f + sideHeadYaws[1] - i;
             prevSideHeadYaws[0]  =  180.0f + f * 20.0f + prevSideHeadYaws[0] - i;
             prevSideHeadYaws[1]  =  180.0f + f * 20.0f + prevSideHeadYaws[1] - i;
-            drawEntity(context, x, y, size, quaternionf, quaternionf2, entity, tickDelta);
+            drawEntity(context, x, y, size, new Vector3f(0.0F, 0.0F, 0.0F), quaternionf, quaternionf2, entity, tickDelta);
             System.arraycopy(m, 0, sideHeadYaws, 0, m.length);
             System.arraycopy(n, 0, prevSideHeadYaws, 0, n.length);
         } else {
-            drawEntity(context, x, y, size, quaternionf, quaternionf2, entity, tickDelta);
+            drawEntity(context, x, y, size, new Vector3f(0.0F, 0.0F, 0.0F), quaternionf, quaternionf2, entity, tickDelta);
         }
         entity.yBodyRot = i;
         entity.yBodyRotO = j;
@@ -416,16 +418,16 @@ public class ToroHealthHud {
     }
 
     //copied from InventoryScreen.drawEntity
-    public static void drawEntity(GuiGraphics context, float x, float y, float size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, float tickDelta) {
+    public static void drawEntity(GuiGraphics context, float x, float y, float size, Vector3f vector3f, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, float tickDelta) {
         context.pose().pushPose();
         context.pose().translate((double)x, (double)y, 50.0);
-        context.pose().mulPose(new Matrix4f().scaling(size, size, -size));
+        context.pose().scale(size, size, -size);
+        context.pose().translate(vector3f.x, vector3f.y, vector3f.z);
         context.pose().mulPose(quaternionf);
         Lighting.setupForEntityInInventory();
         EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
         if (quaternionf2 != null) {
-            quaternionf2.conjugate();
-            entityRenderDispatcher.overrideCameraOrientation(quaternionf2);
+            entityRenderDispatcher.overrideCameraOrientation(quaternionf2.conjugate(new Quaternionf()).rotateY((float) Math.PI));
         }
 
         entityRenderDispatcher.setRenderShadow(false);

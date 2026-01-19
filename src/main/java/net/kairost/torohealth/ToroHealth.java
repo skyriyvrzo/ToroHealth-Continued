@@ -1,9 +1,7 @@
 package net.kairost.torohealth;
 
 import net.neoforged.fml.ModContainer;
-import org.slf4j.Logger;
 import org.jetbrains.annotations.Nullable;
-import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -28,8 +26,6 @@ public class ToroHealth {
     public static ToroHealthHud toroHealthHud = null;
     private static boolean holdingWeapon = false;
     private static LivingEntity targetedEntity;
-    public static final Logger LOGGER = LogUtils.getLogger();
-
 
 
     public ToroHealth(IEventBus modBus, ModContainer container) {

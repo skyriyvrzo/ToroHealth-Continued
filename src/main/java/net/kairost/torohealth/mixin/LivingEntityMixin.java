@@ -52,12 +52,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements BarStateA
             if (this.toroHealth_Continued_forge$barState.health != this.toroHealth_Continued_forge$barState.lastHealth) {
                 this.toroHealth_Continued_forge$barState.handleHealthChange();
                 // create healthChangeParticle
-                ToroHealth.LOGGER.info(
-                    "particleDistanceSquared = {}",
-                    ToroHealthConfig.CONFIG.particleOptions.particleDistanceSquared
-                );
                 if (this.toroHealth_Continued_forge$barState.healthChangeLast != 0 && ToroHealthConfig.CONFIG.particleOptions.showParticle.get() && ToroHealthConfig.CONFIG.enabled.get() && EntityUtil.getSquaredDistanceToCamera((LivingEntity) (Object) this) < ToroHealthConfig.CONFIG.particleOptions.particleDistanceSquared) {
-                    ToroHealth.LOGGER.info("Particle fired");
                     Vec3 entityLocation = this.position();
                     this.level().addAlwaysVisibleParticle(ToroHealthParticles.HEALTH_CHANGE.get(), true, entityLocation.x, entityLocation.y + this.getBbHeight() / 2, entityLocation.z, Double.longBitsToDouble(this.toroHealth_Continued_forge$barState.healthChangeLast & 0xFFFFFFFFL), 0, 0);
                 }

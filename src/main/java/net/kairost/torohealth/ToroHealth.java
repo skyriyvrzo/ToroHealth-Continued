@@ -72,11 +72,7 @@ public class ToroHealth {
 
     public static final class WorldRenderEvents {
         @SubscribeEvent
-        public static void onRenderLevelStage(RenderLevelStageEvent event) {
-            if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
-                return;
-            }
-
+        public static void onRenderLevelStage(RenderLevelStageEvent.AfterParticles event) {
             Minecraft mc = Minecraft.getInstance();
 
             MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();

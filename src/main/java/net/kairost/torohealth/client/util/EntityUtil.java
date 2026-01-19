@@ -10,6 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ambient.AmbientCreature;
 import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.animal.Bee;
+import net.minecraft.world.entity.animal.HappyGhast;
 import net.minecraft.world.entity.animal.Parrot;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.animal.allay.Allay;
@@ -67,7 +68,7 @@ public class EntityUtil {
         if (entity instanceof Bat bat && bat.isResting())
             return true;
 
-        if (entity instanceof Phantom || entity instanceof Bee || entity instanceof Vex || entity instanceof Allay || entity instanceof Ghast || entity instanceof EnderDragon || entity instanceof WitherBoss)
+        if (entity instanceof Phantom || entity instanceof Bee || entity instanceof Vex || entity instanceof Allay || entity instanceof Ghast || entity instanceof EnderDragon || entity instanceof WitherBoss || entity instanceof HappyGhast)
             return true;
 
         return false;

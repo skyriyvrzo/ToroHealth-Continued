@@ -1,13 +1,13 @@
 package net.kairost.torohealth.mixin;
 
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.client.util.RayTrace;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.world.entity.LivingEntity;
 import net.kairost.torohealth.config.ToroHealthConfig;
 
 @Mixin(GameRenderer.class)

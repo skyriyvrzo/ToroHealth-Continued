@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.ToroHealthParticles;
 import net.kairost.torohealth.config.ToroHealthConfig;
 import net.kairost.torohealth.data.BarState;

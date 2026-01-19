@@ -1,14 +1,15 @@
 package net.kairost.torohealth;
 
-import net.neoforged.fml.ModContainer;
 import org.slf4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
@@ -18,7 +19,6 @@ import net.kairost.torohealth.config.ToroHealthConfig;
 import net.kairost.torohealth.client.gui.ToroHealthHud;
 import net.kairost.torohealth.client.util.HoldingWeaponUpdater;
 import net.kairost.torohealth.client.particle.HealthChangeParticle;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 @Mod(ToroHealth.MODID)
 public class ToroHealth {

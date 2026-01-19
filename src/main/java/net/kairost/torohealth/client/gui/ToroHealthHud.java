@@ -307,14 +307,14 @@ public class ToroHealthHud {
 
     private void renderHeartIcon(GuiGraphics context, int x, int y) {
         RenderSystem.enableBlend();
-        context.blit(CONTAINER, x, y, 0, 0, 9, 9, 9, 9);
-        context.blit(FULL, x, y, 0, 0, 9, 9, 9, 9);
+        context.blitSprite(CONTAINER, x, y, 9, 9);
+        context.blitSprite(FULL, x, y, 9, 9);
         RenderSystem.disableBlend();
     }
 
     private void renderArmorIcon(GuiGraphics context, int x, int y) {
         RenderSystem.enableBlend();
-        context.blit(ARMOR_FULL, x, y, 0, 0, 9, 9, 9, 9);
+        context.blitSprite(ARMOR_FULL, x, y, 9, 9);
         RenderSystem.disableBlend();
     }
 

@@ -30,9 +30,9 @@ import net.kairost.torohealth.client.util.EntityUtil.Relation;
 import net.kairost.torohealth.mixin.accessor.WitherEntityAccessor;
 
 public class ToroHealthHud {
-    public static final ResourceLocation CONTAINER = new ResourceLocation("minecraft", "textures/gui/sprites/hud/heart/container.png");
-    public static final ResourceLocation FULL = new ResourceLocation("minecraft", "textures/gui/sprites/hud/heart/full.png");
-    public static final ResourceLocation ARMOR_FULL = new ResourceLocation("minecraft", "textures/gui/sprites/hud/armor_full.png");
+    public static final ResourceLocation CONTAINER = new ResourceLocation("hud/heart/container");
+    public static final ResourceLocation FULL = new ResourceLocation("hud/heart/full");
+    private static final ResourceLocation ARMOR_FULL = new ResourceLocation("hud/armor_full");
     private static final ResourceLocation TOROHEALTH_BARS_TEXTURE = new ResourceLocation(ToroHealth.MODID + ":textures/gui/bars.png");
     private static final ResourceLocation TOROHEALTH_FRAME_TEXTURE = new ResourceLocation(ToroHealth.MODID + ":textures/gui/frame.png");
     private static final int DARK_GRAY = 0x808080;

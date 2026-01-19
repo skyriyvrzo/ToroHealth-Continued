@@ -379,26 +379,27 @@ public class ToroHealthHud {
         entity.yBodyRotO = 180.0f + f * 20.0f;
         entity.yHeadRot = 180.0f + f * 20.0f + k - i;
         entity.yHeadRotO = 180.0f + f * 20.0f + l - j;
-        if (entity instanceof EnderDragon dragon) {
-            EndCrystal endCrystal = dragon.nearestCrystal;
-            dragon.nearestCrystal = null;
-            drawEntity(context, x, y, size, new Vector3f(0.0F, 0.0F, 0.0F), quaternionf, quaternionf2, entity, tickDelta);
-            dragon.nearestCrystal = endCrystal;
-        } else if (entity instanceof WitherBoss wither) {
+        Vector3f vector3f = new Vector3f(0.0F, 0.0F, 0.0F);
+        if (entity instanceof WitherBoss wither) {
             WitherEntityAccessor witherEntityAccessor = (WitherEntityAccessor) wither;
             float[] sideHeadYaws = witherEntityAccessor.torohealth$getSideHeadYaws();
-            float[] prevSideHeadYaws = witherEntityAccessor.torohealth$getPrevSideHeadYaws();
+            float[] lastSideHeadYaws = witherEntityAccessor.torohealth$getLastSideHeadYaws();
             float[] m = sideHeadYaws.clone();
-            float[] n = prevSideHeadYaws.clone();
-            sideHeadYaws[0]  =  180.0f + f * 20.0f + sideHeadYaws[0] - i;
-            sideHeadYaws[1]  =  180.0f + f * 20.0f + sideHeadYaws[1] - i;
-            prevSideHeadYaws[0]  =  180.0f + f * 20.0f + prevSideHeadYaws[0] - i;
-            prevSideHeadYaws[1]  =  180.0f + f * 20.0f + prevSideHeadYaws[1] - i;
-            drawEntity(context, x, y, size, new Vector3f(0.0F, 0.0F, 0.0F), quaternionf, quaternionf2, entity, tickDelta);
+            float[] n = lastSideHeadYaws.clone();
+            sideHeadYaws[0] = 180.0f + f * 20.0f + sideHeadYaws[0] - i;
+            sideHeadYaws[1] = 180.0f + f * 20.0f + sideHeadYaws[1] - i;
+            lastSideHeadYaws[0] = 180.0f + f * 20.0f + lastSideHeadYaws[0] - i;
+            lastSideHeadYaws[1] = 180.0f + f * 20.0f + lastSideHeadYaws[1] - i;
+            drawEntity(context, x, y, size, vector3f, quaternionf, quaternionf2, entity, tickDelta);
             System.arraycopy(m, 0, sideHeadYaws, 0, m.length);
-            System.arraycopy(n, 0, prevSideHeadYaws, 0, n.length);
+            System.arraycopy(n, 0, lastSideHeadYaws, 0, n.length);
+        } else if (entity instanceof EnderDragon enderDragon)  {
+            EndCrystal endCrystal = enderDragon.nearestCrystal;
+            enderDragon.nearestCrystal = null;
+            drawEntity(context, x, y, size, vector3f, quaternionf, quaternionf2, entity, tickDelta);
+            enderDragon.nearestCrystal = endCrystal;
         } else {
-            drawEntity(context, x, y, size, new Vector3f(0.0F, 0.0F, 0.0F), quaternionf, quaternionf2, entity, tickDelta);
+            drawEntity(context, x, y, size, vector3f, quaternionf, quaternionf2, entity, tickDelta);
         }
         entity.yBodyRot = i;
         entity.yBodyRotO = j;

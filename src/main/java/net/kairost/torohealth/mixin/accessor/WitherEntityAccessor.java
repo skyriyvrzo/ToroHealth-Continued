@@ -10,5 +10,5 @@ public interface WitherEntityAccessor {
     float[] torohealth$getSideHeadYaws();
 
     @Accessor("yRotOHeads")
-    float[] torohealth$getPrevSideHeadYaws();
+    float[] torohealth$getLastSideHeadYaws();
 }

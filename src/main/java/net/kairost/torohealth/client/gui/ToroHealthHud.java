@@ -61,6 +61,9 @@ public class ToroHealthHud {
     }
 
     public void render(GuiGraphics context, float tickDelta) {
+        if (this.client.options.hideGui) {
+            return;
+        }
         if (entity == null) {
             return;
         }
@@ -74,8 +77,8 @@ public class ToroHealthHud {
         context.pose().pushPose();
         float x = determineX();
         float y = determineY();
+        context.pose().translate(x, y, 0);
         int scale = ToroHealthConfig.CONFIG.hudOptions.hudScale.get();
-        context.pose().translate(x, y, -90);
         context.pose().scale(scale, scale, scale);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         if (ToroHealthConfig.CONFIG.hudOptions.showEntity.get()) {
@@ -416,7 +419,7 @@ public class ToroHealthHud {
     public static void drawEntity(GuiGraphics context, float x, float y, float size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, float tickDelta) {
         context.pose().pushPose();
         context.pose().translate((double)x, (double)y, 50.0);
-        context.pose().mulPoseMatrix(new Matrix4f().scaling(size, size, -size));
+        context.pose().mulPose(new Matrix4f().scaling(size, size, -size));
         context.pose().mulPose(quaternionf);
         Lighting.setupForEntityInInventory();
         EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();

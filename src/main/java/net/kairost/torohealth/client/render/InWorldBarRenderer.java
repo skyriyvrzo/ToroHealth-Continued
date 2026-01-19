@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EntityAttachment;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -38,8 +39,13 @@ public class InWorldBarRenderer {
         EntityRenderer<? super Entity> entityRenderer = entityRenderDispatcher.getRenderer(entity);
         Vec3 vec3d = entityRenderer.getRenderOffset(entity, tickDelta);
         matrices.translate(x - cameraX + vec3d.x(), y - cameraY + vec3d.y(), z - cameraZ + vec3d.z());
-        float f = entity.getNameTagOffsetY() + 0.2f;
-        matrices.translate(0.0, f, 0.0);
+        Vec3 labelPos = entity.getAttachments().getNullable(EntityAttachment.NAME_TAG, 0, entity.getViewYRot(tickDelta));
+        if (labelPos != null) {
+            matrices.translate(labelPos.x, labelPos.y + 0.7f, labelPos.z);
+        } else {
+            float f = entity.getBbHeight() + 0.7f;
+            matrices.translate(0.0, f, 0.0);
+        }
         matrices.mulPose(entityRenderDispatcher.cameraOrientation());
         matrices.scale(-0.025f, -0.025f, 0.025f);
         VertexConsumer buffer = vertexConsumers.getBuffer(RenderType.text(TOROHEALTH_BARS_TEXTURES));

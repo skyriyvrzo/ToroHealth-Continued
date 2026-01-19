@@ -1,19 +1,19 @@
 package net.kairost.torohealth.mixin;
 
-import net.kairost.torohealth.client.render.InWorldBarRenderer;
-import net.kairost.torohealth.config.ToroHealthConfig;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.world.entity.Entity;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.kairost.torohealth.client.render.InWorldBarRenderer;
+import net.kairost.torohealth.config.ToroHealthConfig;
 
 @Mixin(LevelRenderer.class)
 public class WorldRendererMixin {

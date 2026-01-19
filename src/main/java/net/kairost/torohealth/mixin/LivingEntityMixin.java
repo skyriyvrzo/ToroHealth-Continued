@@ -1,21 +1,21 @@
 package net.kairost.torohealth.mixin;
 
-import net.kairost.torohealth.ToroHealth;
-import net.kairost.torohealth.ToroHealthParticles;
-import net.kairost.torohealth.client.util.EntityUtil;
-import net.kairost.torohealth.config.ToroHealthConfig;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import net.kairost.torohealth.ToroHealth;
+import net.kairost.torohealth.ToroHealthParticles;
+import net.kairost.torohealth.config.ToroHealthConfig;
 import net.kairost.torohealth.data.BarState;
+import net.kairost.torohealth.client.util.EntityUtil;
 import net.kairost.torohealth.data.BarStateAccessor;
 import net.kairost.torohealth.mixin.accessor.LivingEntityAccessor;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.world.entity.LivingEntity;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends EntityMixin implements BarStateAccessor{
@@ -52,12 +52,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements BarStateA
             if (this.toroHealth_Continued_forge$barState.health != this.toroHealth_Continued_forge$barState.lastHealth) {
                 this.toroHealth_Continued_forge$barState.handleHealthChange();
                 // create healthChangeParticle
-                ToroHealth.LOGGER.info(
-                    "particleDistanceSquared = {}",
-                    ToroHealthConfig.CONFIG.particleOptions.particleDistanceSquared
-                );
                 if (this.toroHealth_Continued_forge$barState.healthChangeLast != 0 && ToroHealthConfig.CONFIG.particleOptions.showParticle.get() && ToroHealthConfig.CONFIG.enabled.get() && EntityUtil.getSquaredDistanceToCamera((LivingEntity) (Object) this) < ToroHealthConfig.CONFIG.particleOptions.particleDistanceSquared) {
-                    ToroHealth.LOGGER.info("Particle fired");
                     Vec3 entityLocation = this.position();
                     this.level().addAlwaysVisibleParticle(ToroHealthParticles.HEALTH_CHANGE.get(), true, entityLocation.x, entityLocation.y + this.getBbHeight() / 2, entityLocation.z, Double.longBitsToDouble(this.toroHealth_Continued_forge$barState.healthChangeLast & 0xFFFFFFFFL), 0, 0);
                 }

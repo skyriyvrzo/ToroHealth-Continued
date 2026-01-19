@@ -1,6 +1,7 @@
 package net.kairost.torohealth.client.util;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BowItem;
@@ -9,7 +10,6 @@ import net.minecraft.world.item.EndCrystalItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.MaceItem;
-import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.ThrowablePotionItem;
 import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.item.WindChargeItem;
@@ -34,11 +34,17 @@ public class HoldingWeaponUpdater {
         return item instanceof AxeItem
             || item instanceof BowItem
             || item instanceof CrossbowItem
-            || item instanceof SwordItem
             || item instanceof ThrowablePotionItem
             || item instanceof TridentItem
             || item instanceof EndCrystalItem
             || item instanceof MaceItem
-            || item instanceof WindChargeItem;
+            || item instanceof WindChargeItem
+            || itemStack.is(ItemTags.SWORDS)
+            || itemStack.is(ItemTags.SWORD_ENCHANTABLE)
+            || itemStack.is(ItemTags.AXES)
+            || itemStack.is(ItemTags.BOW_ENCHANTABLE)
+            || itemStack.is(ItemTags.CROSSBOW_ENCHANTABLE)
+            || itemStack.is(ItemTags.TRIDENT_ENCHANTABLE)
+            || itemStack.is(ItemTags.MACE_ENCHANTABLE);
     }
 }

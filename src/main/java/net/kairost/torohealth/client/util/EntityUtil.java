@@ -1,6 +1,5 @@
 package net.kairost.torohealth.client.util;
 
-import java.util.stream.StreamSupport;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.monster.*;
@@ -51,7 +50,7 @@ public class EntityUtil {
             || entity.isCurrentlyGlowing()
             || entity.isOnFire()
             || entity instanceof Creeper && ((Creeper) entity).isPowered() // charged creeper
-            || StreamSupport.stream(((LivingEntity) entity).getAllSlots().spliterator(), false).anyMatch(is -> !is.isEmpty()))
+            || (((LivingEntity) entity).getArmorCoverPercentage() > 0))
             && entity != client.player
             && !entity.isVehicle()
             && !entity.isSpectator();

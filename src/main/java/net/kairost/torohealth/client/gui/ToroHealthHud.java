@@ -241,9 +241,7 @@ public class ToroHealthHud {
         int y = this.at_top ? 0 : -h;
         int u = light_style ? 0 : 42;
         int v = (this.at_top ? 0 : 42) + (this.at_left ? 0 : 84);
-        RenderSystem.enableBlend();
         context.blit(RenderType::guiTextured, TOROHEALTH_FRAME_TEXTURE, x, y, u, v, w, h, 256, 256);
-        RenderSystem.disableBlend();
     }
 
 
@@ -308,16 +306,12 @@ public class ToroHealthHud {
     }
 
     private void renderHeartIcon(GuiGraphics context, int x, int y) {
-        RenderSystem.enableBlend();
         context.blitSprite(RenderType::guiTextured, CONTAINER, x, y, 9, 9);
         context.blitSprite(RenderType::guiTextured, FULL, x, y, 9, 9);
-        RenderSystem.disableBlend();
     }
 
     private void renderArmorIcon(GuiGraphics context, int x, int y) {
-        RenderSystem.enableBlend();
         context.blitSprite(RenderType::guiTextured, ARMOR_FULL, x, y, 9, 9);
-        RenderSystem.disableBlend();
     }
 
     private void renderHealthChangeText(GuiGraphics context, LivingEntity entity, int x, int y) {
@@ -367,9 +361,7 @@ public class ToroHealthHud {
     private void renderBar(GuiGraphics context, int x, int y, int width, int color) {
         int color_argb = color | 0xFF000000;
         int shift = this.at_left ? 0 : (130 - width);
-        RenderSystem.enableBlend();
         context.blit(RenderType::guiTextured, TOROHEALTH_BARS_TEXTURE, x + shift, y, shift, 6 * 2 * 5 + 5, width, 5, 256, 256, color_argb);
-        RenderSystem.disableBlend();
     }
 
     //modified from vanilla InventoryScreen.drawEntity

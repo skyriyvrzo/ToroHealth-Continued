@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -241,8 +242,7 @@ public class ToroHealthHud {
         int u = light_style ? 0 : 42;
         int v = (this.at_top ? 0 : 42) + (this.at_left ? 0 : 84);
         RenderSystem.enableBlend();
-        RenderSystem.setShaderTexture(0, TOROHEALTH_FRAME_TEXTURE);
-        context.blit(TOROHEALTH_FRAME_TEXTURE, x, y, u, v, w, h);
+        context.blit(RenderType::guiTextured, TOROHEALTH_FRAME_TEXTURE, x, y, u, v, w, h, 256, 256);
         RenderSystem.disableBlend();
     }
 
@@ -309,14 +309,14 @@ public class ToroHealthHud {
 
     private void renderHeartIcon(GuiGraphics context, int x, int y) {
         RenderSystem.enableBlend();
-        context.blitSprite(CONTAINER, x, y, 9, 9);
-        context.blitSprite(FULL, x, y, 9, 9);
+        context.blitSprite(RenderType::guiTextured, CONTAINER, x, y, 9, 9);
+        context.blitSprite(RenderType::guiTextured, FULL, x, y, 9, 9);
         RenderSystem.disableBlend();
     }
 
     private void renderArmorIcon(GuiGraphics context, int x, int y) {
         RenderSystem.enableBlend();
-        context.blitSprite(ARMOR_FULL, x, y, 9, 9);
+        context.blitSprite(RenderType::guiTextured, ARMOR_FULL, x, y, 9, 9);
         RenderSystem.disableBlend();
     }
 
@@ -365,13 +365,10 @@ public class ToroHealthHud {
 
     // this method draws a single bar in InGameHud
     private void renderBar(GuiGraphics context, int x, int y, int width, int color) {
-        float r = (color >> 16 & 255) / 255.0F;
-        float g = (color >> 8 & 255) / 255.0F;
-        float b = (color & 255) / 255.0F;
-        int shift = this.at_left ? 0 : (BAR_SIZE - width);
+        int color_argb = color | 0xFF000000;
+        int shift = this.at_left ? 0 : (130 - width);
         RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(r, g, b, 1);
-        context.blit(TOROHEALTH_BARS_TEXTURE, x + shift, y, shift, 6 * 2 * 5 + 5, width, 5);
+        context.blit(RenderType::guiTextured, TOROHEALTH_BARS_TEXTURE, x + shift, y, shift, 6 * 2 * 5 + 5, width, 5, 256, 256, color_argb);
         RenderSystem.disableBlend();
     }
 
@@ -424,6 +421,7 @@ public class ToroHealthHud {
         context.pose().scale(size, size, -size);
         context.pose().translate(vector3f.x, vector3f.y, vector3f.z);
         context.pose().mulPose(quaternionf);
+        context.flush();
         Lighting.setupForEntityInInventory();
         EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
         if (quaternionf2 != null) {
@@ -431,7 +429,7 @@ public class ToroHealthHud {
         }
 
         entityRenderDispatcher.setRenderShadow(false);
-        RenderSystem.runAsFancy(() -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, tickDelta, context.pose(), context.bufferSource(), 0xF000F0));
+        context.drawSpecial(vertexConsumers -> entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, tickDelta, context.pose(), vertexConsumers, 0xF000F0));
         context.flush();
         entityRenderDispatcher.setRenderShadow(true);
         context.pose().popPose();

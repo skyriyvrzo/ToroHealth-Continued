@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.kairost.torohealth.ToroHealth;
@@ -36,8 +37,9 @@ public class InWorldBarRenderer {
         double x = Mth.lerp(tickDelta, entity.xOld, entity.getX());
         double y = Mth.lerp(tickDelta, entity.yOld, entity.getY());
         double z = Mth.lerp(tickDelta, entity.zOld, entity.getZ());
-        EntityRenderer<Entity> entityRenderer = (EntityRenderer<Entity>) entityRenderDispatcher.getRenderer(entity);
-        Vec3 vec3d = entityRenderer.getRenderOffset(entity, tickDelta);
+        EntityRenderer<Entity, EntityRenderState> entityRenderer = (EntityRenderer<Entity, EntityRenderState>) entityRenderDispatcher.getRenderer(entity);
+        EntityRenderState entityRenderState = entityRenderer.createRenderState(entity, tickDelta);
+        Vec3 vec3d = entityRenderer.getRenderOffset(entityRenderState);
         matrices.translate(x - cameraX + vec3d.x(), y - cameraY + vec3d.y(), z - cameraZ + vec3d.z());
         Vec3 labelPos = entity.getAttachments().getNullable(EntityAttachment.NAME_TAG, 0, entity.getViewYRot(tickDelta));
         if (labelPos != null) {
@@ -52,6 +54,7 @@ public class InWorldBarRenderer {
         renderHealthBar(matrices, (LivingEntity)entity, -20.0F, 0.0F, light, vertexConsumers, tickDelta);
         matrices.popPose();
     }
+
     private static void renderHealthBar(PoseStack matrices, LivingEntity entity, float x, float y, int light, MultiBufferSource vertexConsumers, float tickDelta) {
         BarState state = ((BarStateAccessor) entity).torohealth$getBarState();
         Matrix4f matrix = matrices.last().pose();

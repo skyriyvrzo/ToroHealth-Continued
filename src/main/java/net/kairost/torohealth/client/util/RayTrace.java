@@ -19,7 +19,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class RayTrace {
-    // modified from minecraft.client.render.GameRender.updateTargetedEntity
+    // modified from minecraft.client.render.GameRender.updateCrosshairTarget
     public static LivingEntity getEntityInCrosshair(float tickDelta, float reachDistance) {
         Minecraft client = Minecraft.getInstance();
 
@@ -80,7 +80,7 @@ public class RayTrace {
             return world.clipWithInteractionOverride(c.getFrom(), c.getTo(), pos, blockShape, blockState);
         }, (c) -> {
             Vec3 v = c.getFrom().subtract(c.getTo());
-            return BlockHitResult.miss(c.getTo(), Direction.getNearest(v.x, v.y, v.z), BlockPos.containing(c.getTo()));
+            return BlockHitResult.miss(c.getTo(), Direction.getApproximateNearest(v.x, v.y, v.z), BlockPos.containing(c.getTo()));
         });
     }
 }

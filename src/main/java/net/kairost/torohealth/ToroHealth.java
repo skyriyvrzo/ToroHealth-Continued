@@ -1,8 +1,6 @@
 package net.kairost.torohealth;
 
-import org.slf4j.Logger;
 import org.jetbrains.annotations.Nullable;
-import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -32,7 +30,6 @@ public class ToroHealth {
     public static ToroHealthHud toroHealthHud = null;
     private static boolean holdingWeapon = false;
     private static LivingEntity targetedEntity;
-    public static final Logger LOGGER = LogUtils.getLogger();
 
 
 

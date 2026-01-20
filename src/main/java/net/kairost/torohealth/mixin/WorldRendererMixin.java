@@ -66,7 +66,7 @@ public class WorldRendererMixin {
         CallbackInfo callbackInfo,
         @Local(ordinal = 0) Frustum frustum
     ) {
-        Vec3 vec3d = camera.getPosition();
+        Vec3 vec3d = camera.position();
         double d = vec3d.x();
         double e = vec3d.y();
         double f = vec3d.z();

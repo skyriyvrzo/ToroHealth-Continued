@@ -1,10 +1,9 @@
 package net.kairost.torohealth.client.gui;
 
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import org.joml.Quaternionf;
 import net.minecraft.util.Mth;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
@@ -12,6 +11,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ambient.Bat;
@@ -20,10 +20,10 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.Shulker;
-import net.minecraft.world.entity.monster.Spider;
-import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.monster.spider.Spider;
+import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.client.renderstate.RenderStateExtensions;
+import net.minecraft.world.entity.animal.nautilus.AbstractNautilus;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.config.ToroHealthConfig;
 import net.kairost.torohealth.data.BarState;
@@ -33,11 +33,11 @@ import net.kairost.torohealth.client.util.EntityUtil.Relation;
 import net.kairost.torohealth.mixin.accessor.WitherEntityAccessor;
 
 public class ToroHealthHud {
-    public static final ResourceLocation CONTAINER = ResourceLocation.fromNamespaceAndPath("minecraft", "hud/heart/container");
-    public static final ResourceLocation FULL = ResourceLocation.fromNamespaceAndPath("minecraft", "hud/heart/full");
-    private static final ResourceLocation ARMOR_FULL = ResourceLocation.fromNamespaceAndPath("minecraft", "hud/armor_full");
-    private static final ResourceLocation TOROHEALTH_BARS_TEXTURE = ResourceLocation.fromNamespaceAndPath(ToroHealth.MODID, "textures/gui/bars.png");
-    private static final ResourceLocation TOROHEALTH_FRAME_TEXTURE = ResourceLocation.fromNamespaceAndPath(ToroHealth.MODID, "textures/gui/frame.png");
+    public static final Identifier CONTAINER = Identifier.fromNamespaceAndPath("minecraft", "hud/heart/container");
+    public static final Identifier FULL = Identifier.fromNamespaceAndPath("minecraft", "hud/heart/full");
+    private static final Identifier ARMOR_FULL = Identifier.fromNamespaceAndPath("minecraft", "hud/armor_full");
+    private static final Identifier TOROHEALTH_BARS_TEXTURE = Identifier.fromNamespaceAndPath(ToroHealth.MODID, "textures/gui/bars.png");
+    private static final Identifier TOROHEALTH_FRAME_TEXTURE = Identifier.fromNamespaceAndPath(ToroHealth.MODID, "textures/gui/frame.png");
     private static final int DARK_GRAY = 0x808080;
     private static final int LIGHT_GRAY = 0xe0e0e0;
     private static final int FRAME_SIZE = 42;
@@ -360,60 +360,58 @@ public class ToroHealthHud {
         int shift = this.at_left ? 0 : (130 - width);
         context.blit(RenderPipelines.GUI_TEXTURED, TOROHEALTH_BARS_TEXTURE, x + shift, y, shift, 6 * 2 * 5 + 5, width, 5, 256, 256, color_argb);
     }
-
     //modified from vanilla InventoryScreen.drawEntity
     public static void drawEntity(GuiGraphics context, int x1, int y1, int x2, int y2, float size, float mouseX, float mouseY, LivingEntity entity, float tickDelta) {
         float f = (float) Math.atan(mouseX / 40.0F);
         float g = (float) Math.atan(mouseY / 40.0F);
-        context.enableScissor(x1, y1, x2, y2);
         Quaternionf quaternionf = new Quaternionf().rotateZ((float) Math.PI);
         Quaternionf quaternionf2 = new Quaternionf().rotateX(g * 20.0F * (float) (Math.PI / 180.0));
         quaternionf.mul(quaternionf2);
-        float i = entity.yBodyRot;
-        float j = entity.yBodyRotO;
-        float k = entity.yHeadRot;
-        float l = entity.yHeadRotO;
-        entity.yBodyRot = 180.0f + f * 20.0f;
-        entity.yBodyRotO = 180.0f + f * 20.0f;
-        entity.yHeadRot = 180.0f + f * 20.0f + k - i;
-        entity.yHeadRotO = 180.0f + f * 20.0f + l - j;
-        Vector3f vector3f = new Vector3f(0.0F, 0.0F, 0.0F);
+        EntityRenderState entityRenderState;
         if (entity instanceof WitherBoss wither) {
             WitherEntityAccessor witherEntityAccessor = (WitherEntityAccessor) wither;
             float[] sideHeadYaws = witherEntityAccessor.torohealth$getSideHeadYaws();
             float[] lastSideHeadYaws = witherEntityAccessor.torohealth$getLastSideHeadYaws();
+            float i = entity.yBodyRot;
             float[] m = sideHeadYaws.clone();
             float[] n = lastSideHeadYaws.clone();
             sideHeadYaws[0] = 180.0f + f * 20.0f + sideHeadYaws[0] - i;
             sideHeadYaws[1] = 180.0f + f * 20.0f + sideHeadYaws[1] - i;
             lastSideHeadYaws[0] = 180.0f + f * 20.0f + lastSideHeadYaws[0] - i;
             lastSideHeadYaws[1] = 180.0f + f * 20.0f + lastSideHeadYaws[1] - i;
-            drawEntity(context, x1, y1, x2, y2, size, vector3f, quaternionf, quaternionf2, entity, tickDelta);
+            entityRenderState = drawEntity(entity, tickDelta);
             System.arraycopy(m, 0, sideHeadYaws, 0, m.length);
             System.arraycopy(n, 0, lastSideHeadYaws, 0, n.length);
-        } else if (entity instanceof EnderDragon enderDragon)  {
+        } else if (entity instanceof EnderDragon enderDragon) {
             EndCrystal endCrystal = enderDragon.nearestCrystal;
             enderDragon.nearestCrystal = null;
-            drawEntity(context, x1, y1, x2, y2, size, vector3f, quaternionf, quaternionf2, entity, tickDelta);
+            entityRenderState = drawEntity(entity, tickDelta);
             enderDragon.nearestCrystal = endCrystal;
         } else {
-            drawEntity(context, x1, y1, x2, y2, size, vector3f, quaternionf, quaternionf2, entity, tickDelta);
+            entityRenderState = drawEntity(entity, tickDelta);
         }
-        entity.yBodyRot = i;
-        entity.yBodyRotO = j;
-        entity.yHeadRot = k;
-        entity.yHeadRotO = l;
-        context.disableScissor();
+
+        if (entityRenderState instanceof LivingEntityRenderState livingEntityRenderState) {
+            livingEntityRenderState.bodyRot = 180.0F + f * 20.0F;
+            if (entity instanceof AbstractNautilus) {
+                livingEntityRenderState.bodyRot += 180.0F;
+            }
+            livingEntityRenderState.boundingBoxWidth = livingEntityRenderState.boundingBoxWidth / livingEntityRenderState.scale;
+            livingEntityRenderState.boundingBoxHeight = livingEntityRenderState.boundingBoxHeight / livingEntityRenderState.scale;
+            livingEntityRenderState.scale = 1.0F;
+        }
+        Vector3f vector3f = new Vector3f(0.0F, 0.0F, 0.0F);
+        context.submitEntityRenderState(entityRenderState, size, vector3f, quaternionf, quaternionf2, x1, y1, x2, y2);
     }
 
     //copied from InventoryScreen.drawEntity
-    public static void drawEntity(GuiGraphics context, int x1, int y1, int x2, int y2, float scale, Vector3f translation, Quaternionf rotation, @Nullable Quaternionf overrideCameraAngle, LivingEntity entity, float tickDelta) {
-        EntityRenderDispatcher entityrenderdispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-        EntityRenderer entityrenderer = entityrenderdispatcher.getRenderer(entity);
-        EntityRenderState entityrenderstate = entityrenderer.createRenderState(entity, tickDelta);
-        entityrenderer.extractRenderState(entity, entityrenderstate, 1.0F);
-        RenderStateExtensions.onUpdateEntityRenderState(entityrenderer, entity, entityrenderstate);
-        entityrenderstate.hitboxesRenderState = null;
-        context.submitEntityRenderState(entityrenderstate, scale, translation, rotation, overrideCameraAngle, x1, y1, x2, y2);
+    private static EntityRenderState drawEntity(LivingEntity entity, float tickDelta) {
+        EntityRenderDispatcher entityRenderManager = Minecraft.getInstance().getEntityRenderDispatcher();
+        EntityRenderer<? super LivingEntity, ?> entityRenderer = entityRenderManager.getRenderer(entity);
+        EntityRenderState entityRenderState = entityRenderer.createRenderState(entity, tickDelta);
+        entityRenderState.lightCoords = 0xF000F0;
+        entityRenderState.shadowPieces.clear();
+        entityRenderState.outlineColor = 0;
+        return entityRenderState;
     }
 }

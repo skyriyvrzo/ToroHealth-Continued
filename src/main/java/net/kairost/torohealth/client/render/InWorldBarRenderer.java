@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.data.BarState;
 import net.kairost.torohealth.data.BarStateAccessor;
@@ -27,7 +27,7 @@ public class InWorldBarRenderer {
     private static final int DARK_GRAY = 0xFF808080;
     private static final float SIZE = 0.025f;
     private static final int BAR_WIDTH = 40;
-    private static final ResourceLocation IN_WORLD_BAR = ResourceLocation.fromNamespaceAndPath(ToroHealth.MODID, "in_world_bar");
+    private static final Identifier IN_WORLD_BAR = Identifier.fromNamespaceAndPath(ToroHealth.MODID, "in_world_bar");
     private static final TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.PARTICLES).getSprite(IN_WORLD_BAR);
     private static final TextureSubmittable submittable = new TextureSubmittable();
 
@@ -36,7 +36,7 @@ public class InWorldBarRenderer {
             return;
         }
 
-        Vec3 cameraPos = camera.getPosition();
+        Vec3 cameraPos = camera.position();
         EntityRenderState entityRenderState = entityRenderManager.extractEntity(entity, tickDelta);
         EntityRenderer<Entity, EntityRenderState> entityRenderer = (EntityRenderer<Entity, EntityRenderState>) entityRenderManager.getRenderer(entityRenderState);
         Vec3 vec3d = entityRenderer.getRenderOffset(entityRenderState);

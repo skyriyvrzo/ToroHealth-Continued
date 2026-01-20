@@ -85,7 +85,7 @@ public class HealthChangeParticle
     public void extract(QuadParticleRenderState submittable, Camera camera, float tickDelta) {
         Minecraft client = Minecraft.getInstance();
 
-        Vec3 vec3d = camera.getPosition();
+        Vec3 vec3d = camera.position();
         float x = (float)(Mth.lerp(tickDelta, this.xo, this.x) - vec3d.x());
         float y = (float)(Mth.lerp(tickDelta, this.yo, this.y) - vec3d.y());
         float z = (float)(Mth.lerp(tickDelta, this.zo, this.z) - vec3d.z());

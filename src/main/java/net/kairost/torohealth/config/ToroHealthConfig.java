@@ -2,6 +2,7 @@ package net.kairost.torohealth.config;
 
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import org.jetbrains.annotations.NotNull;
 
 public final class ToroHealthConfig {
 
@@ -36,12 +37,12 @@ public final class ToroHealthConfig {
     public static final class HudOptions {
         public final ModConfigSpec.BooleanValue showHUD;
         public final ModConfigSpec.BooleanValue showEntity;
-        public final ModConfigSpec.EnumValue<FrameStyle> frameStyle;
-        public final ModConfigSpec.EnumValue<HealthChangeType> healthChangeType;
+        public final ModConfigSpec.EnumValue<@NotNull FrameStyle> frameStyle;
+        public final ModConfigSpec.EnumValue<@NotNull HealthChangeType> healthChangeType;
         public final ModConfigSpec.BooleanValue onlyWhenHurt;
         public final ModConfigSpec.DoubleValue hudDistance;
         public final ModConfigSpec.IntValue hudHideDelay;
-        public final ModConfigSpec.EnumValue<AnchorPoint> anchorPoint;
+        public final ModConfigSpec.EnumValue<@NotNull AnchorPoint> anchorPoint;
         public final ModConfigSpec.IntValue hudXPosition;
         public final ModConfigSpec.IntValue hudYPosition;
         public final ModConfigSpec.IntValue hudScale;
@@ -76,7 +77,7 @@ public final class ToroHealthConfig {
 
     public static final class ParticleOptions {
         public final ModConfigSpec.BooleanValue showParticle;
-        public final ModConfigSpec.EnumValue<ParticleLightMode> particleLightMode;
+        public final ModConfigSpec.EnumValue<@NotNull ParticleLightMode> particleLightMode;
         public final ModConfigSpec.DoubleValue particleDistance;
         public final ModConfigSpec.IntValue damageColor;
         public final ModConfigSpec.IntValue healColor;
@@ -108,8 +109,8 @@ public final class ToroHealthConfig {
     }
 
     public static final class InWorldBarOptions {
-        public final ModConfigSpec.EnumValue<InWorldBarVisibilityMode> inWorldBarVisibilityMode;
-        public final ModConfigSpec.EnumValue<InWorldBarLightMode> inWorldBarLightMode;
+        public final ModConfigSpec.EnumValue<@NotNull InWorldBarVisibilityMode> inWorldBarVisibilityMode;
+        public final ModConfigSpec.EnumValue<@NotNull InWorldBarLightMode> inWorldBarLightMode;
         public final ModConfigSpec.BooleanValue onlyWhenLookingAt;
         public final ModConfigSpec.BooleanValue onlyWhenHurt;
         public final ModConfigSpec.DoubleValue inWorldBarDistance;

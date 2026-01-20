@@ -3,13 +3,11 @@ package net.kairost.torohealth;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
@@ -18,19 +16,16 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.kairost.torohealth.config.ToroHealthConfig;
 import net.kairost.torohealth.client.gui.ToroHealthHud;
 import net.kairost.torohealth.client.util.HoldingWeaponUpdater;
-import net.kairost.torohealth.client.particle.TextRenderEntry;
-import net.kairost.torohealth.client.particle.TextRenderQueue;
 import net.kairost.torohealth.client.particle.HealthChangeParticle;
 import net.kairost.torohealth.client.particle.TextParticleRenderer;
 
 @Mod(ToroHealth.MODID)
 public class ToroHealth {
     public static final String MODID = "torohealth";
-    private static TextParticleRenderer textParticleRenderer;
+    public static TextParticleRenderer textParticleRenderer;
     public static ToroHealthHud toroHealthHud = null;
     private static boolean holdingWeapon = false;
     private static LivingEntity targetedEntity;
-
 
 
     public ToroHealth(IEventBus modBus, ModContainer container) {
@@ -52,7 +47,6 @@ public class ToroHealth {
         ToroHealthParticles.register(modBus);
 
         NeoForge.EVENT_BUS.register(HudRenderEvents.class);
-        NeoForge.EVENT_BUS.register(WorldRenderEvents.class);
     }
 
     public static final class HudRenderEvents {
@@ -69,27 +63,6 @@ public class ToroHealth {
         }
     }
 
-
-    public static final class WorldRenderEvents {
-        @SubscribeEvent
-        public static void onRenderLevelStage(RenderLevelStageEvent.AfterParticles event) {
-            Minecraft mc = Minecraft.getInstance();
-
-            MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
-
-            for (TextRenderEntry entry : TextRenderQueue.consume()) {
-                textParticleRenderer.render(
-                    entry.text(),
-                    event.getCamera(),
-                    entry.x(), entry.y(), entry.z(),
-                    entry.u(), entry.v(),
-                    entry.color(),
-                    buffers,
-                    entry.light()
-                );
-            }
-        }
-    }
 
     public final static class ClientSetup {
 

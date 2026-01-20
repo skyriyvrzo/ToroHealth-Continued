@@ -23,6 +23,7 @@ import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.client.renderstate.RenderStateExtensions;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.config.ToroHealthConfig;
 import net.kairost.torohealth.data.BarState;
@@ -406,11 +407,13 @@ public class ToroHealthHud {
     }
 
     //copied from InventoryScreen.drawEntity
-    public static void drawEntity(GuiGraphics context, int x1, int y1, int x2, int y2, float size, Vector3f vector3f, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, float tickDelta) {
-        EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-        EntityRenderer<? super LivingEntity, ?> entityRenderer = entityRenderDispatcher.getRenderer(entity);
-        EntityRenderState entityRenderState = entityRenderer.createRenderState(entity, tickDelta);
-        entityRenderState.hitboxesRenderState = null;
-        context.submitEntityRenderState(entityRenderState, size, vector3f, quaternionf, quaternionf2, x1, y1, x2, y2);
+    public static void drawEntity(GuiGraphics context, int x1, int y1, int x2, int y2, float scale, Vector3f translation, Quaternionf rotation, @Nullable Quaternionf overrideCameraAngle, LivingEntity entity, float tickDelta) {
+        EntityRenderDispatcher entityrenderdispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
+        EntityRenderer entityrenderer = entityrenderdispatcher.getRenderer(entity);
+        EntityRenderState entityrenderstate = entityrenderer.createRenderState(entity, tickDelta);
+        entityrenderer.extractRenderState(entity, entityrenderstate, 1.0F);
+        RenderStateExtensions.onUpdateEntityRenderState(entityrenderer, entity, entityrenderstate);
+        entityrenderstate.hitboxesRenderState = null;
+        context.submitEntityRenderState(entityrenderstate, scale, translation, rotation, overrideCameraAngle, x1, y1, x2, y2);
     }
 }

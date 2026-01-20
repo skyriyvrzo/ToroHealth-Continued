@@ -1,7 +1,5 @@
 package net.kairost.torohealth.client.particle;
 
-import org.jetbrains.annotations.NotNull;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.RandomSource;
@@ -10,29 +8,30 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
-import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.state.QuadParticleRenderState;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.kairost.torohealth.config.ToroHealthConfig;
 
 public class HealthChangeParticle
     extends SingleQuadParticle{
     private final int value;
+
     HealthChangeParticle(ClientLevel world, int color, int value, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-        super(world, x, y, z);
+        super(world, x, y, z, null);
         this.hasPhysics = false;
         this.scale(1.0f);
         this.setSize(0.25f, 0.25f);
         this.lifetime = 50;
         this.gravity = 1.0E-2f;
         this.xd = velocityX;
-        this.yd = velocityY + (double)(this.random.nextFloat() / 500.0f);
+        this.yd = velocityY + (double) (this.random.nextFloat() / 500.0f);
         this.zd = velocityZ;
-        this.rCol = (float)(color >> 16 & 0xFF) / 255.0f;
-        this.gCol = (float)(color >> 8 & 0xFF) / 255.0f;
-        this.bCol = (float)(color & 0xFF) / 255.0f;
+        this.rCol = (float) (color >> 16 & 0xFF) / 255.0f;
+        this.gCol = (float) (color >> 8 & 0xFF) / 255.0f;
+        this.bCol = (float) (color & 0xFF) / 255.0f;
         this.value = value;
     }
 
@@ -55,8 +54,8 @@ public class HealthChangeParticle
     }
 
     @Override
-    public @NotNull ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    public SingleQuadParticle.Layer getLayer() {
+        return Layer.TRANSLUCENT;
     }
 
     public static class HealthChangeFactory
@@ -68,11 +67,9 @@ public class HealthChangeParticle
         }
 
         //@Override
-        @Override
-        public Particle createParticle(@NotNull SimpleParticleType simpleParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i) {
-            RandomSource random = clientWorld.getRandom();
+        public Particle createParticle(SimpleParticleType simpleParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i, RandomSource random) {
             // use g to encode health change
-            int healthChange = (int)Double.doubleToLongBits(g);
+            int healthChange = (int) Double.doubleToLongBits(g);
             int color = (healthChange > 0) ? ToroHealthConfig.CONFIG.particleOptions.healColor.get() : ToroHealthConfig.CONFIG.particleOptions.damageColor.get();
             int value = Math.abs(healthChange);
             double vx = random.nextGaussian() * 0.035;
@@ -85,7 +82,7 @@ public class HealthChangeParticle
     }
 
     @Override
-    public void render(@NotNull VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
+    public void extract(QuadParticleRenderState submittable, Camera camera, float tickDelta) {
         Minecraft client = Minecraft.getInstance();
 
         Vec3 vec3d = camera.getPosition();

@@ -4,7 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.network.chat.Component;
 
 public class TextParticleRenderer {
     private final Minecraft client;
@@ -13,13 +14,23 @@ public class TextParticleRenderer {
         this.client = client;
     }
 
-    public void render(String text, Camera camera, float x, float y, float z, float u, float v, int color, MultiBufferSource vertexConsumers, int light) {
+    public void render(String text, Camera camera, float x, float y, float z, float u, float v, int color, SubmitNodeCollector queue, int light) {
         PoseStack matrices = new PoseStack();
         matrices.translate(x, y, z);
         matrices.mulPose(camera.rotation());
         matrices.scale(0.025f, -0.025f, 0.025f);
-        matrices.translate(-client.font.width(text), -3, 0);
+        matrices.translate(-this.client.font.width(text), -3, 0);
 
-        client.font.drawInBatch(text, u, v, color, false, matrices.last().pose(), vertexConsumers, Font.DisplayMode.NORMAL, 0, light);
+        queue.submitText(
+            matrices,
+            u, v,
+            Component.literal(text).getVisualOrderText(),
+            false,
+            Font.DisplayMode.NORMAL,
+            light,
+            color,
+            0,
+            0
+        );
     }
 }

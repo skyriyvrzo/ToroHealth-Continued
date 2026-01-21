@@ -44,6 +44,15 @@ public class EntityUtil {
             && !entity.isSpectator();
     }
 
+    public static boolean isDetectable(Entity entity, MinecraftClient client) {
+        return (!entity.isInvisibleTo(client.player)
+            || entity.isGlowing()
+            || entity.isOnFire()
+            || entity instanceof CreeperEntity && ((CreeperEntity) entity).isCharged() // charged creeper
+            || (((LivingEntity) entity).getArmorVisibility() > 0))
+            && !entity.isSpectator();
+    }
+
     public static boolean isFloating(LivingEntity entity) {
         if (entity.isTouchingWater() && !entity.isOnGround())
             return true;

@@ -42,7 +42,7 @@ public class RayTrace {
         Vec3d vec3d2 = entity2.getRotationVec(1.0f);
         Vec3d vec3d3 = vec3d.add(vec3d2.x * reachDistance, vec3d2.y * reachDistance, vec3d2.z * reachDistance);
         Box box = entity2.getBoundingBox().stretch(vec3d2.multiply(reachDistance)).expand(1.0, 1.0, 1.0);
-        EntityHitResult entityHitResult = ProjectileUtil.raycast(entity2, vec3d, vec3d3, box, entity -> !entity.isSpectator() && entity.collides(), e);
+        EntityHitResult entityHitResult = ProjectileUtil.raycast(entity2, vec3d, vec3d3, box, entity -> EntityUtil.isDetectable(entity, MinecraftClient.getInstance()) && entity.collides(), e);
         if (entityHitResult != null) {
             Entity entity22 = entityHitResult.getEntity();
             Vec3d vec3d4 = entityHitResult.getPos();

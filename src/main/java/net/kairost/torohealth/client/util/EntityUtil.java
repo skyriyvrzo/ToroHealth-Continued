@@ -1,6 +1,5 @@
 package net.kairost.torohealth.client.util;
 
-import java.util.stream.StreamSupport;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
@@ -39,9 +38,18 @@ public class EntityUtil {
                 || entity.isGlowing()
                 || entity.isOnFire()
                 || entity instanceof CreeperEntity && ((CreeperEntity) entity).shouldRenderOverlay() // charged creeper
-                || StreamSupport.stream(entity.getItemsEquipped().spliterator(), false).anyMatch(is -> !is.isEmpty()))
+                || (((LivingEntity) entity).getArmorVisibility() > 0))
             && entity != client.player
             && !entity.hasPassengers()
+            && !entity.isSpectator();
+    }
+
+    public static boolean isDetectable(Entity entity, MinecraftClient client) {
+        return (!entity.isInvisibleTo(client.player)
+            || entity.isGlowing()
+            || entity.isOnFire()
+            || entity instanceof CreeperEntity && ((CreeperEntity) entity).shouldRenderOverlay() // charged creeper
+            || (((LivingEntity) entity).getArmorVisibility() > 0))
             && !entity.isSpectator();
     }
 

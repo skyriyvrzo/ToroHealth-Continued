@@ -116,6 +116,6 @@ public class InWorldBarRenderer {
         if (ToroHealth.getConfig().inWorldBarOptions.onlyWhenLookingAt && ToroHealth.getTargetedEntity() != entity) {
             return false;
         }
-        return EntityUtil.showHealthBar(entity, MinecraftClient.getInstance());
+        return EntityUtil.showHealthBar(entity, MinecraftClient.getInstance().player);
     }
 }

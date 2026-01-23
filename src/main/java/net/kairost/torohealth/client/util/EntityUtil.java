@@ -31,24 +31,20 @@ public class EntityUtil {
         }
     }
 
-    public static boolean showHealthBar(Entity entity, MinecraftClient client) {
+    public static boolean showHealthBar(Entity entity, PlayerEntity player) {
         return entity instanceof LivingEntity
             && !(entity instanceof ArmorStandEntity)
-            && (!entity.isInvisibleTo(client.player)
-                || entity.isGlowing()
-                || entity.isOnFire()
-                || entity instanceof CreeperEntity && ((CreeperEntity) entity).isCharged() // charged creeper
-                || (((LivingEntity) entity).getArmorVisibility() > 0))
-            && entity != client.player
+            && entity != player
             && !entity.hasPassengers()
-            && !entity.isSpectator();
+            && isDetectable(entity, player);
     }
 
-    public static boolean isDetectable(Entity entity, MinecraftClient client) {
-        return (!entity.isInvisibleTo(client.player)
+    public static boolean isDetectable(Entity entity, PlayerEntity player) {
+        return (!entity.isInvisibleTo(player)
             || entity.isGlowing()
             || entity.isOnFire()
             || entity instanceof CreeperEntity && ((CreeperEntity) entity).isCharged() // charged creeper
+            || entity instanceof ShulkerEntity
             || (((LivingEntity) entity).getArmorVisibility() > 0))
             && !entity.isSpectator();
     }

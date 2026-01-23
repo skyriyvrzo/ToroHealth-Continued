@@ -34,9 +34,9 @@ public class InWorldBarRenderer {
         matrices.push();
         EntityRenderer<? super Entity> entityRenderer = entityRenderDispatcher.getRenderer(entity);
         Vec3d vec3d = entityRenderer.getPositionOffset(entity, tickDelta);
-        double x = MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX() + vec3d.getX());
-        double y = MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY() + vec3d.getY());
-        double z = MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ() + vec3d.getZ());
+        double x = MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX()) + vec3d.getX();
+        double y = MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY()) + vec3d.getY();
+        double z = MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ()) + vec3d.getZ();
         matrices.translate(x - cameraX, y - cameraY, z - cameraZ);
         float f = entity.getHeight() + 0.7f;
         matrices.translate(0.0, f, 0.0);

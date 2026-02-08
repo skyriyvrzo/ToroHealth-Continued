@@ -44,7 +44,6 @@ public class EntityUtil {
             || entity.isGlowing()
             || entity.isOnFire()
             || entity instanceof CreeperEntity && ((CreeperEntity) entity).isCharged() // charged creeper
-            || entity instanceof ShulkerEntity
             || (((LivingEntity) entity).getArmorVisibility() > 0))
             && !entity.isSpectator();
     }

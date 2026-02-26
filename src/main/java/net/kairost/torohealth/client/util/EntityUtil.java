@@ -43,8 +43,8 @@ public class EntityUtil {
         return (!entity.isInvisibleTo(player)
             || entity.isGlowing()
             || entity.isOnFire()
-            || entity instanceof CreeperEntity && ((CreeperEntity) entity).isCharged() // charged creeper
-            || (((LivingEntity) entity).getArmorVisibility() > 0))
+            || (entity instanceof CreeperEntity && ((CreeperEntity) entity).isCharged()) // charged creeper
+            || (entity instanceof LivingEntity && (((LivingEntity) entity).getArmorVisibility() > 0)))
             && !entity.isSpectator();
     }
 

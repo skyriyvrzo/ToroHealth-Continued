@@ -1,25 +1,25 @@
 package net.kairost.torohealth;
 
-import net.kairost.torohealth.client.particle.TextParticleRenderer;
-import org.jetbrains.annotations.Nullable;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.ActionResult;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.Registries;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.particle.SimpleParticleType;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.Registry;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
+import org.jetbrains.annotations.Nullable;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import net.kairost.torohealth.config.ModConfig;
 import net.kairost.torohealth.client.gui.ToroHealthHud;
 import net.kairost.torohealth.client.particle.HealthChangeParticle;
+import net.kairost.torohealth.client.particle.TextParticleRenderer;
 import net.kairost.torohealth.client.util.HoldingWeaponUpdater;
 
 public class ToroHealth implements ClientModInitializer {
@@ -36,35 +36,35 @@ public class ToroHealth implements ClientModInitializer {
         // set config
         ModConfig.init();
         // toroHealthHud
-        toroHealthHud = new ToroHealthHud(MinecraftClient.getInstance());
+        toroHealthHud = new ToroHealthHud(Minecraft.getInstance());
         // textParticleRenderer
-        textParticleRenderer = new TextParticleRenderer(MinecraftClient.getInstance());
+        textParticleRenderer = new TextParticleRenderer(Minecraft.getInstance());
 
         ConfigHolder<ModConfig> holder =
             AutoConfig.getConfigHolder(ModConfig.class);
 
         holder.registerSaveListener((h, c) -> {
             c.postLoad();
-            return ActionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         });
 
         config = ModConfig.INSTANCE;
 
         //toroHealth Particle
         Registry.register(
-            Registries.PARTICLE_TYPE,
-            Identifier.of(MODID, "health_change"),
+            BuiltInRegistries.PARTICLE_TYPE,
+            Identifier.fromNamespaceAndPath(MODID, "health_change"),
             HEALTH_CHANGE
         );
 
-        ParticleFactoryRegistry.getInstance().register(
+        ParticleProviderRegistry.getInstance().register(
             HEALTH_CHANGE,
             HealthChangeParticle.HealthChangeFactory::new
         );
 
         //tick update logic
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.player == null || client.world == null) {
+            if (client.player == null || client.level == null) {
                 return;
             }
             HoldingWeaponUpdater.update();
@@ -72,7 +72,7 @@ public class ToroHealth implements ClientModInitializer {
         });
 
         //hud
-        HudElementRegistry.attachElementAfter(VanillaHudElements.MISC_OVERLAYS, Identifier.of("kairost", "torohealth_hud_overlay"), (context, tickCounter) -> {
+        HudElementRegistry.attachElementAfter(VanillaHudElements.MISC_OVERLAYS, Identifier.fromNamespaceAndPath("kairost", "torohealth_hud_overlay"), (context, tickCounter) -> {
             if (config.enabled && config.hudOptions.showHUD) {
                 toroHealthHud.render(context, tickCounter);
             }

@@ -1,45 +1,46 @@
 package net.kairost.torohealth.client.render;
 
-import com.mojang.blaze3d.buffers.GpuBufferSlice;
-import com.mojang.blaze3d.systems.RenderPass;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.particle.BillboardParticle;
-import net.minecraft.client.particle.BillboardParticleSubmittable;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BuiltBuffer;
-import net.minecraft.client.render.Submittable;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.render.command.LayeredCustomCommandRenderer;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.texture.AbstractTexture;
-import net.minecraft.client.texture.TextureManager;
-import net.minecraft.client.util.BufferAllocator;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import com.mojang.blaze3d.buffers.GpuBufferSlice;
+import com.mojang.blaze3d.systems.RenderPass;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.feature.ParticleFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
+import net.minecraft.client.renderer.state.level.ParticleGroupRenderState;
+import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import org.jetbrains.annotations.Nullable;
+
 
 
 //modified on BillboardParticleSubmittable
-public class TextureSubmittable implements OrderedRenderCommandQueue.LayeredCustom, Submittable {
+public class TextureSubmittable implements SubmitNodeCollector.ParticleGroupRenderer, ParticleGroupRenderState {
     private static final int INITIAL_BUFFER_MAX_LENGTH = 1024;
     private static final int BUFFER_FLOAT_FIELDS = 14;
     private static final int BUFFER_INT_FIELDS = 2;
-    private final Map<BillboardParticle.RenderType, TextureSubmittable.Vertices> bufferByType = new HashMap();
+    private final Map<SingleQuadParticle.Layer, TextureSubmittable.Vertices> bufferByType = new HashMap();
     private int textures;
 
     public void render(
-        BillboardParticle.RenderType renderType,
+        SingleQuadParticle.Layer renderType,
         float x,
         float y,
         float z,
@@ -57,83 +58,85 @@ public class TextureSubmittable implements OrderedRenderCommandQueue.LayeredCust
         int color,
         int brightness
     ) {
-        ((TextureSubmittable.Vertices)this.bufferByType.computeIfAbsent(renderType, renderTypex -> new TextureSubmittable.Vertices()))
+        this.bufferByType.computeIfAbsent(renderType, renderTypex -> new Vertices())
             .vertex(x, y, z, width, height, rotationX, rotationY, rotationZ, rotationW, size, minU, maxU, minV, maxV, color, brightness);
         this.textures++;
     }
 
     @Override
-    public void onFrameEnd() {
+    public void clear() {
         this.bufferByType.values().forEach(TextureSubmittable.Vertices::reset);
         this.textures = 0;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return this.textures == 0;
+    }
+
     @Nullable
     @Override
-    public BillboardParticleSubmittable.Buffers submit(LayeredCustomCommandRenderer.VerticesCache cache) {
+    public QuadParticleRenderState.PreparedBuffers prepare(ParticleFeatureRenderer.ParticleBufferCache cache, boolean translucent) {
         int i = this.textures * 4;
 
         Object var13;
-        try (BufferAllocator bufferAllocator = BufferAllocator.fixedSized(i * VertexFormats.POSITION_TEXTURE_COLOR_LIGHT.getVertexSize())) {
-            BufferBuilder bufferBuilder = new BufferBuilder(bufferAllocator, VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR_LIGHT);
-            Map<BillboardParticle.RenderType, BillboardParticleSubmittable.Layer> map = new HashMap();
+        try (ByteBufferBuilder bufferAllocator = ByteBufferBuilder.exactlySized(i * DefaultVertexFormat.PARTICLE.getVertexSize())) {
+            BufferBuilder bufferBuilder = new BufferBuilder(bufferAllocator, VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+            Map<SingleQuadParticle.Layer, QuadParticleRenderState.PreparedLayer> map = new HashMap();
             int j = 0;
 
-            for (Entry<BillboardParticle.RenderType, TextureSubmittable.Vertices> entry : this.bufferByType.entrySet()) {
-                ((TextureSubmittable.Vertices)entry.getValue())
+            for (Entry<SingleQuadParticle.Layer, TextureSubmittable.Vertices> entry : this.bufferByType.entrySet()) {
+                entry.getValue()
                     .render(
                         (x, y, z, width, height, rotationX, rotationY, rotationZ, rotationW,size, minU, maxU, minV, maxV, color, brightness) -> this.drawFace(
                             bufferBuilder, x, y, z, width, height, rotationX, rotationY, rotationZ, rotationW, size, minU, maxU, minV, maxV, color, brightness
                         )
                     );
-                if (((TextureSubmittable.Vertices)entry.getValue()).nextVertexIndex() > 0) {
+                if (entry.getValue().nextVertexIndex() > 0) {
                     map.put(
-                        (BillboardParticle.RenderType)entry.getKey(),
-                        new BillboardParticleSubmittable.Layer(j, ((TextureSubmittable.Vertices)entry.getValue()).nextVertexIndex() * 6)
+                        entry.getKey(),
+                        new QuadParticleRenderState.PreparedLayer(j, entry.getValue().nextVertexIndex() * 6)
                     );
                 }
 
-                j += ((TextureSubmittable.Vertices)entry.getValue()).nextVertexIndex() * 4;
+                j += entry.getValue().nextVertexIndex() * 4;
             }
 
-            BuiltBuffer builtBuffer = bufferBuilder.endNullable();
+            MeshData builtBuffer = bufferBuilder.build();
             if (builtBuffer != null) {
-                cache.write(builtBuffer.getBuffer());
-                RenderSystem.getSequentialBuffer(VertexFormat.DrawMode.QUADS).getIndexBuffer(builtBuffer.getDrawParameters().indexCount());
+                cache.write(builtBuffer.vertexBuffer());
+                RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS).getBuffer(builtBuffer.drawState().indexCount());
                 GpuBufferSlice gpuBufferSlice = RenderSystem.getDynamicUniforms()
-                    .write(RenderSystem.getModelViewMatrix(), new Vector4f(1.0F, 1.0F, 1.0F, 1.0F), new Vector3f(), new Matrix4f());
-                return new BillboardParticleSubmittable.Buffers(builtBuffer.getDrawParameters().indexCount(), gpuBufferSlice, map);
+                    .writeTransform(RenderSystem.getModelViewMatrix(), new Vector4f(1.0F, 1.0F, 1.0F, 1.0F), new Vector3f(), new Matrix4f());
+                return new QuadParticleRenderState.PreparedBuffers(builtBuffer.drawState().indexCount(), gpuBufferSlice, map);
             }
 
             var13 = null;
         }
 
-        return (BillboardParticleSubmittable.Buffers)var13;
+        return (QuadParticleRenderState.PreparedBuffers)var13;
     }
 
 
     @Override
     public void render(
-        BillboardParticleSubmittable.Buffers buffers,
-        LayeredCustomCommandRenderer.VerticesCache cache,
-        RenderPass renderPass,
-        TextureManager manager,
-        boolean translucent
+        final QuadParticleRenderState.PreparedBuffers buffers,
+        final ParticleFeatureRenderer.ParticleBufferCache cache,
+        final RenderPass renderPass,
+        final TextureManager manager
     ) {
-        RenderSystem.ShapeIndexBuffer shapeIndexBuffer = RenderSystem.getSequentialBuffer(VertexFormat.DrawMode.QUADS);
+        RenderSystem.AutoStorageIndexBuffer shapeIndexBuffer = RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
         renderPass.setVertexBuffer(0, cache.get());
-        renderPass.setIndexBuffer(shapeIndexBuffer.getIndexBuffer(buffers.indexCount()), shapeIndexBuffer.getIndexType());
+        renderPass.setIndexBuffer(shapeIndexBuffer.getBuffer(buffers.indexCount()), shapeIndexBuffer.type());
         renderPass.setUniform("DynamicTransforms", buffers.dynamicTransforms());
 
-        for (Entry<BillboardParticle.RenderType, BillboardParticleSubmittable.Layer> entry : buffers.layers().entrySet()) {
-            if (translucent == ((BillboardParticle.RenderType)entry.getKey()).translucent()) {
-                renderPass.setPipeline(((BillboardParticle.RenderType)entry.getKey()).pipeline());
-                AbstractTexture abstractTexture = manager.getTexture(((BillboardParticle.RenderType)entry.getKey()).textureAtlasLocation());
-                renderPass.bindTexture("Sampler0", abstractTexture.getGlTextureView(), abstractTexture.getSampler());
-                renderPass.drawIndexed(
-                    ((BillboardParticleSubmittable.Layer)entry.getValue()).vertexOffset(), 0, ((BillboardParticleSubmittable.Layer)entry.getValue()).indexCount(), 1
-                );
-            }
+        for (Entry<SingleQuadParticle.Layer, QuadParticleRenderState.PreparedLayer> entry : buffers.layers().entrySet()) {
+            renderPass.setPipeline(entry.getKey().pipeline());
+            AbstractTexture abstractTexture = manager.getTexture(entry.getKey().textureAtlasLocation());
+            renderPass.bindTexture("Sampler0", abstractTexture.getTextureView(), abstractTexture.getSampler());
+            renderPass.drawIndexed(
+                entry.getValue().vertexOffset(), 0, entry.getValue().indexCount(), 1
+            );
         }
     }
 
@@ -178,13 +181,13 @@ public class TextureSubmittable implements OrderedRenderCommandQueue.LayeredCust
         int brightness
     ) {
         Vector3f vector3f = new Vector3f(localX, localY, 0.0F).rotate(rotation).mul(size).add(x, y, z);
-        vertexConsumer.vertex(vector3f.x(), vector3f.y(), vector3f.z()).texture(maxU, maxV).color(color).light(brightness);
+        vertexConsumer.addVertex(vector3f.x(), vector3f.y(), vector3f.z()).setUv(maxU, maxV).setColor(color).setLight(brightness);
     }
 
     @Override
-    public void submit(OrderedRenderCommandQueue orderedRenderCommandQueue, CameraRenderState cameraRenderState) {
+    public void submit(SubmitNodeCollector orderedRenderCommandQueue, CameraRenderState cameraRenderState) {
         if (this.textures > 0) {
-            orderedRenderCommandQueue.submitCustom(this);
+            orderedRenderCommandQueue.submitParticleGroup(this);
         }
     }
 

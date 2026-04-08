@@ -1,8 +1,8 @@
 package net.kairost.torohealth.mixin;
 
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.data.TrackedData;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -40,8 +40,8 @@ public abstract class LivingEntityMixin extends EntityMixin implements BarStateA
         this.barState = BarState.create((LivingEntity) (Object) this);
     }
 
-    @Inject(method = "onTrackedDataSet", at = @At("TAIL"))
-    private void torohealth$onTrackedData(TrackedData<?> data, CallbackInfo callbackInfo) {
+    @Inject(method = "onSyncedDataUpdated(Lnet/minecraft/network/syncher/EntityDataAccessor;)V", at = @At("TAIL"))
+    private void torohealth$onTrackedData(EntityDataAccessor<?> data, CallbackInfo callbackInfo) {
         if (this.barState == null) {
             return;
         }
@@ -51,8 +51,8 @@ public abstract class LivingEntityMixin extends EntityMixin implements BarStateA
                 this.barState.handleHealthChange();
                 // create healthChangeParticle
                 if (this.barState.healthChangeLast != 0 && ToroHealth.getConfig().particleOptions.showParticle && ToroHealth.getConfig().enabled && EntityUtil.getSquaredDistanceToCamera((LivingEntity) (Object) this) < ToroHealth.getConfig().particleOptions.particleDistanceSquared) {
-                    Vec3d entityLocation = this.getEntityPos();
-                    this.getEntityWorld().addImportantParticleClient(ToroHealth.HEALTH_CHANGE, true, entityLocation.x, entityLocation.y + this.getHeight() / 2, entityLocation.z, Double.longBitsToDouble(this.barState.healthChangeLast & 0xFFFFFFFFL), 0, 0);
+                    Vec3 entityLocation = this.position();
+                    this.level().addAlwaysVisibleParticle(ToroHealth.HEALTH_CHANGE, true, entityLocation.x, entityLocation.y + this.getBbHeight() / 2, entityLocation.z, Double.longBitsToDouble(this.barState.healthChangeLast & 0xFFFFFFFFL), 0, 0);
                 }
             }
         }

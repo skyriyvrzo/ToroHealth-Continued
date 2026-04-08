@@ -1,32 +1,32 @@
 package net.kairost.torohealth.client.particle;
 
-import net.minecraft.text.Text;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
+import org.joml.Quaternionfc;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.network.chat.Component;
 
 public class TextParticleRenderer {
-    private final MinecraftClient client;
+    private final Minecraft client;
 
-    public TextParticleRenderer(MinecraftClient client) {
+    public TextParticleRenderer(Minecraft client) {
         this.client = client;
     }
 
-    public void render(String text, Camera camera, float x, float y, float z, float u, float v, int color, OrderedRenderCommandQueue queue, int light) {
-        MatrixStack matrices = new MatrixStack();
+    public void render(String text, Quaternionfc cameraRotation, float x, float y, float z, float u, float v, int color, SubmitNodeCollector queue, int light) {
+        PoseStack matrices = new PoseStack();
         matrices.translate(x, y, z);
-        matrices.multiply(camera.getRotation());
+        matrices.mulPose(cameraRotation);
         matrices.scale(0.025f, -0.025f, 0.025f);
-        matrices.translate(-this.client.textRenderer.getWidth(text), -3, 0);
+        matrices.translate(-this.client.font.width(text), -3, 0);
 
         queue.submitText(
             matrices,
             u, v,
-            Text.literal(text).asOrderedText(),
+            Component.literal(text).getVisualOrderText(),
             false,
-            TextRenderer.TextLayerType.NORMAL,
+            Font.DisplayMode.NORMAL,
             light,
             color,
             0,

@@ -2,20 +2,20 @@ package net.kairost.torohealth.client.render;
 
 import org.joml.Vector3f;
 import org.joml.Quaternionf;
-import net.minecraft.util.Atlases;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.EntityAttachmentType;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.particle.BillboardParticle;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRenderManager;
-import net.minecraft.client.render.entity.state.EntityRenderState;
+import net.minecraft.data.AtlasIds;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityAttachment;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.config.ModConfig;
 import net.kairost.torohealth.data.BarState;
@@ -27,30 +27,30 @@ public class InWorldBarRenderer {
     private static final int DARK_GRAY = 0xFF808080;
     private static final float SIZE = 0.025f;
     private static final int BAR_WIDTH = 40;
-    private static final Identifier IN_WORLD_BAR = Identifier.of(ToroHealth.MODID, "in_world_bar");
-    private static final Sprite sprite = MinecraftClient.getInstance().getAtlasManager().getAtlasTexture(Atlases.PARTICLES).getSprite(IN_WORLD_BAR);
+    private static final Identifier IN_WORLD_BAR = Identifier.fromNamespaceAndPath(ToroHealth.MODID, "in_world_bar");
+    private static final TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.PARTICLES).getSprite(IN_WORLD_BAR);
     private static final TextureSubmittable submittable = new TextureSubmittable();
 
-    public static void render(Entity entity, Camera camera, float tickDelta, int light, EntityRenderManager entityRenderManager) {
+    public static void render(Entity entity, Camera camera, float tickDelta, int light, EntityRenderDispatcher entityRenderManager) {
         if (!shouldRender(entity, entityRenderManager)) {
             return;
         }
 
-        Vec3d cameraPos = camera.getCameraPos();
-        EntityRenderState entityRenderState = entityRenderManager.getAndUpdateRenderState(entity, tickDelta);
+        Vec3 cameraPos = camera.position();
+        EntityRenderState entityRenderState = entityRenderManager.extractEntity(entity, tickDelta);
         EntityRenderer<Entity, EntityRenderState> entityRenderer = (EntityRenderer<Entity, EntityRenderState>) entityRenderManager.getRenderer(entityRenderState);
-        Vec3d vec3d = entityRenderer.getPositionOffset(entityRenderState);
-        double x = MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX()) - cameraPos.x + vec3d.getX();
-        double y = MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY()) - cameraPos.y + vec3d.getY();
-        double z = MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ()) - cameraPos.z + vec3d.getZ();
-        Vec3d labelPos = entity.getAttachments().getPointNullable(EntityAttachmentType.NAME_TAG, 0, entity.getYaw(tickDelta));
+        Vec3 vec3d = entityRenderer.getRenderOffset(entityRenderState);
+        double x = Mth.lerp(tickDelta, entity.xOld, entity.getX()) - cameraPos.x + vec3d.x();
+        double y = Mth.lerp(tickDelta, entity.yOld, entity.getY()) - cameraPos.y + vec3d.y();
+        double z = Mth.lerp(tickDelta, entity.zOld, entity.getZ()) - cameraPos.z + vec3d.z();
+        Vec3 labelPos = entity.getAttachments().getNullable(EntityAttachment.NAME_TAG, 0, entity.getViewYRot(tickDelta));
         if (labelPos == null) {
-            float f = entity.getHeight();
-            labelPos = new Vec3d(0.0, f, 0.0);
+            float f = entity.getBbHeight();
+            labelPos = new Vec3(0.0, f, 0.0);
         }
-        Vector3f vector3f = new Vector3f((float) -BAR_WIDTH / 2, -5, 0.0F).rotate(camera.getRotation()).mul(SIZE).add((float) (x + labelPos.x), (float) (y + labelPos.y + 0.7), (float) (z + labelPos.z));
+        Vector3f vector3f = new Vector3f((float) -BAR_WIDTH / 2, -5, 0.0F).rotate(camera.rotation()).mul(SIZE).add((float) (x + labelPos.x), (float) (y + labelPos.y + 0.7), (float) (z + labelPos.z));
 
-        renderHealthBar((LivingEntity)entity, vector3f.x, vector3f.y, vector3f.z, new Quaternionf(camera.getRotation()), light, tickDelta);
+        renderHealthBar((LivingEntity)entity, vector3f.x, vector3f.y, vector3f.z, new Quaternionf(camera.rotation()), light, tickDelta);
     }
 
     private static void renderHealthBar(LivingEntity entity, float x, float y, float z, Quaternionf quaternionf,int light, float tickDelta) {
@@ -61,10 +61,10 @@ public class InWorldBarRenderer {
         color = color | (0xFF << 24);
         color2 = color2 | (0xFF << 24);
         float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
-        float percent2 = Math.min(MathHelper.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
+        float percent2 = Math.min(Mth.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
 
-        int width = Math.min(MathHelper.ceil(percent * 41.0f), BAR_WIDTH);
-        int width2 = Math.min(MathHelper.ceil(percent2 * 41.0f), BAR_WIDTH);
+        int width = Math.min(Mth.ceil(percent * 41.0f), BAR_WIDTH);
+        int width2 = Math.min(Mth.ceil(percent2 * 41.0f), BAR_WIDTH);
 
         Vector3f shift = new Vector3f(0f, 0f, 0.1f).rotate(quaternionf).mul(SIZE);
 
@@ -81,16 +81,16 @@ public class InWorldBarRenderer {
 
 
     private static void renderBar(float x, float y, float z, int color, int width, int light, Quaternionf rotation) {
-        float u1 = sprite.getMinU();
-        float u2 = MathHelper.lerp((float) width / BAR_WIDTH, sprite.getMinU(), sprite.getMaxU());
-        float v1 = sprite.getMinV();
-        float v2 = sprite.getMaxV();
+        float u1 = sprite.getU0();
+        float u2 = Mth.lerp((float) width / BAR_WIDTH, sprite.getU0(), sprite.getU1());
+        float v1 = sprite.getV0();
+        float v2 = sprite.getV1();
 
-        submittable.render(BillboardParticle.RenderType.PARTICLE_ATLAS_TRANSLUCENT, x, y, z, (float) width, 5f, rotation.x, rotation.y, rotation.z, rotation.w, SIZE, u1, u2, v1, v2, color, light);
+        submittable.render(SingleQuadParticle.Layer.TRANSLUCENT, x, y, z, (float) width, 5f, rotation.x, rotation.y, rotation.z, rotation.w, SIZE, u1, u2, v1, v2, color, light);
     }
 
 
-    private static boolean shouldRender(Entity entity, EntityRenderManager entityRenderManager) {
+    private static boolean shouldRender(Entity entity, EntityRenderDispatcher entityRenderManager) {
         if (ToroHealth.getConfig().inWorldBarOptions.inWorldBarVisibilityMode.equals(ModConfig.InWorldBarVisibilityMode.NONE)) {
             return false;
         }
@@ -100,7 +100,7 @@ public class InWorldBarRenderer {
         if (!(entity instanceof LivingEntity livingEntity)) {
             return false;
         }
-        if (entityRenderManager.getSquaredDistanceToCamera(entity) > ToroHealth.getConfig().inWorldBarOptions.inWorldBarDistanceSquared) {
+        if (entityRenderManager.distanceToSqr(entity) > ToroHealth.getConfig().inWorldBarOptions.inWorldBarDistanceSquared) {
             return false;
         }
         if (ToroHealth.getConfig().inWorldBarOptions.onlyWhenHurt && livingEntity.getHealth() >= livingEntity.getMaxHealth()) {
@@ -109,7 +109,7 @@ public class InWorldBarRenderer {
         if (ToroHealth.getConfig().inWorldBarOptions.onlyWhenLookingAt && ToroHealth.getTargetedEntity() != entity) {
             return false;
         }
-        return EntityUtil.showHealthBar(entity, MinecraftClient.getInstance().player);
+        return EntityUtil.showHealthBar(entity, Minecraft.getInstance().player);
     }
 
     public static TextureSubmittable getSubmittable() {

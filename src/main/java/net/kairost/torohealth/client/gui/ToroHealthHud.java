@@ -1,29 +1,29 @@
 package net.kairost.torohealth.client.gui;
 
-import net.minecraft.entity.passive.AbstractNautilusEntity;
 import org.joml.Vector3f;
 import org.joml.Quaternionf;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.GhastEntity;
-import net.minecraft.entity.mob.ShulkerEntity;
-import net.minecraft.entity.mob.SpiderEntity;
-import net.minecraft.entity.passive.BatEntity;
-import net.minecraft.entity.passive.VillagerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.boss.WitherEntity;
-import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.entity.decoration.EndCrystalEntity;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRenderManager;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
+import net.minecraft.util.Mth;
+import net.minecraft.resources.Identifier;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ambient.Bat;
+import net.minecraft.world.entity.animal.nautilus.AbstractNautilus;
+import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.monster.Ghast;
+import net.minecraft.world.entity.monster.Shulker;
+import net.minecraft.world.entity.monster.spider.Spider;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.config.ModConfig.FrameStyle;
 import net.kairost.torohealth.data.BarStateAccessor;
@@ -33,11 +33,11 @@ import net.kairost.torohealth.client.util.EntityUtil.Relation;
 import net.kairost.torohealth.mixin.accessor.WitherEntityAccessor;
 
 public class ToroHealthHud {
-    public static final Identifier CONTAINER = Identifier.of("minecraft", "hud/heart/container");
-    public static final Identifier FULL = Identifier.of("minecraft", "hud/heart/full");
-    private static final Identifier ARMOR_FULL = Identifier.of("minecraft", "hud/armor_full");
-    private static final Identifier TOROHEALTH_BARS_TEXTURE = Identifier.of(ToroHealth.MODID, "textures/gui/bars.png");
-    private static final Identifier TOROHEALTH_FRAME_TEXTURE = Identifier.of(ToroHealth.MODID, "textures/gui/frame.png");
+    public static final Identifier CONTAINER = Identifier.fromNamespaceAndPath("minecraft", "hud/heart/container");
+    public static final Identifier FULL = Identifier.fromNamespaceAndPath("minecraft", "hud/heart/full");
+    private static final Identifier ARMOR_FULL = Identifier.fromNamespaceAndPath("minecraft", "hud/armor_full");
+    private static final Identifier TOROHEALTH_BARS_TEXTURE = Identifier.fromNamespaceAndPath(ToroHealth.MODID, "textures/gui/bars.png");
+    private static final Identifier TOROHEALTH_FRAME_TEXTURE = Identifier.fromNamespaceAndPath(ToroHealth.MODID, "textures/gui/frame.png");
     private static final int DARK_GRAY = 0x808080;
     private static final int LIGHT_GRAY = 0xe0e0e0;
     private static final int FRAME_SIZE = 42;
@@ -50,7 +50,7 @@ public class ToroHealthHud {
     private static final int BAR_Y = 12;
     private static final int BAR_SIZE = 130;
     private static final int HEALTH_CHANGE_Y = 18;
-    private final MinecraftClient client;
+    private final Minecraft client;
     private LivingEntity entity;
     private int age;
     private float entityX;
@@ -59,11 +59,11 @@ public class ToroHealthHud {
     private boolean at_left;
     private boolean at_top;
 
-    public ToroHealthHud(MinecraftClient client) {
+    public ToroHealthHud(Minecraft client) {
         this.client = client;
     }
 
-    public void render(DrawContext context, RenderTickCounter tickCounter) {
+    public void render(GuiGraphicsExtractor context, DeltaTracker tickCounter) {
         if (!ToroHealth.getConfig().enabled || !ToroHealth.getConfig().hudOptions.showHUD) {
             return;
         }
@@ -77,31 +77,31 @@ public class ToroHealthHud {
             return;
         }
 
-        float tickDelta = tickCounter.getTickProgress(false);
-        context.getMatrices().pushMatrix();
+        float tickDelta = tickCounter.getGameTimeDeltaPartialTick(false);
+        context.pose().pushMatrix();
         float x = determineX();
         float y = determineY();
         int scale = ToroHealth.getConfig().hudOptions.hudScale;
-        context.getMatrices().translate(x, y);
-        context.getMatrices().scale(scale, scale);
+        context.pose().translate(x, y);
+        context.pose().scale(scale, scale);
         if (ToroHealth.getConfig().hudOptions.showEntity) {
             this.renderFrame(context);
-            context.getMatrices().translate((this.at_left ? 1 : -1) * (FRAME_SIZE + 2), (this.at_top ? 1 : -1) * (INFO_Y_BASE + (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.HEAVY)? 2 : 0)));
+            context.pose().translate((this.at_left ? 1 : -1) * (FRAME_SIZE + 2), (this.at_top ? 1 : -1) * (INFO_Y_BASE + (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.HEAVY)? 2 : 0)));
 
         }
 
         // draw entity info
         this.renderInfo(context, tickDelta);
-        context.getMatrices().popMatrix();
+        context.pose().popMatrix();
 
         if (ToroHealth.getConfig().hudOptions.showEntity) {
-            drawEntity(context, (int) (x + scale * (this.entityX - 2 * FRAME_SIZE + (this.at_left ? 0 : -FRAME_SIZE))), (int) (y + scale * (this.entityY - 2 * FRAME_SIZE + (this.at_top ? 0 : -FRAME_SIZE))), (int) (x + scale * (this.entityX + 2 * FRAME_SIZE + (this.at_left ? 0 : -FRAME_SIZE))), (int) (y + scale * (this.entityY + 2 * FRAME_SIZE + (this.at_top ? 0 : -FRAME_SIZE))), this.entityScale * scale, (this.at_left ? -80 : 80), -20, entity, tickDelta);
+            drawEntity(context, (int) (x + scale * (this.entityX - 2 * FRAME_SIZE + (this.at_left ? 0 : -FRAME_SIZE))), (int) (y + scale * (this.entityY - 2 * FRAME_SIZE + (this.at_top ? 0 : -FRAME_SIZE))), (int) (x + scale * (this.entityX + 2 * FRAME_SIZE + (this.at_left ? 0 : -FRAME_SIZE))), (int) (y + scale * (this.entityY + 2 * FRAME_SIZE + (this.at_top ? 0 : -FRAME_SIZE))), this.entityScale * scale, 0, (this.at_left ? -80 : 80), -20, entity, tickDelta);
         }
     }
 
     private float determineX() {
         float x = ToroHealth.getConfig().hudOptions.hudXPosition;
-        float wScreen = this.client.getWindow().getScaledWidth();
+        float wScreen = this.client.getWindow().getGuiScaledWidth();
 
         return switch (ToroHealth.getConfig().hudOptions.anchorPoint) {
             case BOTTOM_LEFT, TOP_LEFT: {
@@ -117,7 +117,7 @@ public class ToroHealthHud {
 
     private float determineY() {
         float y = ToroHealth.getConfig().hudOptions.hudYPosition;
-        float hScreen = client.getWindow().getScaledHeight();
+        float hScreen = client.getWindow().getGuiScaledHeight();
 
         return switch (ToroHealth.getConfig().hudOptions.anchorPoint) {
             case TOP_LEFT, TOP_RIGHT: {
@@ -154,13 +154,13 @@ public class ToroHealthHud {
     private void setEntityWork(LivingEntity entity)  {
         this.entity = entity;
         if  (entity !=  null) {
-            if (entity instanceof EnderDragonEntity) {
-                this.entityScale = 2 * ENTITY_RENDER_HEIGHT / entity.getHeight();
+            if (entity instanceof EnderDragon) {
+                this.entityScale = 2 * ENTITY_RENDER_HEIGHT / entity.getBbHeight();
             }
             else {
-                float scale = this.entity.getScaleFactor();
-                float height = this.entity.getHeight() / scale;
-                float width = this.entity.getWidth() / scale;
+                float scale = this.entity.getAgeScale();
+                float height = this.entity.getBbHeight() / scale;
+                float width = this.entity.getBbWidth() / scale;
                 this.entityScale = Math.min(ENTITY_RENDER_HEIGHT / height, ENTITY_RENDER_WIDTH / width);
 
                 // restrict entity scale
@@ -197,41 +197,41 @@ public class ToroHealthHud {
             // default
             this.entityY = (float) FRAME_SIZE / 2 + ENTITY_RENDER_HEIGHT / 2;
         }
-        if (this.entity instanceof GhastEntity) {
-            this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * entityScale * 3 / 8 ;
+        if (this.entity instanceof Ghast) {
+            this.entityY = (float) FRAME_SIZE / 2 + entity.getBbHeight() * entityScale * 3 / 8 ;
         }
-        else if (this.entity instanceof EnderDragonEntity) {
-            this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * this.entityScale / 4;
+        else if (this.entity instanceof EnderDragon) {
+            this.entityY = (float) FRAME_SIZE / 2 + entity.getBbHeight() * this.entityScale / 4;
         }
-        else if (this.entity instanceof ShulkerEntity shulker) {
-            switch (shulker.getAttachedFace()){
+        else if (this.entity instanceof Shulker shulker) {
+            switch (shulker.getAttachFace()){
                 case DOWN:
                     this.entityY = (float) FRAME_SIZE / 2 + ENTITY_RENDER_HEIGHT / 2;
                     break;
                 case UP:
-                    this.entityY = (float) FRAME_SIZE / 2 - ENTITY_RENDER_HEIGHT / 2 + entity.getHeight() * entityScale;
+                    this.entityY = (float) FRAME_SIZE / 2 - ENTITY_RENDER_HEIGHT / 2 + entity.getBbHeight() * entityScale;
                     break;
                 case NORTH, SOUTH, EAST, WEST:
-                    this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * this.entityScale / 2;
+                    this.entityY = (float) FRAME_SIZE / 2 + entity.getBbHeight() * this.entityScale / 2;
                     break;
             }
         }
-        else if (this.entity instanceof VillagerEntity villager && villager.isSleeping())
-            this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * this.entityScale / 2;
-        else if (this.entity instanceof PlayerEntity player && player.isSleeping())
-            this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * this.entityScale / 2;
-        else if (this.entity instanceof BatEntity bat && !bat.isRoosting())
-            this.entityY = (float) FRAME_SIZE / 2 - ENTITY_RENDER_HEIGHT / 2 + entity.getHeight() * entityScale;
-        else if (this.entity instanceof SpiderEntity spider && spider.isClimbing())
-            this.entityY = (float) FRAME_SIZE / 2 + this.entity.getHeight() * this.entityScale / 2;
-        else if (this.entity.hasVehicle() || EntityUtil.isFloating(this.entity) || this.entity.hasStatusEffect(StatusEffects.LEVITATION))
-            this.entityY = (float) FRAME_SIZE / 2 + entity.getHeight() * this.entityScale / 2;
-        else if (this.entity.isOnGround())
+        else if (this.entity instanceof Villager villager && villager.isSleeping())
+            this.entityY = (float) FRAME_SIZE / 2 + entity.getBbHeight() * this.entityScale / 2;
+        else if (this.entity instanceof Player player && player.isSleeping())
+            this.entityY = (float) FRAME_SIZE / 2 + entity.getBbHeight() * this.entityScale / 2;
+        else if (this.entity instanceof Bat bat && !bat.isResting())
+            this.entityY = (float) FRAME_SIZE / 2 - ENTITY_RENDER_HEIGHT / 2 + entity.getBbHeight() * entityScale;
+        else if (this.entity instanceof Spider spider && spider.onClimbable())
+            this.entityY = (float) FRAME_SIZE / 2 + this.entity.getBbHeight() * this.entityScale / 2;
+        else if (this.entity.isPassenger() || EntityUtil.isFloating(this.entity) || this.entity.hasEffect(MobEffects.LEVITATION))
+            this.entityY = (float) FRAME_SIZE / 2 + entity.getBbHeight() * this.entityScale / 2;
+        else if (this.entity.onGround())
             this.entityY = (float) FRAME_SIZE / 2 + ENTITY_RENDER_HEIGHT / 2;
     }
 
 
-    private void renderFrame(DrawContext context) {
+    private void renderFrame(GuiGraphicsExtractor context) {
         boolean light_style = (ToroHealth.getConfig().hudOptions.frameStyle.equals(FrameStyle.LIGHT));
         int h = 42;
         int w = light_style ? 42 : 179;
@@ -239,11 +239,11 @@ public class ToroHealthHud {
         int y = this.at_top ? 0 : -h;
         int u = light_style ? 0 : 42;
         int v = (this.at_top ? 0 : 42) + (this.at_left ? 0 : 84);
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, TOROHEALTH_FRAME_TEXTURE, x, y, u, v, w, h, 256, 256);
+        context.blit(RenderPipelines.GUI_TEXTURED, TOROHEALTH_FRAME_TEXTURE, x, y, u, v, w, h, 256, 256);
     }
 
 
-    private void renderInfo(DrawContext context, float tickDelta) {
+    private void renderInfo(GuiGraphicsExtractor context, float tickDelta) {
         // render bar
         this.renderHealthBar(context, this.entity, (this.at_left ? 0 : -BAR_SIZE), (this.at_top ? BAR_Y : -(BAR_Y + 5)), tickDelta);
         int x_pos_scalar = this.at_left ? 1 : -1;
@@ -253,14 +253,14 @@ public class ToroHealthHud {
 
         // name
         String name = this.entity.getDisplayName().getString();
-        context.drawTextWithShadow(this.client.textRenderer, name, xOffset + (this.at_left ? 0 : -this.client.textRenderer.getWidth(name)), (this.at_top ? 1 : -8), 0xFFFFFFFF);
-        xOffset += x_pos_scalar * (this.client.textRenderer.getWidth(name) + INFO_SPACING);
+        context.text(this.client.font, name, xOffset + (this.at_left ? 0 : -this.client.font.width(name)), (this.at_top ? 1 : -8), 0xFFFFFFFF);
+        xOffset += x_pos_scalar * (this.client.font.width(name) + INFO_SPACING);
 
 
         // health
-        int healthMax = MathHelper.ceil(this.entity.getMaxHealth());
-        int healthCurrent = MathHelper.clamp(
-            MathHelper.ceil(this.entity.getHealth()),
+        int healthMax = Mth.ceil(this.entity.getMaxHealth());
+        int healthCurrent = Mth.clamp(
+            Mth.ceil(this.entity.getHealth()),
             0,
             healthMax
         );
@@ -271,29 +271,29 @@ public class ToroHealthHud {
 
             xOffset += 10;
 
-            context.drawTextWithShadow(this.client.textRenderer, healthText, xOffset, healthTextY, 0xFFFFFFFF);
-            xOffset +=this.client.textRenderer.getWidth(healthText) + INFO_SPACING;
+            context.text(this.client.font, healthText, xOffset, healthTextY, 0xFFFFFFFF);
+            xOffset +=this.client.font.width(healthText) + INFO_SPACING;
         } else {
-            context.drawTextWithShadow(this.client.textRenderer, healthText, xOffset - this.client.textRenderer.getWidth(healthText), healthTextY, 0xFFFFFFFF);
+            context.text(this.client.font, healthText, xOffset - this.client.font.width(healthText), healthTextY, 0xFFFFFFFF);
 
-            xOffset -= (this.client.textRenderer.getWidth(healthText) + 1);
+            xOffset -= (this.client.font.width(healthText) + 1);
 
             renderHeartIcon(context, xOffset - 9, (healthTextY - 1));
             xOffset -= (9 + INFO_SPACING);
         }
 
         // armor
-        int armor = this.entity.getArmor();
+        int armor = this.entity.getArmorValue();
         if (armor > 0) {
             String armorText = Integer.toString(armor);
             int armorTextY = this.at_top ? 1 : -8;
             if (this.at_left) {
                 renderArmorIcon(context, xOffset, armorTextY - 1);
                 xOffset += 10;
-                context.drawTextWithShadow(this.client.textRenderer, armorText, xOffset, armorTextY, 0xFFFFFFFF);
+                context.text(this.client.font, armorText, xOffset, armorTextY, 0xFFFFFFFF);
             } else {
-                context.drawTextWithShadow(this.client.textRenderer, armorText, xOffset - this.client.textRenderer.getWidth(armorText), armorTextY, 0xFFFFFFFF);
-                xOffset -= (this.client.textRenderer.getWidth(Integer.toString(entity.getArmor())) + 1);
+                context.text(this.client.font, armorText, xOffset - this.client.font.width(armorText), armorTextY, 0xFFFFFFFF);
+                xOffset -= (this.client.font.width(Integer.toString(entity.getArmorValue())) + 1);
                 renderArmorIcon(context, xOffset - 9, armorTextY - 1);
             }
         }
@@ -302,16 +302,16 @@ public class ToroHealthHud {
         this.renderHealthChangeText(context, entity, (this.at_left ? 1 : -1) * BAR_SIZE, y_pos_scalar * HEALTH_CHANGE_Y);
     }
 
-    private void renderHeartIcon(DrawContext context, int x, int y) {
-        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, CONTAINER, x, y, 9, 9);
-        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, FULL, x, y, 9, 9);
+    private void renderHeartIcon(GuiGraphicsExtractor context, int x, int y) {
+        context.blitSprite(RenderPipelines.GUI_TEXTURED, CONTAINER, x, y, 9, 9);
+        context.blitSprite(RenderPipelines.GUI_TEXTURED, FULL, x, y, 9, 9);
     }
 
-    private void renderArmorIcon(DrawContext context, int x, int y) {
-        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, ARMOR_FULL, x, y, 9, 9);
+    private void renderArmorIcon(GuiGraphicsExtractor context, int x, int y) {
+        context.blitSprite(RenderPipelines.GUI_TEXTURED, ARMOR_FULL, x, y, 9, 9);
     }
 
-    private void renderHealthChangeText(DrawContext context, LivingEntity entity, int x, int y) {
+    private void renderHealthChangeText(GuiGraphicsExtractor context, LivingEntity entity, int x, int y) {
         int healthChange;
         BarState state = ((BarStateAccessor) entity).torohealth$getBarState();
         if (state == null) {
@@ -325,12 +325,12 @@ public class ToroHealthHud {
         int color = (healthChange > 0 ? ToroHealth.getConfig().particleOptions.healColor : ToroHealth.getConfig().particleOptions.damageColor) | 0xFF000000;
         if (healthChange != 0) {
             String text = Integer.toString(Math.abs(healthChange));
-            context.drawTextWithShadow(this.client.textRenderer, text, x + (this.at_left ? -this.client.textRenderer.getWidth(text) : 2), (this.at_top ? y : (y - 8)), color);
+            context.text(this.client.font, text, x + (this.at_left ? -this.client.font.width(text) : 2), (this.at_top ? y : (y - 8)), color);
         }
     }
 
     // draw a health Bar composed of 3 layers in InGameHud.
-    private void renderHealthBar(DrawContext context, LivingEntity entity, int x, int y, float tickDelta) {
+    private void renderHealthBar(GuiGraphicsExtractor context, LivingEntity entity, int x, int y, float tickDelta) {
         BarState state = ((BarStateAccessor) entity).torohealth$getBarState();
         if (state == null) {
             return;
@@ -340,9 +340,9 @@ public class ToroHealthHud {
         int color = relation.equals(Relation.FOE) ? ToroHealth.getConfig().barColor.foeColor : ToroHealth.getConfig().barColor.friendColor;
         int color2 = relation.equals(Relation.FOE) ? ToroHealth.getConfig().barColor.foeColorSecondary : ToroHealth.getConfig().barColor.friendColorSecondary;
         float percent = Math.min(state.health, entity.getMaxHealth()) / entity.getMaxHealth();
-        float percent2 = Math.min(MathHelper.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
-        int width = MathHelper.ceil(percent * (BAR_SIZE + 1));
-        int width2 = MathHelper.ceil(percent2 * (BAR_SIZE + 1));
+        float percent2 = Math.min(Mth.lerp(tickDelta, state.lastHealthDisplay, state.healthDisplay), entity.getMaxHealth()) / entity.getMaxHealth();
+        int width = Mth.ceil(percent * (BAR_SIZE + 1));
+        int width2 = Mth.ceil(percent2 * (BAR_SIZE + 1));
         if (BAR_SIZE > width && BAR_SIZE > width2) {
             this.renderBar(context, x, y, BAR_SIZE, DARK_GRAY);
         }
@@ -355,64 +355,77 @@ public class ToroHealthHud {
     }
 
     // this method draws a single bar in InGameHud
-    private void renderBar(DrawContext context, int x, int y, int width, int color) {
+    private void renderBar(GuiGraphicsExtractor context, int x, int y, int width, int color) {
         int color_argb = color | 0xFF000000;
         int shift = this.at_left ? 0 : (130 - width);
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, TOROHEALTH_BARS_TEXTURE, x + shift, y, shift, 6 * 2 * 5 + 5, width, 5, 256, 256, color_argb);
+        context.blit(RenderPipelines.GUI_TEXTURED, TOROHEALTH_BARS_TEXTURE, x + shift, y, shift, 6 * 2 * 5 + 5, width, 5, 256, 256, color_argb);
     }
 
     //modified from vanilla InventoryScreen.drawEntity
-    public static void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, float size, float mouseX, float mouseY, LivingEntity entity, float tickDelta) {
-        float f = (float) Math.atan(mouseX / 40.0F);
-        float g = (float) Math.atan(mouseY / 40.0F);
-        Quaternionf quaternionf = new Quaternionf().rotateZ((float) Math.PI);
-        Quaternionf quaternionf2 = new Quaternionf().rotateX(g * 20.0F * (float) (Math.PI / 180.0));
-        quaternionf.mul(quaternionf2);
-        EntityRenderState entityRenderState;
-        if (entity instanceof WitherEntity wither) {
+    private static void drawEntity(
+        final GuiGraphicsExtractor graphics,
+        final int x0,
+        final int y0,
+        final int x1,
+        final int y1,
+        final float size,
+        final float offsetY,
+        final float mouseX,
+        final float mouseY,
+        final LivingEntity entity,
+        float tickDelta
+    ) {
+        float xAngle = (float)Math.atan(mouseX / 40.0F);
+        float yAngle = (float)Math.atan(mouseY / 40.0F);
+        Quaternionf rotation = new Quaternionf().rotateZ((float) Math.PI);
+        Quaternionf xRotation = new Quaternionf().rotateX(yAngle * 20.0F * (float) (Math.PI / 180.0));
+        rotation.mul(xRotation);
+        EntityRenderState renderState;
+        if (entity instanceof WitherBoss wither) {
             WitherEntityAccessor witherEntityAccessor = (WitherEntityAccessor) wither;
             float[] sideHeadYaws = witherEntityAccessor.torohealth$getSideHeadYaws();
             float[] lastSideHeadYaws = witherEntityAccessor.torohealth$getLastSideHeadYaws();
-            float i = entity.bodyYaw;
+            float i = entity.yBodyRot;
             float[] m = sideHeadYaws.clone();
             float[] n = lastSideHeadYaws.clone();
-            sideHeadYaws[0] = 180.0f + f * 20.0f + sideHeadYaws[0] - i;
-            sideHeadYaws[1] = 180.0f + f * 20.0f + sideHeadYaws[1] - i;
-            lastSideHeadYaws[0] = 180.0f + f * 20.0f + lastSideHeadYaws[0] - i;
-            lastSideHeadYaws[1] = 180.0f + f * 20.0f + lastSideHeadYaws[1] - i;
-            entityRenderState = drawEntity(entity, tickDelta);
+            sideHeadYaws[0] = 180.0f + xAngle * 20.0f + sideHeadYaws[0] - i;
+            sideHeadYaws[1] = 180.0f + xAngle * 20.0f + sideHeadYaws[1] - i;
+            lastSideHeadYaws[0] = 180.0f + xAngle * 20.0f + lastSideHeadYaws[0] - i;
+            lastSideHeadYaws[1] = 180.0f + xAngle * 20.0f + lastSideHeadYaws[1] - i;
+            renderState = extractRenderState(entity, tickDelta);
             System.arraycopy(m, 0, sideHeadYaws, 0, m.length);
             System.arraycopy(n, 0, lastSideHeadYaws, 0, n.length);
-        } else if (entity instanceof EnderDragonEntity enderDragon) {
-            EndCrystalEntity endCrystal = enderDragon.connectedCrystal;
-            enderDragon.connectedCrystal = null;
-            entityRenderState = drawEntity(entity, tickDelta);
-            enderDragon.connectedCrystal = endCrystal;
+        } else if (entity instanceof EnderDragon enderDragon) {
+            EndCrystal endCrystal = enderDragon.nearestCrystal;
+            enderDragon.nearestCrystal = null;
+            renderState = extractRenderState(entity, tickDelta);
+            enderDragon.nearestCrystal = endCrystal;
         } else {
-            entityRenderState = drawEntity(entity, tickDelta);
+            renderState = extractRenderState(entity, tickDelta);
         }
 
-        if (entityRenderState instanceof LivingEntityRenderState livingEntityRenderState) {
-            livingEntityRenderState.bodyYaw = 180.0F + f * 20.0F;
-            if (entity instanceof AbstractNautilusEntity) {
-                livingEntityRenderState.bodyYaw += 180.0F;
+        if (renderState instanceof LivingEntityRenderState livingRenderState) {
+            livingRenderState.bodyRot = 180.0F + xAngle * 20.0F;
+            if (entity instanceof AbstractNautilus) {
+                livingRenderState.bodyRot += 180.0F;
             }
-            livingEntityRenderState.width = livingEntityRenderState.width / livingEntityRenderState.baseScale;
-            livingEntityRenderState.height = livingEntityRenderState.height / livingEntityRenderState.baseScale;
-            livingEntityRenderState.baseScale = 1.0F;
+
+            livingRenderState.boundingBoxWidth = livingRenderState.boundingBoxWidth / livingRenderState.scale;
+            livingRenderState.boundingBoxHeight = livingRenderState.boundingBoxHeight / livingRenderState.scale;
+            livingRenderState.scale = 1.0F;
         }
-        Vector3f vector3f = new Vector3f(0.0F, 0.0F, 0.0F);
-        context.addEntity(entityRenderState, size, vector3f, quaternionf, quaternionf2, x1, y1, x2, y2);
+
+        Vector3f translation = new Vector3f(0.0F, 0.0F, 0.0F);
+        graphics.entity(renderState, size, translation, rotation, xRotation, x0, y0, x1, y1);
     }
 
-    //copied from InventoryScreen.drawEntity
-    private static EntityRenderState drawEntity(LivingEntity entity, float tickDelta) {
-        EntityRenderManager entityRenderManager = MinecraftClient.getInstance().getEntityRenderDispatcher();
-        EntityRenderer<? super LivingEntity, ?> entityRenderer = entityRenderManager.getRenderer(entity);
-        EntityRenderState entityRenderState = entityRenderer.getAndUpdateRenderState(entity, tickDelta);
-        entityRenderState.light = 0xF000F0;
-        entityRenderState.shadowPieces.clear();
-        entityRenderState.outlineColor = 0;
-        return entityRenderState;
+    //copied from InventoryScreen.extractRenderState
+    private static EntityRenderState extractRenderState(final LivingEntity entity, float tickDelta) {
+        EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
+        EntityRenderer<? super LivingEntity, ?> renderer = entityRenderDispatcher.getRenderer(entity);
+        EntityRenderState renderState = renderer.createRenderState(entity, tickDelta);
+        renderState.shadowPieces.clear();
+        renderState.outlineColor = 0;
+        return renderState;
     }
 }

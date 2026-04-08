@@ -1,9 +1,18 @@
 package net.kairost.torohealth.client.util;
 
-import net.minecraft.item.*;
-import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.EndCrystalItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.MaceItem;
+import net.minecraft.world.item.ThrowablePotionItem;
+import net.minecraft.world.item.TridentItem;
+import net.minecraft.world.item.WindChargeItem;
 import net.kairost.torohealth.ToroHealth;
 import net.kairost.torohealth.config.ModConfig;
 
@@ -11,13 +20,13 @@ public class HoldingWeaponUpdater {
     public static void update() {
         if (ModConfig.InWorldBarVisibilityMode.NONE.equals(ToroHealth.getConfig().inWorldBarOptions.inWorldBarVisibilityMode))
             return;
-        MinecraftClient minecraft = MinecraftClient.getInstance();
-        PlayerEntity player = minecraft.player;
+        Minecraft minecraft = Minecraft.getInstance();
+        Player player = minecraft.player;
         if (player == null) {
             ToroHealth.setHoldingWeapon(false);
             return;
         }
-        ToroHealth.setHoldingWeapon(isWeapon(player.getMainHandStack()) || isWeapon(player.getOffHandStack()));
+        ToroHealth.setHoldingWeapon(isWeapon(player.getMainHandItem()) || isWeapon(player.getOffhandItem()));
     }
 
     private static boolean isWeapon(ItemStack itemStack) {
@@ -30,14 +39,14 @@ public class HoldingWeaponUpdater {
             || item instanceof EndCrystalItem
             || item instanceof MaceItem
             || item instanceof WindChargeItem
-            || itemStack.isIn(ItemTags.SWORDS)
-            || itemStack.isIn(ItemTags.SPEARS)
-            || itemStack.isIn(ItemTags.WEAPON_ENCHANTABLE)
-            || itemStack.isIn(ItemTags.SHARP_WEAPON_ENCHANTABLE)
-            || itemStack.isIn(ItemTags.AXES)
-            || itemStack.isIn(ItemTags.BOW_ENCHANTABLE)
-            || itemStack.isIn(ItemTags.CROSSBOW_ENCHANTABLE)
-            || itemStack.isIn(ItemTags.TRIDENT_ENCHANTABLE)
-            || itemStack.isIn(ItemTags.MACE_ENCHANTABLE);
+            || itemStack.is(ItemTags.SWORDS)
+            || itemStack.is(ItemTags.SPEARS)
+            || itemStack.is(ItemTags.WEAPON_ENCHANTABLE)
+            || itemStack.is(ItemTags.SHARP_WEAPON_ENCHANTABLE)
+            || itemStack.is(ItemTags.AXES)
+            || itemStack.is(ItemTags.BOW_ENCHANTABLE)
+            || itemStack.is(ItemTags.CROSSBOW_ENCHANTABLE)
+            || itemStack.is(ItemTags.TRIDENT_ENCHANTABLE)
+            || itemStack.is(ItemTags.MACE_ENCHANTABLE);
     }
 }

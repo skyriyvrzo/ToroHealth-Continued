@@ -42,7 +42,7 @@ public class RayTrace {
         Vec3 vec3d2 = entity.getViewVector(1.0f);
         Vec3 vec3d3 = vec3d.add(vec3d2.x * reachDistance, vec3d2.y * reachDistance, vec3d2.z * reachDistance);
         AABB box = entity.getBoundingBox().expandTowards(vec3d2.scale(reachDistance)).inflate(1.0, 1.0, 1.0);
-        EntityHitResult entityHitResult = ProjectileUtil.getEntityHitResult(entity, vec3d, vec3d3, box, entityx -> !entityx.isSpectator() && entityx.isPickable(), e);
+        EntityHitResult entityHitResult = ProjectileUtil.getEntityHitResult(entity, vec3d, vec3d3, box, entityx -> EntityUtil.isDetectable(entityx, client.player) && entityx.isPickable(), e);
         if (entityHitResult != null) {
             Entity entity2 = entityHitResult.getEntity();
             Vec3 vec3d4 = entityHitResult.getLocation();

@@ -44,16 +44,20 @@ public class EntityUtil {
         }
     }
 
-    public static boolean showHealthBar(Entity entity, Minecraft client) {
+    public static boolean showHealthBar(Entity entity, Player player) {
         return entity instanceof LivingEntity
             && !(entity instanceof ArmorStand)
-            && (!entity.isInvisibleTo(client.player)
+            && entity != player
+            && !entity.isVehicle()
+            && isDetectable(entity, player);
+    }
+
+    public static boolean isDetectable(Entity entity, Player player) {
+        return (!entity.isInvisibleTo(player)
             || entity.isCurrentlyGlowing()
             || entity.isOnFire()
-            || entity instanceof Creeper && ((Creeper) entity).isPowered() // charged creeper
-            || (((LivingEntity) entity).getArmorCoverPercentage() > 0))
-            && entity != client.player
-            && !entity.isVehicle()
+            || (entity instanceof Creeper && ((Creeper) entity).isPowered()) // charged creeper
+            || (entity instanceof LivingEntity && (((LivingEntity) entity).getArmorCoverPercentage() > 0)))
             && !entity.isSpectator();
     }
 

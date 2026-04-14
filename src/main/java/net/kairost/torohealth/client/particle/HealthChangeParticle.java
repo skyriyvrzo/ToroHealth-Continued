@@ -3,6 +3,7 @@ package net.kairost.torohealth.client.particle;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -10,8 +11,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.state.QuadParticleRenderState;
+import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.kairost.torohealth.config.ToroHealthConfig;
 
@@ -99,7 +99,7 @@ public class HealthChangeParticle
         int b = (int)(this.bCol * 255.0f) & 0xFF;
         int color = (a << 24) | (r << 16) | (g << 8) | b;
 
-        int light = ToroHealthConfig.CONFIG.particleOptions.particleLightMode.get().equals(ToroHealthConfig.ParticleLightMode.FULL_BRIGHT) ? LightTexture.FULL_BRIGHT : this.getLightColor(tickDelta);
+        int light = ToroHealthConfig.CONFIG.particleOptions.particleLightMode.get().equals(ToroHealthConfig.ParticleLightMode.FULL_BRIGHT) ? LightCoordsUtil.FULL_BRIGHT : this.getLightCoords(tickDelta);
 
         TextRenderQueue.submit(
             new TextRenderEntry(text, x, y, z, h, -3.0f, color, light)

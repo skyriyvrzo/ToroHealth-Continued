@@ -68,7 +68,6 @@ public class InWorldBarRenderer {
 
         Vector3f shift = new Vector3f(0f, 0f, 0.1f).rotate(quaternionf).mul(SIZE);
 
-
         if (40 > width && 40 > width2) {
             renderBar(x, y, z, DARK_GRAY, BAR_WIDTH, light, quaternionf);
         }
@@ -110,7 +109,7 @@ public class InWorldBarRenderer {
         if (ToroHealthConfig.CONFIG.inWorldBarOptions.onlyWhenLookingAt.get() && ToroHealth.getTargetedEntity() != entity) {
             return false;
         }
-        return EntityUtil.showHealthBar(entity, Minecraft.getInstance());
+        return EntityUtil.showHealthBar(entity, Minecraft.getInstance().player);
     }
 
     public static TextureSubmittable getSubmittable() {

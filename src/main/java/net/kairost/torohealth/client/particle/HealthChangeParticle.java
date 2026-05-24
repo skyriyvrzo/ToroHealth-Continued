@@ -1,5 +1,11 @@
 package net.kairost.torohealth.client.particle;
 
+import org.jspecify.annotations.NonNull;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.kairost.torohealth.ToroHealth;
+import net.kairost.torohealth.config.ModConfig;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -13,18 +19,15 @@ import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.NonNull;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.kairost.torohealth.ToroHealth;
-import net.kairost.torohealth.config.ModConfig;
 
 @Environment(value=EnvType.CLIENT)
 public class HealthChangeParticle
     extends SingleQuadParticle{
-    private final int value;
+    private final int healthChange;
+    private final int currentHealth;
 
-    HealthChangeParticle(ClientLevel world, int color, int value, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+
+    HealthChangeParticle(ClientLevel world, int color, int healthChange, int currentHealth, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         super(world, x, y, z, null);
         this.hasPhysics = false;
         this.scale(1.0f);
@@ -37,7 +40,8 @@ public class HealthChangeParticle
         this.rCol = (float) (color >> 16 & 0xFF) / 255.0f;
         this.gCol = (float) (color >> 8 & 0xFF) / 255.0f;
         this.bCol = (float) (color & 0xFF) / 255.0f;
-        this.value = value;
+        this.healthChange = healthChange;
+        this.currentHealth = currentHealth;
     }
 
     @Override
@@ -74,14 +78,14 @@ public class HealthChangeParticle
 
         //@Override
         public Particle createParticle(SimpleParticleType simpleParticleType, @NonNull ClientLevel clientWorld, double d, double e, double f, double g, double h, double i, RandomSource random) {
-            // use g to encode health change
+        	// use g to encode health change
             int healthChange = (int) Double.doubleToLongBits(g);
+            int currentHealth = (int) Double.doubleToLongBits(h);
             int color = (healthChange > 0) ? ToroHealth.getConfig().particleOptions.healColor : ToroHealth.getConfig().particleOptions.damageColor;
-            int value = Math.abs(healthChange);
             double vx = random.nextGaussian() * 0.035;
             double vy = 0.15 + (random.nextGaussian() * 0.01);
             double vz = random.nextGaussian() * 0.035;
-            HealthChangeParticle healthChangeParticle = new HealthChangeParticle(clientWorld, color, value, d, e, f, vx, vy, vz);
+            HealthChangeParticle healthChangeParticle = new HealthChangeParticle(clientWorld, color, healthChange, currentHealth, d, e, f, vx, vy, vz);
             healthChangeParticle.setAlpha(1.0f);
             return healthChangeParticle;
         }
@@ -96,7 +100,12 @@ public class HealthChangeParticle
         float y = (float)(Mth.lerp(tickDelta, this.yo, this.y) - vec3d.y());
         float z = (float)(Mth.lerp(tickDelta, this.zo, this.z) - vec3d.z());
 
-        String text = Integer.toString(this.value);
+        String text;
+        if (this.healthChange < 0) {
+            text = "\u00A7c-" + Math.abs(this.healthChange) + "\u2764\u00A7b[" + this.currentHealth + "\u2764]";
+        } else {
+            text = "\u00A7a+" + this.healthChange + "\u2764\u00A7b[" + this.currentHealth + "\u2764]";
+        }
         float h = -client.font.width(text) / 2.0f;
 
         int a = (int)(this.alpha * 255.0f) & 0xFF;

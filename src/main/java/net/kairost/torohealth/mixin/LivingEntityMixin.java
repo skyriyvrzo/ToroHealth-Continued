@@ -3,6 +3,7 @@ package net.kairost.torohealth.mixin;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -52,7 +53,7 @@ public abstract class LivingEntityMixin extends EntityMixin implements BarStateA
                 // create healthChangeParticle
                 if (this.barState.healthChangeLast != 0 && ToroHealth.getConfig().particleOptions.showParticle && ToroHealth.getConfig().enabled && EntityUtil.getSquaredDistanceToCamera((LivingEntity) (Object) this) < ToroHealth.getConfig().particleOptions.particleDistanceSquared) {
                     Vec3 entityLocation = this.position();
-                    this.level().addAlwaysVisibleParticle(ToroHealth.HEALTH_CHANGE, true, entityLocation.x, entityLocation.y + this.getBbHeight() / 2, entityLocation.z, Double.longBitsToDouble(this.barState.healthChangeLast & 0xFFFFFFFFL), 0, 0);
+                    this.level().addAlwaysVisibleParticle(ToroHealth.HEALTH_CHANGE, true, entityLocation.x, entityLocation.y + this.getBbHeight() / 2, entityLocation.z, Double.longBitsToDouble(this.barState.healthChangeLast & 0xFFFFFFFFL), Double.longBitsToDouble(Mth.ceil(this.barState.health) & 0xFFFFFFFFL), 0);
                 }
             }
         }

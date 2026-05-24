@@ -1,9 +1,15 @@
 package net.kairost.torohealth.client.gui;
 
-import org.joml.Vector3f;
 import org.joml.Quaternionf;
-import net.minecraft.util.Mth;
-import net.minecraft.resources.Identifier;
+import org.joml.Vector3f;
+
+import net.kairost.torohealth.ToroHealth;
+import net.kairost.torohealth.client.util.EntityUtil;
+import net.kairost.torohealth.client.util.EntityUtil.Relation;
+import net.kairost.torohealth.config.ModConfig.FrameStyle;
+import net.kairost.torohealth.data.BarState;
+import net.kairost.torohealth.data.BarStateAccessor;
+import net.kairost.torohealth.mixin.accessor.WitherEntityAccessor;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -12,25 +18,20 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.animal.nautilus.AbstractNautilus;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.entity.monster.spider.Spider;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.boss.wither.WitherBoss;
-import net.kairost.torohealth.ToroHealth;
-import net.kairost.torohealth.config.ModConfig.FrameStyle;
-import net.kairost.torohealth.data.BarStateAccessor;
-import net.kairost.torohealth.data.BarState;
-import net.kairost.torohealth.client.util.EntityUtil;
-import net.kairost.torohealth.client.util.EntityUtil.Relation;
-import net.kairost.torohealth.mixin.accessor.WitherEntityAccessor;
 
 public class ToroHealthHud {
     public static final Identifier CONTAINER = Identifier.fromNamespaceAndPath("minecraft", "hud/heart/container");
@@ -243,7 +244,7 @@ public class ToroHealthHud {
     }
 
 
-    private void renderInfo(GuiGraphicsExtractor context, float tickDelta) {
+    private void renderInfo(GuiGraphicsExtractor context, float tickDelta) {    	
         // render bar
         this.renderHealthBar(context, this.entity, (this.at_left ? 0 : -BAR_SIZE), (this.at_top ? BAR_Y : -(BAR_Y + 5)), tickDelta);
         int x_pos_scalar = this.at_left ? 1 : -1;
